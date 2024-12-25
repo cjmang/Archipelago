@@ -292,9 +292,8 @@ class GSTLAWorld(World):
                     continue
 
                 if mimic_loc.item.name in [mimic.name for mimic in mimic_list]:
-                    #this mimic is allowed to be in this sphere so most of the time we leave it alone, if this is guarenteed the end swap results tend to be very chaotic as not a lot of mimics can be swapped
-                    if self.random.randint(0, 1) == 1:
-                        mimic_loc.locked = True
+                    #this mimic is allowed to be in this sphere so we leave it alone
+                    mimic_loc.locked = True
                     continue
 
         #optimization to avoid looping over mimic types we already know we have swapped all future sphere instances of a particular type
@@ -308,11 +307,6 @@ class GSTLAWorld(World):
             for mimic_loc in mimic_locs:
                 if mimic_loc.locked:
                     # Guess someone really wanted this mimic here
-                    continue
-
-                if mimic_loc.item.name in [mimic.name for mimic in mimic_list]:
-                    #This mimic is allowed to be in this sphere so we leave it alone
-                    mimic_loc.locked = True
                     continue
 
                 mimic_swapped = False
