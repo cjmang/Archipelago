@@ -272,12 +272,35 @@ class GSTLAWorld(World):
 
     def _scale_mimics(self, max_sphere: int, mimic_map: defaultdict[int, List[GSTLALocation]]):
         mimic_lists = []
+        mimic_lists.append(mimics[:2])
         for i in range(1, len(mimics) - 1):
             mimic_lists.append(mimics[i - 1:i + 2])
+        mimic_lists.append(mimics[-2:])
 
-        breakpoints = [(max_sphere + 1) / 7 * i for i in range(1, 8)]
+        breakpoints = [(max_sphere + 1) / len(mimic_lists) * i for i in range(1, len(mimic_lists))]
 
-        for sphere, mimic_locs in mimic_map.items():
+        #First pass checking if mimics are already located in spheres they are allowed to be, if so we can lock those in place so they wont get altered anymore
+        for sphere, mimic_locs in sorted(mimic_map.items(), key= lambda s: s[0]):
+            breakpoint_index = bisect(breakpoints, sphere)
+            if breakpoint_index >= len(mimic_lists):
+                breakpoint_index = len(mimic_lists) - 1
+            mimic_list = mimic_lists[breakpoint_index]
+            #logger.info("Sphere %d, Mimic List %s", sphere, [mimic.name for mimic in mimic_list])
+            for mimic_loc in mimic_locs:
+                if mimic_loc.locked:
+                    # Guess someone really wanted this mimic here
+                    continue
+
+                if mimic_loc.item.name in [mimic.name for mimic in mimic_list]:
+                    #this mimic is allowed to be in this sphere so most of the time we leave it alone, if this is guarenteed the end swap results tend to be very chaotic as not a lot of mimics can be swapped
+                    if self.random.randint(0, 1) == 1:
+                        mimic_loc.locked = True
+                    continue
+
+        #optimization to avoid looping over mimic types we already know we have swapped all future sphere instances of a particular type
+        swapped_mimic_types = []
+        #second pass where real swapping of mimics can take place
+        for sphere, mimic_locs in sorted(mimic_map.items(), key= lambda s: s[0]):
             breakpoint_index = bisect(breakpoints, sphere)
             if breakpoint_index >= len(mimic_lists):
                 breakpoint_index = len(mimic_lists) - 1
@@ -286,11 +309,56 @@ class GSTLAWorld(World):
                 if mimic_loc.locked:
                     # Guess someone really wanted this mimic here
                     continue
-                current_item = mimic_loc.item
-                current_item.location = None
-                new_mimic = create_item_direct(self.random.choice(mimic_list), self.player)
-                # logger.info("Replacing mimic %s with mimic %s in sphere %d", current_item.name, new_mimic.name, sphere)
-                mimic_loc.item = new_mimic
+
+                if mimic_loc.item.name in [mimic.name for mimic in mimic_list]:
+                    #This mimic is allowed to be in this sphere so we leave it alone
+                    mimic_loc.locked = True
+                    continue
+
+                mimic_swapped = False
+                for mimic_type in mimics:
+                    if mimic_type.name in swapped_mimic_types:
+                        continue
+
+                    if mimic_swapped:
+                        break
+                    for sphere2, mimic_locs2 in sorted(mimic_map.items(), key= lambda s: s[0], reverse=True):
+                        if mimic_swapped:
+                            break
+
+                        #Do no try to swap mimics from the same or earlier spheres, assuming that earlier spheres are weaker and we do not want to move those around again
+                        if sphere2 <= sphere:
+                            swapped_mimic_types.append(mimic_type.name)
+                            #logger.info("No suitable mimics of type %s found to swap with in sphere %d or later, trying next type", mimic_type.name, sphere2)
+                            break
+
+                        for mimic_loc2 in mimic_locs2:
+                            if mimic_loc2.locked:
+                                continue
+
+                            #should only occur if we have a weaker mimic than our sphere allows and this fail safe makes sure we dont put a tougher mimic earlier
+                            #if a weaker mimic is available it would have gone through the next if statement below
+                            if mimic_loc.item.name == mimic_type.name:
+                                mimic_loc.locked = True
+                                mimic_swapped = True
+                                swapped_mimic_types.append(mimic_type.name)
+                                #logger.info("Hit same type mimic %s, search is over in sphere %d. Not replacing instance at %s in sphere %d from player", mimic_type.name, sphere2, mimic_loc.name, sphere, mimic_loc.item.player)
+                                break
+
+                            if mimic_loc2.item.name == mimic_type.name:
+                                temp_item = mimic_loc.item
+                                mimic_loc.item = mimic_loc2.item
+                                mimic_loc.item.location = mimic_loc
+                                mimic_loc.locked = True
+                                mimic_loc2.item = temp_item
+                                mimic_loc2.item.location = mimic_loc2
+                                mimic_swapped = True
+                                #logger.info("Swapping mimic %s at %s in sphere %d from player %s with mimic %s from %s in sphere %d from player %s", temp_item.name, mimic_loc.name, sphere, temp_item.player, mimic_loc.item.name, mimic_loc2.name, sphere2, mimic_loc.item.player)
+                                break
+
+            #Restrict swapping to not bother sweeping all spheres, by this point it should be organized enough
+            if sphere >= max_sphere * 0.75:
+                break
 
     def _scale_characters(self, max_sphere: int, char_map: defaultdict[int, List[GSTLAItem]]):
         max_level = self.options.max_scaled_level.value
