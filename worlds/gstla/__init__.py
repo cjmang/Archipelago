@@ -174,6 +174,9 @@ class GSTLAWorld(World):
         create_regions(self)
         create_vanilla_connections(self.multiworld, self.player)
 
+        from Utils import visualize_regions
+        visualize_regions(self.get_region("Menu"), "regions_graph.puml")
+
     def create_items(self) -> None:
         create_events(self)
         create_items(self, self.player)

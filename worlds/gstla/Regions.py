@@ -63,7 +63,7 @@ def create_regions(world: 'GSTLAWorld'):
 
 regions: Dict[str, RegionData] = {
     RegionName.Menu: RegionData(RegionName.Menu, None, [EntranceName.Menu_StartGame]),
-    RegionName.Idejima: RegionData(RegionName.Idejima,
+    RegionName.Indra_Idejima: RegionData(RegionName.Indra_Idejima,
     [
         LocationName.Idejima_Growth,
         LocationName.Idejima_Shamans_Rod,
@@ -71,7 +71,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Idejima_Sheba,
     ],
     [
-        EntranceName.IdejimaToDaila,
+        EntranceName.Idejima_To_Overworld,
         EntranceName.AnywhereToJoinedPartyMembers
     ]),
     RegionName.PartyMembers: RegionData(RegionName.PartyMembers,
@@ -112,7 +112,13 @@ regions: Dict[str, RegionData] = {
         LocationName.Squall
     ],
     []),
-    RegionName.Daila: RegionData(RegionName.Daila,
+    RegionName.Indra_IdejimaArea: RegionData(RegionName.Indra_IdejimaArea,
+    [
+    ],
+    [
+        EntranceName.Overworld_To_Daila_NorthSide,
+    ]),
+    RegionName.Indra_Daila: RegionData(RegionName.Indra_Daila,
     [
         LocationName.Daila_Herb,
         LocationName.Daila_3_coins,
@@ -121,26 +127,40 @@ regions: Dict[str, RegionData] = {
         LocationName.Daila_Sleep_Bomb,
         LocationName.Daila_Sea_Gods_Tear,
         LocationName.Daila_Smoke_Bomb,
+    ],
+    [
+        EntranceName.Daila_North_To_Overworld,
+        EntranceName.Daila_South_To_Overworld,
+    ]),
+    RegionName.Indra_NorthernIndra: RegionData(RegionName.Indra_NorthernIndra,
+    [
         LocationName.Echo
     ],
     [
-        EntranceName.DailaToShrineOfTheSeaGod,
-        EntranceName.DailaToKandoreanTemple,
-        EntranceName.DailaToDehkanPlateau
+        EntranceName.Overworld_To_Daila_SouthSide,
+        EntranceName.Overworld_To_ShrineOfTheSeaGod,
+        EntranceName.Overworld_To_KandoreanTemple,
+        EntranceName.Overworld_To_DehkanPlateau_NorthWestSide
     ]),
-    RegionName.KandoreamTemple: RegionData(RegionName.KandoreamTemple,
+    RegionName.Indra_KandoreanTemple: RegionData(RegionName.Indra_KandoreanTemple,
     [
         LocationName.Kandorean_Temple_Mimic,
         LocationName.Kandorean_Temple_Lash_Pebble,
         LocationName.Kandorean_Temple_Mysterious_Card,
         LocationName.Fog
+    ],
+    [
+        EntranceName.KandoreanTemple_To_Overworld
     ]),
-    RegionName.ShrineOfTheSeaGod: RegionData(RegionName.ShrineOfTheSeaGod, [
+    RegionName.Indra_ShrineOfTheSeaGod: RegionData(RegionName.Indra_ShrineOfTheSeaGod, [
         LocationName.Breath,
         LocationName.Shrine_of_the_Sea_God_Rusty_Staff,
         LocationName.Shrine_of_the_Sea_God_Right_Prong
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_To_Overworld
     ]),
-    RegionName.DehkanPlateau: RegionData(RegionName.DehkanPlateau,
+    RegionName.Indra_DehkanPlateau: RegionData(RegionName.Indra_DehkanPlateau,
     [
         LocationName.Dehkan_Plateau_Elixir,
         LocationName.Dehkan_Plateau_Pound_Cube,
@@ -151,11 +171,29 @@ regions: Dict[str, RegionData] = {
         LocationName.Cannon
     ],
     [
-        EntranceName.DehkanPlateauToMadra
+        EntranceName.DehkanPlateau_West_To_Overworld,
+        EntranceName.DehkanPlateau_East_To_Overworld
+    ]),
+    RegionName.Indra_SouthernIndra: RegionData(RegionName.Indra_SouthernIndra,
+    [
+        LocationName.Iron,
+    ],
+    [
+        EntranceName.Overworld_To_DehkanPlateau_SouthEastSide,
+        EntranceName.Overworld_To_IndraCavern,
+        EntranceName.Overworld_To_Madra,
+        EntranceName.Overworld_To_GondowanCliffs,
+        EntranceName.Overworld_To_MadraDrawbridge_SouthSide,
+        
+        EntranceName.MadraToEasternSea,
+        EntranceName.MadraToLemurianShip
     ]),
     RegionName.IndraCavern: RegionData(RegionName.IndraCavern,
     [
         LocationName.Indra_Cavern_Zagan
+    ],
+    [
+        EntranceName.IndraCavern_To_Overworld
     ]),
     RegionName.Madra: RegionData(RegionName.Madra,
     [
@@ -166,16 +204,11 @@ regions: Dict[str, RegionData] = {
         LocationName.Madra_Sleep_Bomb,
         LocationName.Madra_15_coins,
         LocationName.Madra_Nurses_Cap,
-        LocationName.Iron,
         LocationName.Char
     ],
     [
-        EntranceName.MadraToIndraCavern,
+        EntranceName.Madra_To_Overworld,
         EntranceName.MadraToMadraCatacombs,
-        EntranceName.MadraToOseniaCliffs,
-        EntranceName.MadraToGondowanCliffs,
-        EntranceName.MadraToEasternSea,
-        EntranceName.MadraToLemurianShip
     ]),
     RegionName.MadraCatacombs: RegionData(RegionName.MadraCatacombs,
     [
@@ -186,12 +219,39 @@ regions: Dict[str, RegionData] = {
         LocationName.Madra_Catacombs_Mist_Potion,
         LocationName.Madra_Catacombs_Moloch
     ]),
+    RegionName.MadraDrawBridge: RegionData(RegionName.MadraDrawBridge,
+    [],
+    [
+        EntranceName.MadraDrawbridge_South_To_Overworld,
+        EntranceName.MadraDrawbridge_North_To_Overworld
+    ]),
+    RegionName.Indra_MadraDrawBridgeArea: RegionData(RegionName.Indra_MadraDrawBridgeArea,
+    [],
+    [
+        EntranceName.Overworld_To_MadraDrawbridge_NorthSide,
+        EntranceName.Overworld_To_OseniaCliffs_WestSide,
+    ]),
     RegionName.OseniaCliffs: RegionData(RegionName.OseniaCliffs,
     [
         LocationName.Osenia_Cliffs_Pirates_Sword
     ],
     [
-        EntranceName.OseniaCliffsToMikasalla
+        EntranceName.OseniaCliffs_West_To_Overworld,
+        EntranceName.OseniaCliffs_East_To_Overworld
+    ]),
+    RegionName.Oseania_SouthWesternOsenia: RegionData(RegionName.Oseania_SouthWesternOsenia,
+    [
+        LocationName.Sour,
+    ],
+    [
+        EntranceName.Overworld_To_OseniaCliffs_EastSide,
+        EntranceName.Overworld_To_Mikasalla,
+        EntranceName.Overworld_To_OseniaCavern,
+        EntranceName.Overworld_To_Garoh,
+        EntranceName.Overworld_To_AirsRock,
+        EntranceName.Overworld_To_YampiDesertFront,
+
+        EntranceName.Overworld_Garoh_To_YampiDesertBack
     ]),
     RegionName.YampiDesertFront: RegionData(RegionName.YampiDesertFront,
     [
@@ -201,6 +261,8 @@ regions: Dict[str, RegionData] = {
         LocationName.Blitz
     ],
     [
+        EntranceName.YampDesertFront_To_Overworld,
+
         EntranceName.YampiDesertFrontToYampiDesertBack
     ]),
     RegionName.YampiDesertBack: RegionData(RegionName.YampiDesertBack,
@@ -213,7 +275,9 @@ regions: Dict[str, RegionData] = {
         LocationName.Yampi_Desert_Cave_Water_of_Life
     ],
     [
-        EntranceName.YampiDesertBackToAlhafra,
+        EntranceName.YampiDesertBack_To_Overworld_Garoh,
+        EntranceName.YampiDesertBack_To_Overworld_Alhafra,
+
         EntranceName.YampiDesertBackToYampiDesertCave
     ]),
     RegionName.YampiDesertCave: RegionData(RegionName.YampiDesertCave,
@@ -223,32 +287,6 @@ regions: Dict[str, RegionData] = {
         LocationName.Yampi_Desert_Cave_Mythril_Silver,
         LocationName.Crystal
     ]),
-    RegionName.Alhafra: RegionData(RegionName.Alhafra,
-    [
-        LocationName.Alhafra_Psy_Crystal,
-        LocationName.Alhafra_Sleep_Bomb,
-        LocationName.Alhafra_Lucky_Medal,
-        LocationName.Alhafra_32_coins,
-        LocationName.Alhafra_Smoke_Bomb,
-        LocationName.Alhafra_Elixir,
-        LocationName.Alhafra_Apple,
-        LocationName.Alhafra_Briggs,
-        LocationName.Alhafra_Prison_Briggs
-    ],
-    [
-        EntranceName.AlhafraToYampiDesertBack,
-        EntranceName.AlhafraToAlhafraCave,
-    ]),
-    RegionName.AlhafraCave: RegionData(RegionName.AlhafraCave,
-    [
-        LocationName.Alhafran_Cave_123_coins,
-        LocationName.Alhafran_Cave_Ixion_Mail,
-        LocationName.Alhafran_Cave_Lucky_Medal,
-        LocationName.Alhafran_Cave_Power_Bread,
-        LocationName.Alhafran_Cave_777_coins,
-        LocationName.Alhafran_Cave_Potion,
-        LocationName.Alhafran_Cave_Psy_Crystal
-    ]),
     RegionName.Mikasalla: RegionData(RegionName.Mikasalla,
     [
         LocationName.Mikasalla_Nut,
@@ -256,13 +294,10 @@ regions: Dict[str, RegionData] = {
         LocationName.Mikasalla_Elixir,
         LocationName.Mikasalla_82_coins,
         LocationName.Mikasalla_Lucky_Pepper,
-        LocationName.Sour,
         LocationName.Spark
     ],
     [
-        EntranceName.MikasallaToYampiDesertFront,
-        EntranceName.MikasallaToGaroh,
-        EntranceName.MikasallaToOseniaCavern
+        EntranceName.Mikasalla_To_Overworld
     ]),
     RegionName.Garoh: RegionData(RegionName.Garoh,
     [
@@ -274,8 +309,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Ether
     ],
     [
-        EntranceName.GarohToAirsRock,
-        EntranceName.GarohToYampiDesertBack
+        EntranceName.Garoh_To_Overworld
     ]),
     RegionName.AirsRock: RegionData(RegionName.AirsRock,
     [
@@ -294,9 +328,50 @@ regions: Dict[str, RegionData] = {
         LocationName.Airs_Rock_Vial_Three,
         LocationName.Airs_Rock_Flora,
         LocationName.Airs_Rock_Reveal
+    ],
+    [
+        EntranceName.AirsRock_To_Overworld
     ]),
-    RegionName.OseniaCavern: RegionData(RegionName.OseniaCavern, [
+    RegionName.OseniaCavern: RegionData(RegionName.OseniaCavern, 
+    [
         LocationName.Osenia_Cavern_Megaera
+    ],
+    [
+        EntranceName.OseniaCavern_To_Overworld
+    ]),
+    RegionName.Oseania_AlhafraArea: RegionData(RegionName.Oseania_AlhafraArea,
+    [
+    ],
+    [
+        EntranceName.Overworld_To_Alhafra,
+        EntranceName.Overworld_Alhafra_To_YampiDesertBack
+    ]),
+    RegionName.Alhafra: RegionData(RegionName.Alhafra,
+    [
+        LocationName.Alhafra_Psy_Crystal,
+        LocationName.Alhafra_Sleep_Bomb,
+        LocationName.Alhafra_Lucky_Medal,
+        LocationName.Alhafra_32_coins,
+        LocationName.Alhafra_Smoke_Bomb,
+        LocationName.Alhafra_Elixir,
+        LocationName.Alhafra_Apple,
+        LocationName.Alhafra_Briggs,
+        LocationName.Alhafra_Prison_Briggs
+    ],
+    [
+        EntranceName.Alhafra_To_Overworld,
+
+        EntranceName.AlhafraToAlhafraCave,
+    ]),
+    RegionName.AlhafraCave: RegionData(RegionName.AlhafraCave,
+    [
+        LocationName.Alhafran_Cave_123_coins,
+        LocationName.Alhafran_Cave_Ixion_Mail,
+        LocationName.Alhafran_Cave_Lucky_Medal,
+        LocationName.Alhafran_Cave_Power_Bread,
+        LocationName.Alhafran_Cave_777_coins,
+        LocationName.Alhafran_Cave_Potion,
+        LocationName.Alhafran_Cave_Psy_Crystal
     ]),
     RegionName.GondowanCliffs: RegionData(RegionName.GondowanCliffs,
     [
@@ -306,6 +381,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Kindle
     ],
     [
+        EntranceName.GondowanCliffs_East_To_Overworld,
         EntranceName.GondowanCliffsToNaribwe
     ]),
     RegionName.Naribwe: RegionData(RegionName.Naribwe,

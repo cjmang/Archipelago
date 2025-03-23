@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 
 def set_entrance_rules(world: 'GSTLAWorld'):
     player = world.player
-    add_rule(world.get_entrance(EntranceName.DailaToShrineOfTheSeaGod),
+    add_rule(world.get_entrance(EntranceName.Overworld_To_ShrineOfTheSeaGod),
              lambda state: state.has(ItemName.Lash_Pebble, player))
 
-    add_rule(world.get_entrance(EntranceName.DailaToKandoreanTemple),
+    add_rule(world.get_entrance(EntranceName.Overworld_To_KandoreanTemple),
              lambda state: state.has(ItemName.Whirlwind, player))
 
     add_rule(world.get_entrance(EntranceName.MadraToMadraCatacombs),
@@ -37,13 +37,13 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.AlhafraToAlhafraCave),
              lambda state: (state.has(ItemName.Briggs_defeated, player) and state.has(ItemName.Tremor_Bit, player)) or state.has(ItemName.Briggs_escaped, player))
 
-    add_rule(world.get_entrance(EntranceName.GarohToAirsRock),
+    add_rule(world.get_entrance(EntranceName.Overworld_To_AirsRock),
              lambda state: state.has(ItemName.Whirlwind, player))
 
-    add_rule(world.get_entrance(EntranceName.GarohToYampiDesertBack),
+    add_rule(world.get_entrance(EntranceName.Overworld_Garoh_To_YampiDesertBack),
              lambda state: state.has(ItemName.Sand, player))
 
-    add_rule(world.get_entrance(EntranceName.MadraToGondowanCliffs),
+    add_rule(world.get_entrance(EntranceName.Overworld_To_GondowanCliffs),
              lambda state: state.has(ItemName.Frost_Jewel, player) or state.has(ItemName.Scoop_Gem, player))
 
     add_rule(world.get_entrance(EntranceName.GondowanCliffsToNaribwe),

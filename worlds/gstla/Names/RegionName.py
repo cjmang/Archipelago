@@ -1,15 +1,29 @@
 class RegionName():
     Menu = "Menu"
+
+    #Overworld
     EasternSea = "Eastern Sea"
     WesternSea = "Western Sea"
-    Idejima = "Idejima"
-    Daila = "Daila"
-    KandoreamTemple = "Kandoream Temple"
-    DehkanPlateau = "Dehkan Plateau"
-    Madra = "Madra"
-    MadraCatacombs = "Madra Catacombs"
-    IndraCavern = "Indra Cavern"
-    ShrineOfTheSeaGod = "Shrine of the Sea God"
+
+
+    #Indra
+    Indra_IdejimaArea = "Overworld - Indra Idejima Area"
+    Indra_NorthernIndra = "Overworld - Northern Indra"
+    Indra_SouthernIndra = "Overworld - Southern Indra"
+    Indra_MadraDrawBridgeArea = "Overworld - Madra Drawbridge Area"
+    Indra_Idejima = "Indra - Idejima"
+    Indra_Daila = "Indra - Daila"
+    Indra_ShrineOfTheSeaGod = "Indra - Shrine of the Sea God"
+    Indra_KandoreanTemple = "Indra - Kandorean Temple"
+    Indra_DehkanPlateau = "Indra - Dehkan Plateau"
+    Madra = "Indra - Madra"
+    MadraCatacombs = "Indra - Madra - Madra Catacombs"
+    IndraCavern = "Indra - Indra Cavern"
+    MadraDrawBridge = "Indra - Madra Drawbridge"
+
+    #Osenia
+    Oseania_SouthWesternOsenia = "Overworld - SouthWestern Osenia"
+    Oseania_AlhafraArea = "Overworld - Osenia Alhafra Area"
     OseniaCliffs = "Osenia Cliffs"
     YampiDesertFront = "Yampi Desert Front"
     YampiDesertBack = "Yampi Desert Back"
@@ -18,12 +32,16 @@ class RegionName():
     Garoh = "Garoh"
     AirsRock = "AirsRock"
     OseniaCavern = "Osenia Cavern"
+
+
+    #Gondowan
     GondowanCliffs = "Gondowan Cliffs"
     Naribwe = "Naribwe"
     KibomboMountains = "Kibombo Mountains"
     Kibombo = "Kibombo"
     GabombaStatue = "Gabomba Statue"
     GabombaCatacombs = "Gabomba Catacombs"
+
     WestIndraIslet = "West Indra Islet"
     NorthOseniaIslet = "North Osenia Islet"
     SouthEastAngaraIslet = "SouthEast Angara Islet"
