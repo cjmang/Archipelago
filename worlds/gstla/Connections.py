@@ -39,6 +39,11 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_To_Kibombo, RegionName.Kibombo, '2:27', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_WestIndraIslet_To_WestIndraIslet, RegionName.WestIndraIslet, '2:28', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_EastTundariaIslet_To_EastTundariaIslet, RegionName.EastTundariaIslet, '2:29', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletWest, RegionName.NorthOseniaIslet, '2:81', ERTestGroups.EAST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletSouth, RegionName.NorthOseniaIslet, '2:30', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletEast, RegionName.NorthOseniaIslet, '2:80', ERTestGroups.WEST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_SouthEastAngaraIslet_To_SouthEastAngaraIslet, RegionName.SouthEastAngaraIslet, '2:31', ERTestGroups.WEST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_SeaOfTimeIslet_To_SeaOfTimeIslet, RegionName.SeaOfTimeIslet, '2:32', ERTestGroups.SOUTH | ERTestGroups.OW_WALK),
 
     #Indra
     EntranceData(EntranceName.Idejima_To_Overworld, RegionName.Indra_IdejimaArea, '9:4', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK, EntranceType.ONE_WAY),
@@ -83,6 +88,9 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_Gondowan_South_To_EasternSea, RegionName.EasternSea),
     EntranceData(EntranceName.Overworld_WestIndraIslet_To_EasternSea, RegionName.EasternSea),
     EntranceData(EntranceName.Overworld_EastTundariaIslet_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_NorthOseniaIslet_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_SouthEastAngaraIslet_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_SeaOfTimeIslet_To_EasternSea, RegionName.EasternSea),
 
     EntranceData(EntranceName.Overworld_EasternSea_To_Indra_North, RegionName.Indra_NorthernIndra),
     EntranceData(EntranceName.Overworld_EasternSea_To_Indra_South, RegionName.Indra_SouthernIndra),
@@ -91,10 +99,17 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_EasternSea_To_Gondowan_South, RegionName.Gondowan_SouthernGondowan),
     EntranceData(EntranceName.Overworld_EasternSea_To_WestIndraIslet, RegionName.Overworld_WestIndraIslet),
     EntranceData(EntranceName.Overworld_EasternSea_To_EastTundariaIslet, RegionName.Overworld_EastTundariaIslet),
-
+    EntranceData(EntranceName.Overworld_EasternSea_To_NorthOseniaIslet, RegionName.Overworld_NorthOseniaIslet),
+    EntranceData(EntranceName.Overworld_EasternSea_To_SouthEastAngaraIslet, RegionName.Overworld_SouthEastAngaraIslet),
+    EntranceData(EntranceName.Overworld_EasternSea_To_SeaOfTimeIslet, RegionName.Overworld_SeaOfTimeIslet),
 
     EntranceData(EntranceName.WestIndraIslet_To_Overworld, RegionName.Overworld_WestIndraIslet, '131:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
     EntranceData(EntranceName.EastTundariaIslet_To_Overworld, RegionName.Overworld_EastTundariaIslet, '132:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.NorthOseniaIsletWest_To_Overworld, RegionName.Overworld_NorthOseniaIslet, '133:??', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK), #TODO
+    EntranceData(EntranceName.NorthOseniaIsletSouth_To_Overworld, RegionName.Overworld_NorthOseniaIslet, '133:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.NorthOseniaIsletEast_To_Overworld, RegionName.Overworld_NorthOseniaIslet, '133:2', ERTestGroups.EAST | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.SouthEastAngaraIslet_To_Overworld, RegionName.Overworld_SouthEastAngaraIslet, '134:10', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.SeaOfTimeIslet_To_Overworld, RegionName.Overworld_SeaOfTimeIslet, '135:1', ERTestGroups.NORTH | ERTestGroups.SCREEN_EDGE_WALK),
 
 
 
@@ -105,9 +120,6 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.AlhafraToAlhafraCave, RegionName.AlhafraCave),
     EntranceData(EntranceName.KibomboToGabombaStatue, RegionName.GabombaStatue),
     EntranceData(EntranceName.GabombaStatueToGabombaCatacombs, RegionName.GabombaCatacombs),
-    EntranceData(EntranceName.EasternSeaToNorthOseniaIslet, RegionName.NorthOseniaIslet),
-    EntranceData(EntranceName.EasternSeaToSouthEastAngaraIslet, RegionName.SouthEastAngaraIslet),
-    EntranceData(EntranceName.EasternSeaToSeaOfTimeIslet, RegionName.SeaOfTimeIslet),
     EntranceData(EntranceName.EasternSeaToSeaOfTime, RegionName.SeaOfTime),
     EntranceData(EntranceName.EasternSeaToTreasureIsland, RegionName.TreasureIsland),
     EntranceData(EntranceName.EasternSeaToChampa, RegionName.Champa),

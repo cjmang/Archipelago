@@ -482,10 +482,10 @@ regions: Dict[str, RegionData] = {
         EntranceName.Overworld_EasternSea_To_Gondowan_South,
         EntranceName.Overworld_EasternSea_To_WestIndraIslet,
         EntranceName.Overworld_EasternSea_To_EastTundariaIslet,
+        EntranceName.Overworld_EasternSea_To_NorthOseniaIslet,
+        EntranceName.Overworld_EasternSea_To_SouthEastAngaraIslet,
+        EntranceName.Overworld_EasternSea_To_SeaOfTimeIslet,
 
-        EntranceName.EasternSeaToNorthOseniaIslet,
-        EntranceName.EasternSeaToSouthEastAngaraIslet,
-        EntranceName.EasternSeaToSeaOfTimeIslet,
         EntranceName.EasternSeaToSeaOfTime,
         EntranceName.EasternSeaToTreasureIsland,
         EntranceName.EasternSeaToChampa,
@@ -528,21 +528,53 @@ regions: Dict[str, RegionData] = {
     [
         EntranceName.EastTundariaIslet_To_Overworld
     ]),
-    RegionName.SouthEastAngaraIslet:RegionData(RegionName.SouthEastAngaraIslet,
+    RegionName.Overworld_NorthOseniaIslet: RegionData(RegionName.Overworld_NorthOseniaIslet,
     [
-        LocationName.SE_Angara_Islet_Lucky_Medal,
-        LocationName.SE_Angara_Islet_Red_Cloth
+    ],
+    [
+        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletWest,
+        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletSouth,
+        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletEast,
+        EntranceName.Overworld_NorthOseniaIslet_To_EasternSea
     ]),
     RegionName.NorthOseniaIslet:RegionData(RegionName.NorthOseniaIslet,
     [
         LocationName.N_Osenia_Islet_Lucky_Medal,
         LocationName.N_Osenia_Islet_Milk
+    ],
+    [
+        EntranceName.NorthOseniaIsletWest_To_Overworld,
+        EntranceName.NorthOseniaIsletSouth_To_Overworld,
+        EntranceName.NorthOseniaIsletEast_To_Overworld
+    ]),
+    RegionName.Overworld_SouthEastAngaraIslet:RegionData(RegionName.Overworld_SouthEastAngaraIslet,
+    [
+    ],
+    [
+        EntranceName.Overworld_SouthEastAngaraIslet_To_EasternSea,
+        EntranceName.Overworld_SouthEastAngaraIslet_To_SouthEastAngaraIslet,
+    ]),
+    RegionName.SouthEastAngaraIslet:RegionData(RegionName.SouthEastAngaraIslet,
+    [
+        LocationName.SE_Angara_Islet_Lucky_Medal,
+        LocationName.SE_Angara_Islet_Red_Cloth
+    ],
+    [
+        EntranceName.SouthEastAngaraIslet_To_Overworld
+    ]),
+    RegionName.Overworld_SeaOfTimeIslet:RegionData(RegionName.Overworld_SeaOfTimeIslet,
+    [
+    ],
+    [
+        EntranceName.Overworld_SeaOfTimeIslet_To_EasternSea,
+        EntranceName.Overworld_SeaOfTimeIslet_To_SeaOfTimeIslet
     ]),
     RegionName.SeaOfTimeIslet:RegionData(RegionName.SeaOfTimeIslet,
     [
         LocationName.Sea_of_Time_Islet_Lucky_Medal
     ],
     [
+        EntranceName.SeaOfTimeIslet_To_Overworld,
         EntranceName.SeaOfTimeIsletToIsletCave
     ]),
     RegionName.IsletCave:RegionData(RegionName.IsletCave,
