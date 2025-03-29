@@ -10,7 +10,8 @@ class EntranceName():
     Overworld_To_DehkanPlateau_SouthEastSide = "Overworld - Dehkan Plateau South Eastern Side"
     Overworld_To_IndraCavern = "Overworld - Indra Cavern"
     Overworld_To_Madra = "Overworld - Madra"
-    Overworld_To_GondowanCliffs = "Overworld - Gondowan Cliffs East Side"
+    Overworld_To_GondowanCliffs_EastSide = "Overworld - Gondowan Cliffs East Side"
+    Overworld_To_GondowanCliffs_WestSide = "Overworld - Gondowan Cliffs West Side"
     Overworld_To_MadraDrawbridge_SouthSide = "Overworld - Madra Drawbridge South Side"
     Overworld_To_MadraDrawbridge_NorthSide = "Overworld - Madra Drawbright North Side"
     Idejima_To_Overworld = "Idejima - Western Exit"
@@ -48,6 +49,41 @@ class EntranceName():
     Overworld_Alhafra_To_YampiDesertBack = "Overworld (Alhafra) - Yampi Desert Back"
     Alhafra_To_Overworld = "Alhafra - Southern Exit"
 
+    #Gondowan
+    GondowanCliffs_West_To_Overworld = "Gondowan Cliffs - Western Exit"
+    Overworld_To_KibomboMountains_SouthSide = "Overworld - Kibombo Mountains South Side"
+    Overworld_To_KibomboMountains_NorthSide = "Overworld - Kibombo Mountains North Side"
+    Overworld_To_Naribwe_SouthSide = "Overworld - Naribwe SouthSide"
+    Overworld_To_Naribwe_NorthSide = "Overworld - Naribwe NorthSide"
+    Naribwe_South_To_Overworld = "Naribwe - Southern Exit"
+    Naribwe_North_To_Overworld = "Naribwe - Northern Exit"
+    KibomboMountains_South_To_Overworld = "Kibombo Mountains - Southern Exit"
+    KibomboMountains_NorthWest_To_Overworld = "Kibombo Mountains - Northwestern Exit"
+    Overworld_To_Kibombo = "Overworld - Kibombo"
+    Kibombo_To_Overworld = "Kibombo - Southern Exit"
+
+
+    #Eastern Sea
+    Overworld_Indra_North_To_EasternSea = "Overworld - Northern Indra To Eastern Sea"
+    Overworld_Indra_South_To_EasternSea = "Overworld - Southern Indra To Eastern Sea"
+    Overworld_Oseania_AlhafraArea_To_EasternSea = "Overworld - Osenia Alhafra Area To Eastern Sea"
+    Overworld_Gondowan_Central_To_EasternSea = "Overworld - Central Gondowan To Eastern Sea"
+    Overworld_Gondowan_South_To_EasternSea = "Overworld - Southern Gondowan To Eastern Sea"
+    Overworld_WestIndraIslet_To_EasternSea = "Overworld - West Indra Islet To Eastern Sea"
+    Overworld_EastTundariaIslet_To_EasternSea = "Overworld - East Tundaria Islet To Eastern Sea"
+
+    Overworld_EasternSea_To_Indra_North = "Eastern Sea To Northern Indra"
+    Overworld_EasternSea_To_Indra_South = "Eastern Sea To Southern Indra"
+    Overworld_EasternSea_To_Osenia_AlhafraArea = "Eastern Sea To Osenia Alhafra Area"
+    Overworld_EasternSea_To_Gondowan_Central = "Eastern Sea To Central Gondowan"
+    Overworld_EasternSea_To_Gondowan_South = "Eastern Sea To Southern Gondowan"
+    Overworld_EasternSea_To_WestIndraIslet = "Eastern Sea To West Indra Islet"
+    Overworld_EasternSea_To_EastTundariaIslet = "Eastern Sea To East Tundaria Islet"
+
+    Overworld_WestIndraIslet_To_WestIndraIslet = "Overworld - West Indra Islet"
+    WestIndraIslet_To_Overworld = "West Indra Islet - Southern Exit"
+    Overworld_EastTundariaIslet_To_EastTundariaIslet = "Overworld - East Tundaria Islet"
+    EastTundariaIslet_To_Overworld = "East Tundaria Islet - Southern Exit"
 
     #TODO
     MadraToMadraCatacombs = "Madra To Madra Catacombs"
@@ -55,16 +91,9 @@ class EntranceName():
     YampiDesertFrontToYampiDesertBack = "Yampi Desert Front To Yampi Desert Back"
     YampiDesertBackToYampiDesertCave = "Yampi Desert Back To Yampi Desert Cave"
     AlhafraToAlhafraCave = "Alhafra To Alhafra Cave"
-    MadraToEasternSea = "Madra To Eastern Sea"
-    GondowanCliffsToNaribwe = "Gondowan Cliffs To Naribwe"
-    NaribweToKibomboMountains = "Naribwe To Kibombo Mountains"
-    KibomboMountainsToKibombo = "Kibombo Mountains To Kibombo"
     KibomboToGabombaStatue = "Kibombo To Gabomba Statue"
     GabombaStatueToGabombaCatacombs = "Gabomba Statue To Gabomba Catacombs"
-    EasternSeaToAlhafra = "Eastern Sea To Alhafra"
-    EasternSeaToKibombo = "Eastern Sea To Kibombo"
-    EasternSeaToNaribwe = "Eastern Sea To Naribwe"
-    EasternSeaToWestIndraIslet = "Eastern Sea To West Indra Islet"
+
     EasternSeaToNorthOseniaIslet = "Eastern Sea To North Osenia Islet"
     EasternSeaToSouthEastAngaraIslet = "Eastern Sea To South East Angara Islet"
     EasternSeaToSeaOfTimeIslet = "Eastern Sea To Sea Of Time Islet"
@@ -75,11 +104,12 @@ class EntranceName():
     EasternSeaToIzumo = "Eastern Sea To Izumo"
     EasternSeaToGaiaRock = "Eastern Sea To Gaia Rock"
     EasternSeaToYallam = "Eastern Sea To Yallam"
-    EasternSeaToEastTundariaIslet = "Eastern Sea To East Tundaria Islet"
+
     EasternSeaToTundariaTower = "Eastern Sea To Tundaria Tower"
     EasternSeaToApojiiIslands = "Eastern Sea To Apojii Islands"
     EasternSeaToAquaRock = "Eastern Sea To Aqua Rock"
     EasternSeaToWesternSea = "Eastern Sea To Western Sea"
+
     TreasureIslandToTreasureIsland_Grindstone = "Treasure Island To Treasure Island Post Grindstone"
     TreasureIsland_GrindstoneToTreasureIsland_PostReunion = "Treasure Island Post Grindstone To Treasure Island - PostReunion"
     TundariaTowerToTundariaTower_Parched = "Tundaria Tower To Tundaria Tower - Parched Areas"

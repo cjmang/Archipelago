@@ -18,7 +18,7 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_To_DehkanPlateau_SouthEastSide, RegionName.Indra_DehkanPlateau, '2:7',  ERTestGroups.NORTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_To_IndraCavern, RegionName.IndraCavern, '2:83', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_To_Madra, RegionName.Madra, '2:9', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
-    EntranceData(EntranceName.Overworld_To_GondowanCliffs, RegionName.GondowanCliffs, '2:22', ERTestGroups.WEST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_GondowanCliffs_EastSide, RegionName.GondowanCliffs, '2:22', ERTestGroups.WEST | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_To_MadraDrawbridge_SouthSide, RegionName.MadraDrawBridge, '2:10', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_To_MadraDrawbridge_NorthSide, RegionName.MadraDrawBridge, '2:11', ERTestGroups.SOUTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_To_OseniaCliffs_WestSide, RegionName.OseniaCliffs, '2:12', ERTestGroups.EAST | ERTestGroups.OW_WALK),
@@ -31,6 +31,14 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_Garoh_To_YampiDesertBack, RegionName.YampiDesertBack, '2:19', ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_Alhafra_To_YampiDesertBack, RegionName.YampiDesertBack, '2:18', ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_To_Alhafra, RegionName.Alhafra, '2:20', ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_GondowanCliffs_WestSide, RegionName.GondowanCliffs, '2:21', ERTestGroups.EAST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_Naribwe_SouthSide, RegionName.Naribwe, '2:23', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_Naribwe_NorthSide, RegionName.Naribwe, '2:24', ERTestGroups.SOUTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_KibomboMountains_SouthSide, RegionName.KibomboMountains, '2:25', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_KibomboMountains_NorthSide, RegionName.KibomboMountains, '2:26', ERTestGroups.SOUTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_To_Kibombo, RegionName.Kibombo, '2:27', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_WestIndraIslet_To_WestIndraIslet, RegionName.WestIndraIslet, '2:28', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_EastTundariaIslet_To_EastTundariaIslet, RegionName.EastTundariaIslet, '2:29', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
 
     #Indra
     EntranceData(EntranceName.Idejima_To_Overworld, RegionName.Indra_IdejimaArea, '9:4', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK, EntranceType.ONE_WAY),
@@ -58,22 +66,45 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.YampiDesertBack_To_Overworld_Alhafra, RegionName.Oseania_AlhafraArea, '74:2', ERTestGroups.NORTH | ERTestGroups.SCREEN_EDGE_WALK),
     EntranceData(EntranceName.Alhafra_To_Overworld, RegionName.Oseania_AlhafraArea, '95:9', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
  
+    #Gondowan
+    EntranceData(EntranceName.GondowanCliffs_West_To_Overworld, RegionName.Gondowan_SouthernGondowan, '102:1', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.Naribwe_South_To_Overworld, RegionName.Gondowan_SouthernGondowan, '105:6', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.Naribwe_North_To_Overworld, RegionName.Gondowan_SouthernGondowan, '105:7', ERTestGroups.NORTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.KibomboMountains_South_To_Overworld, RegionName.Gondowan_SouthernGondowan, '108:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.KibomboMountains_NorthWest_To_Overworld, RegionName.Gondowan_CentralGondowan, '107:1', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.Kibombo_To_Overworld, RegionName.Gondowan_CentralGondowan, '113:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+
+
+    #Eastern Sea
+    EntranceData(EntranceName.Overworld_Indra_North_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_Indra_South_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_Oseania_AlhafraArea_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_Gondowan_Central_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_Gondowan_South_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_WestIndraIslet_To_EasternSea, RegionName.EasternSea),
+    EntranceData(EntranceName.Overworld_EastTundariaIslet_To_EasternSea, RegionName.EasternSea),
+
+    EntranceData(EntranceName.Overworld_EasternSea_To_Indra_North, RegionName.Indra_NorthernIndra),
+    EntranceData(EntranceName.Overworld_EasternSea_To_Indra_South, RegionName.Indra_SouthernIndra),
+    EntranceData(EntranceName.Overworld_EasternSea_To_Osenia_AlhafraArea, RegionName.Oseania_AlhafraArea),
+    EntranceData(EntranceName.Overworld_EasternSea_To_Gondowan_Central, RegionName.Gondowan_CentralGondowan),
+    EntranceData(EntranceName.Overworld_EasternSea_To_Gondowan_South, RegionName.Gondowan_SouthernGondowan),
+    EntranceData(EntranceName.Overworld_EasternSea_To_WestIndraIslet, RegionName.Overworld_WestIndraIslet),
+    EntranceData(EntranceName.Overworld_EasternSea_To_EastTundariaIslet, RegionName.Overworld_EastTundariaIslet),
+
+
+    EntranceData(EntranceName.WestIndraIslet_To_Overworld, RegionName.Overworld_WestIndraIslet, '131:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.EastTundariaIslet_To_Overworld, RegionName.Overworld_EastTundariaIslet, '132:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+
+
 
     EntranceData(EntranceName.MadraToMadraCatacombs, RegionName.MadraCatacombs),
-    EntranceData(EntranceName.MadraToEasternSea, RegionName.EasternSea),
     EntranceData(EntranceName.MadraToLemurianShip, RegionName.Lemurian_Ship),
     EntranceData(EntranceName.YampiDesertFrontToYampiDesertBack, RegionName.YampiDesertBack),
     EntranceData(EntranceName.YampiDesertBackToYampiDesertCave, RegionName.YampiDesertCave),
     EntranceData(EntranceName.AlhafraToAlhafraCave, RegionName.AlhafraCave),
-    EntranceData(EntranceName.GondowanCliffsToNaribwe, RegionName.Naribwe),
-    EntranceData(EntranceName.NaribweToKibomboMountains, RegionName.KibomboMountains),
-    EntranceData(EntranceName.KibomboMountainsToKibombo, RegionName.Kibombo),
     EntranceData(EntranceName.KibomboToGabombaStatue, RegionName.GabombaStatue),
     EntranceData(EntranceName.GabombaStatueToGabombaCatacombs, RegionName.GabombaCatacombs),
-    EntranceData(EntranceName.EasternSeaToAlhafra, RegionName.Alhafra),
-    EntranceData(EntranceName.EasternSeaToKibombo, RegionName.Kibombo),
-    EntranceData(EntranceName.EasternSeaToNaribwe, RegionName.Naribwe),
-    EntranceData(EntranceName.EasternSeaToWestIndraIslet, RegionName.WestIndraIslet),
     EntranceData(EntranceName.EasternSeaToNorthOseniaIslet, RegionName.NorthOseniaIslet),
     EntranceData(EntranceName.EasternSeaToSouthEastAngaraIslet, RegionName.SouthEastAngaraIslet),
     EntranceData(EntranceName.EasternSeaToSeaOfTimeIslet, RegionName.SeaOfTimeIslet),
@@ -84,7 +115,6 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.EasternSeaToIzumo, RegionName.Izumo),
     EntranceData(EntranceName.EasternSeaToGaiaRock, RegionName.GaiaRock),
     EntranceData(EntranceName.EasternSeaToYallam, RegionName.Yallam),
-    EntranceData(EntranceName.EasternSeaToEastTundariaIslet, RegionName.EastTundariaIslet),
     EntranceData(EntranceName.EasternSeaToTundariaTower, RegionName.TundariaTower),
     EntranceData(EntranceName.EasternSeaToApojiiIslands, RegionName.ApojiiIslands),
     EntranceData(EntranceName.EasternSeaToAquaRock, RegionName.AquaRock),

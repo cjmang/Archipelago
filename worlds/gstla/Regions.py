@@ -140,7 +140,8 @@ regions: Dict[str, RegionData] = {
         EntranceName.Overworld_To_Daila_SouthSide,
         EntranceName.Overworld_To_ShrineOfTheSeaGod,
         EntranceName.Overworld_To_KandoreanTemple,
-        EntranceName.Overworld_To_DehkanPlateau_NorthWestSide
+        EntranceName.Overworld_To_DehkanPlateau_NorthWestSide,
+        EntranceName.Overworld_Indra_North_To_EasternSea
     ]),
     RegionName.Indra_KandoreanTemple: RegionData(RegionName.Indra_KandoreanTemple,
     [
@@ -182,10 +183,10 @@ regions: Dict[str, RegionData] = {
         EntranceName.Overworld_To_DehkanPlateau_SouthEastSide,
         EntranceName.Overworld_To_IndraCavern,
         EntranceName.Overworld_To_Madra,
-        EntranceName.Overworld_To_GondowanCliffs,
+        EntranceName.Overworld_To_GondowanCliffs_EastSide,
         EntranceName.Overworld_To_MadraDrawbridge_SouthSide,
         
-        EntranceName.MadraToEasternSea,
+        EntranceName.Overworld_Indra_South_To_EasternSea,
         EntranceName.MadraToLemurianShip
     ]),
     RegionName.IndraCavern: RegionData(RegionName.IndraCavern,
@@ -344,7 +345,8 @@ regions: Dict[str, RegionData] = {
     ],
     [
         EntranceName.Overworld_To_Alhafra,
-        EntranceName.Overworld_Alhafra_To_YampiDesertBack
+        EntranceName.Overworld_Alhafra_To_YampiDesertBack,
+        EntranceName.Overworld_Oseania_AlhafraArea_To_EasternSea
     ]),
     RegionName.Alhafra: RegionData(RegionName.Alhafra,
     [
@@ -382,7 +384,18 @@ regions: Dict[str, RegionData] = {
     ],
     [
         EntranceName.GondowanCliffs_East_To_Overworld,
-        EntranceName.GondowanCliffsToNaribwe
+        EntranceName.GondowanCliffs_West_To_Overworld
+    ]),
+    RegionName.Gondowan_SouthernGondowan: RegionData(RegionName.Gondowan_SouthernGondowan,
+    [
+        LocationName.Chill
+    ],
+    [
+        EntranceName.Overworld_To_GondowanCliffs_WestSide,
+        EntranceName.Overworld_To_Naribwe_SouthSide,
+        EntranceName.Overworld_To_Naribwe_NorthSide,
+        EntranceName.Overworld_To_KibomboMountains_SouthSide,
+        EntranceName.Overworld_Gondowan_South_To_EasternSea
     ]),
     RegionName.Naribwe: RegionData(RegionName.Naribwe,
     [
@@ -390,11 +403,11 @@ regions: Dict[str, RegionData] = {
         LocationName.Naribwe_18_coins,
         LocationName.Naribwe_Sleep_Bomb,
         LocationName.Naribwe_Thorn_Crown,
-        LocationName.Naribwe_Unicorn_Ring,
-        LocationName.Chill
+        LocationName.Naribwe_Unicorn_Ring
     ],
     [
-        EntranceName.NaribweToKibomboMountains,
+        EntranceName.Naribwe_North_To_Overworld,
+        EntranceName.Naribwe_South_To_Overworld
     ]),
     RegionName.KibomboMountains: RegionData(RegionName.KibomboMountains,
     [
@@ -405,7 +418,16 @@ regions: Dict[str, RegionData] = {
         LocationName.Waft
     ],
     [
-        EntranceName.KibomboMountainsToKibombo
+        EntranceName.KibomboMountains_South_To_Overworld,
+        EntranceName.KibomboMountains_NorthWest_To_Overworld
+    ]),
+    RegionName.Gondowan_CentralGondowan: RegionData(RegionName.Gondowan_CentralGondowan,
+    [
+    ],
+    [
+        EntranceName.Overworld_To_KibomboMountains_NorthSide,
+        EntranceName.Overworld_To_Kibombo,
+        EntranceName.Overworld_Gondowan_Central_To_EasternSea
     ]),
     RegionName.Kibombo: RegionData(RegionName.Kibombo,
     [
@@ -416,6 +438,7 @@ regions: Dict[str, RegionData] = {
     ],
     [
         EntranceName.KibomboToGabombaStatue,
+        EntranceName.Kibombo_To_Overworld
     ]),
     RegionName.GabombaStatue: RegionData(RegionName.GabombaStatue,
     [
@@ -452,10 +475,14 @@ regions: Dict[str, RegionData] = {
         LocationName.Overworld_Rusty_Mace,
     ],
     [
-        EntranceName.EasternSeaToAlhafra,
-        EntranceName.EasternSeaToKibombo,
-        EntranceName.EasternSeaToNaribwe,
-        EntranceName.EasternSeaToWestIndraIslet,
+        EntranceName.Overworld_EasternSea_To_Indra_North,
+        EntranceName.Overworld_EasternSea_To_Indra_South,
+        EntranceName.Overworld_EasternSea_To_Osenia_AlhafraArea,
+        EntranceName.Overworld_EasternSea_To_Gondowan_Central,
+        EntranceName.Overworld_EasternSea_To_Gondowan_South,
+        EntranceName.Overworld_EasternSea_To_WestIndraIslet,
+        EntranceName.Overworld_EasternSea_To_EastTundariaIslet,
+
         EntranceName.EasternSeaToNorthOseniaIslet,
         EntranceName.EasternSeaToSouthEastAngaraIslet,
         EntranceName.EasternSeaToSeaOfTimeIslet,
@@ -466,21 +493,40 @@ regions: Dict[str, RegionData] = {
         EntranceName.EasternSeaToIzumo,
         EntranceName.EasternSeaToGaiaRock,
         EntranceName.EasternSeaToYallam,
-        EntranceName.EasternSeaToEastTundariaIslet,
         EntranceName.EasternSeaToTundariaTower,
         EntranceName.EasternSeaToApojiiIslands,
         EntranceName.EasternSeaToAquaRock,
         EntranceName.EasternSeaToWesternSea
     ]),
-    RegionName.EastTundariaIslet: RegionData(RegionName.EastTundariaIslet,
+    RegionName.Overworld_WestIndraIslet: RegionData(RegionName.Overworld_WestIndraIslet,
     [
-        LocationName.E_Tundaria_Islet_Lucky_Medal,
-        LocationName.E_Tundaria_Islet_Pretty_Stone
+    ],
+    [
+        EntranceName.Overworld_WestIndraIslet_To_WestIndraIslet,
+        EntranceName.Overworld_WestIndraIslet_To_EasternSea
     ]),
     RegionName.WestIndraIslet: RegionData(RegionName.WestIndraIslet,
     [
         LocationName.W_Indra_Islet_Lucky_Medal,
         LocationName.W_Indra_Islet_Lil_Turtle
+    ],
+    [
+        EntranceName.WestIndraIslet_To_Overworld
+    ]),
+    RegionName.Overworld_EastTundariaIslet: RegionData(RegionName.Overworld_EastTundariaIslet,
+    [
+    ],
+    [
+        EntranceName.Overworld_EastTundariaIslet_To_EastTundariaIslet,
+        EntranceName.Overworld_EastTundariaIslet_To_EasternSea
+    ]),
+    RegionName.EastTundariaIslet: RegionData(RegionName.EastTundariaIslet,
+    [
+        LocationName.E_Tundaria_Islet_Lucky_Medal,
+        LocationName.E_Tundaria_Islet_Pretty_Stone
+    ],
+    [
+        EntranceName.EastTundariaIslet_To_Overworld
     ]),
     RegionName.SouthEastAngaraIslet:RegionData(RegionName.SouthEastAngaraIslet,
     [

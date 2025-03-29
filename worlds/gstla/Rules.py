@@ -43,13 +43,13 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.Overworld_Garoh_To_YampiDesertBack),
              lambda state: state.has(ItemName.Sand, player))
 
-    add_rule(world.get_entrance(EntranceName.Overworld_To_GondowanCliffs),
+    add_rule(world.get_entrance(EntranceName.Overworld_To_GondowanCliffs_EastSide),
              lambda state: state.has(ItemName.Frost_Jewel, player) or state.has(ItemName.Scoop_Gem, player))
 
-    add_rule(world.get_entrance(EntranceName.GondowanCliffsToNaribwe),
+    add_rule(world.get_entrance(EntranceName.GondowanCliffs_West_To_Overworld),
              lambda state: state.has(ItemName.Briggs_defeated, player))
 
-    add_rule(world.get_entrance(EntranceName.KibomboMountainsToKibombo),
+    add_rule(world.get_entrance(EntranceName.KibomboMountains_NorthWest_To_Overworld),
              lambda state: state.has(ItemName.Frost_Jewel, player) or state.has(ItemName.Lash_Pebble, player) and state.has(ItemName.Whirlwind, player))
 
     add_rule(world.get_entrance(EntranceName.KibomboToGabombaStatue),
@@ -58,8 +58,28 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.GabombaStatueToGabombaCatacombs),
              lambda state: state.has(ItemName.Gabomba_Statue_Completed, player) and state.has(ItemName.Cyclone_Chip, player))
 
-    add_rule(world.get_entrance(EntranceName.MadraToEasternSea),
+
+    add_rule(world.get_entrance(EntranceName.Overworld_Indra_North_To_EasternSea),
              lambda state: state.has(ItemName.Ship, player))
+
+    add_rule(world.get_entrance(EntranceName.Overworld_Indra_South_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_Oseania_AlhafraArea_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_Gondowan_Central_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_Gondowan_South_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_WestIndraIslet_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_EastTundariaIslet_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+
 
     add_rule(world.get_entrance(EntranceName.SeaOfTimeIsletToIsletCave),
              lambda state: state.has(ItemName.Mind_Read, player) and state.has(ItemName.Lil_Turtle, player))
