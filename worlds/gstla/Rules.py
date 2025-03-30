@@ -88,6 +88,30 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     
     add_rule(world.get_entrance(EntranceName.Overworld_SeaOfTimeIslet_To_EasternSea),
              lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_ApojiiIslands_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_AquaRock_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_Izumo_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_TreasureIsland_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_Tundaria_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_SEAngara_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_SouthernAngara_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_SouthEastOsenia_To_EasternSea),
+             lambda state: state.has(ItemName.Ship, player))
 
 
     add_rule(world.get_entrance(EntranceName.SeaOfTimeIsletToIsletCave),
@@ -102,12 +126,12 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.TreasureIsland_GrindstoneToTreasureIsland_PostReunion),
              lambda state: state.has(ItemName.Lifting_Gem, player))
     
-    add_rule(world.get_entrance(EntranceName.EasternSeaToAnkohlRuins),
+    add_rule(world.get_entrance(EntranceName.Overworld_EasternSea_To_SEAngara),
              lambda state: state.has(ItemName.Whirlwind, player))
 
     add_rule(world.get_entrance(EntranceName.AnkohlRuinsToAnkohlRuins_Sand),
              lambda state: state.has(ItemName.Sand, player))
-    add_rule(world.get_entrance(EntranceName.EasternSeaToAquaRock),
+    add_rule(world.get_entrance(EntranceName.Overworld_EasternSea_To_AquaRock),
              lambda state: state.has(ItemName.Douse_Drop, player))
 
     add_rule(world.get_entrance(EntranceName.TundariaTowerToTundariaTower_Parched),

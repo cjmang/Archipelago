@@ -485,17 +485,16 @@ regions: Dict[str, RegionData] = {
         EntranceName.Overworld_EasternSea_To_NorthOseniaIslet,
         EntranceName.Overworld_EasternSea_To_SouthEastAngaraIslet,
         EntranceName.Overworld_EasternSea_To_SeaOfTimeIslet,
+        EntranceName.Overworld_EasternSea_To_ApojiiIslands,
+        EntranceName.Overworld_EasternSea_To_AquaRock,
+        EntranceName.Overworld_EasternSea_To_Izumo,
+        EntranceName.Overworld_EasternSea_To_TreasureIsland,
+        EntranceName.Overworld_EasternSea_To_Tundaria,
+        EntranceName.Overworld_EasternSea_To_SEAngara,
+        EntranceName.Overworld_EasternSea_To_SouthernAngara,
+        EntranceName.Overworld_EasternSea_To_SouthEastOsenia,
 
         EntranceName.EasternSeaToSeaOfTime,
-        EntranceName.EasternSeaToTreasureIsland,
-        EntranceName.EasternSeaToChampa,
-        EntranceName.EasternSeaToAnkohlRuins,
-        EntranceName.EasternSeaToIzumo,
-        EntranceName.EasternSeaToGaiaRock,
-        EntranceName.EasternSeaToYallam,
-        EntranceName.EasternSeaToTundariaTower,
-        EntranceName.EasternSeaToApojiiIslands,
-        EntranceName.EasternSeaToAquaRock,
         EntranceName.EasternSeaToWesternSea
     ]),
     RegionName.Overworld_WestIndraIslet: RegionData(RegionName.Overworld_WestIndraIslet,
@@ -532,9 +531,7 @@ regions: Dict[str, RegionData] = {
     [
     ],
     [
-        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletWest,
-        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletSouth,
-        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIsletEast,
+        EntranceName.Overworld_NorthOseniaIslet_To_NorthOseniaIslet,
         EntranceName.Overworld_NorthOseniaIslet_To_EasternSea
     ]),
     RegionName.NorthOseniaIslet:RegionData(RegionName.NorthOseniaIslet,
@@ -543,9 +540,7 @@ regions: Dict[str, RegionData] = {
         LocationName.N_Osenia_Islet_Milk
     ],
     [
-        EntranceName.NorthOseniaIsletWest_To_Overworld,
-        EntranceName.NorthOseniaIsletSouth_To_Overworld,
-        EntranceName.NorthOseniaIsletEast_To_Overworld
+        EntranceName.NorthOseniaIslet_To_Overworld,
     ]),
     RegionName.Overworld_SouthEastAngaraIslet:RegionData(RegionName.Overworld_SouthEastAngaraIslet,
     [
@@ -584,6 +579,13 @@ regions: Dict[str, RegionData] = {
         LocationName.Meld,
         LocationName.Serac
     ]),
+    RegionName.Overworld_ApojiiIslands:RegionData(RegionName.Overworld_ApojiiIslands,
+    [
+    ],
+    [
+        EntranceName.Overworld_ApojiiIslands_To_EasternSea,
+        EntranceName.Overworld_ApojiiIslands_To_ApojiIslands
+    ]),
     RegionName.ApojiiIslands:RegionData(RegionName.ApojiiIslands,
     [
         LocationName.Apojii_Islands_Herb,
@@ -592,6 +594,16 @@ regions: Dict[str, RegionData] = {
         LocationName.Apojii_Islands_182_coins,
         LocationName.Apojii_Islands_Bramble_Seed,
         LocationName.Haze
+    ],
+    [
+        EntranceName.ApojiiIslands_To_Overworld
+    ]),
+    RegionName.Overworld_AquaRock:RegionData(RegionName.Overworld_AquaRock,
+    [
+    ],
+    [
+        EntranceName.Overworld_AquaRock_To_EasternSea,
+        EntranceName.Overworld_AquaRock_To_AquaRock
     ]),
     RegionName.AquaRock:RegionData(RegionName.AquaRock,
     [
@@ -609,6 +621,17 @@ regions: Dict[str, RegionData] = {
         LocationName.Aqua_Rock_Water_of_Life,
         LocationName.Aqua_Rock_Parch,
         LocationName.Steam
+    ],
+    [
+        EntranceName.AquaRock_To_Overworld
+    ]),
+    RegionName.Overworld_Izumo:RegionData(RegionName.Overworld_Izumo,
+    [
+    ],
+    [
+        EntranceName.Overworld_Izumo_To_EasternSea,
+        EntranceName.Overworld_Izumo_To_Izumo,
+        EntranceName.Overworld_Izumo_To_GaiaRock,
     ]),
     RegionName.Izumo:RegionData(RegionName.Izumo,
     [
@@ -622,6 +645,9 @@ regions: Dict[str, RegionData] = {
         LocationName.Izumo_Water_of_Life,
         LocationName.Izumo_Ulysses,
         LocationName.Coal
+    ],
+    [
+        EntranceName.Izumo_To_Overworld
     ]),
     RegionName.GaiaRock:RegionData(RegionName.GaiaRock,
     [
@@ -633,6 +659,16 @@ regions: Dict[str, RegionData] = {
         LocationName.Gaia_Rock_Dancing_Idol,
         LocationName.Gaia_Rock_Serpent_Fight,
         LocationName.Gaia_Rock_Sand
+    ],
+    [
+        EntranceName.GaiaRock_To_Overworld
+    ]),
+    RegionName.Overworld_TreasureIsland:RegionData(RegionName.Overworld_TreasureIsland,
+    [
+    ],
+    [
+        EntranceName.Overworld_TreasureIsland_To_EasternSea,
+        EntranceName.Overworld_TreasureIsland_To_TreasureIsland,
     ]),
     RegionName.TreasureIsland: RegionData(RegionName.TreasureIsland,
     [
@@ -650,6 +686,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Treasure_Isle_Empty_Ten,
     ],
     [
+        EntranceName.TreasureIsland_To_Overworld,
         EntranceName.TreasureIslandToTreasureIsland_Grindstone
     ]),
     RegionName.TreasureIsland_Grindstone: RegionData(RegionName.TreasureIsland_Grindstone,
@@ -673,12 +710,20 @@ regions: Dict[str, RegionData] = {
         LocationName.Treasure_Isle_Iris_Robe,
         LocationName.Treasure_Isle_Fire_Brand,
     ]),
-    RegionName.TundariaTower: RegionData(RegionName.TundariaTower,
+    RegionName.Overworld_Tundaria:RegionData(RegionName.Overworld_Tundaria,
     [
-        LocationName.Tundaria_Tower_Center_Prong,
-        LocationName.Wheeze,
+        LocationName.Wheeze
     ],
     [
+        EntranceName.Overworld_Tundaria_To_EasternSea,
+        EntranceName.Overworld_Tundaria_To_TundariaTower,
+    ]),
+    RegionName.TundariaTower: RegionData(RegionName.TundariaTower,
+    [
+        LocationName.Tundaria_Tower_Center_Prong
+    ],
+    [
+        EntranceName.TundariaTower_To_Overworld,
         EntranceName.TundariaTowerToTundariaTower_Parched
     ]),
     RegionName.TundariaTower_Parched: RegionData(RegionName.TundariaTower_Parched,
@@ -694,6 +739,13 @@ regions: Dict[str, RegionData] = {
         LocationName.Tundaria_Tower_Burst_Brooch,
         LocationName.Reflux
     ]),
+    RegionName.Overworld_SouthEasternAngara:RegionData(RegionName.Overworld_SouthEasternAngara,
+    [
+    ],
+    [
+        EntranceName.Overworld_SEAngara_To_EasternSea,
+        EntranceName.Overworld_SEAngara_To_AnkohlRuins,
+    ]),
     RegionName.AnkohlRuins: RegionData(RegionName.AnkohlRuins,
     [
         LocationName.Ankohl_Ruins_Empty,
@@ -706,6 +758,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Ankohl_Ruins_Crystal_Powder
     ],
     [
+        EntranceName.AnkohlRuins_To_Overworld,
         EntranceName.AnkohlRuinsToAnkohlRuins_Sand
     ]),
     RegionName.AnkohlRuins_Sand: RegionData(RegionName.AnkohlRuins_Sand,
@@ -720,6 +773,13 @@ regions: Dict[str, RegionData] = {
         LocationName.Ankohl_Ruins_Vial,
         LocationName.Ankohl_Ruins_Left_Prong
     ]),
+    RegionName.Overworld_SouthernAngara:RegionData(RegionName.Overworld_SouthernAngara,
+    [
+    ],
+    [
+        EntranceName.Overworld_SouthernAngara_To_EasternSea,
+        EntranceName.Overworld_SouthernAngara_To_Champa,
+    ]),
     RegionName.Champa: RegionData(RegionName.Champa,
     [
         LocationName.Champa_Elixir,
@@ -729,6 +789,16 @@ regions: Dict[str, RegionData] = {
         LocationName.Champa_Smoke_Bomb,
         LocationName.Champa_Lucky_Medal,
         LocationName.Champa_Viking_Helm
+    ],
+    [
+        EntranceName.Champa_To_Overworld,
+    ]),
+    RegionName.Overworld_SouthEasternOsenia:RegionData(RegionName.Overworld_SouthEasternOsenia,
+    [
+    ],
+    [
+        EntranceName.Overworld_SouthEastOsenia_To_EasternSea,
+        EntranceName.Overworld_SouthEastOsenia_To_YallamSouth,
     ]),
     RegionName.Yallam: RegionData(RegionName.Yallam,
     [
@@ -740,7 +810,16 @@ regions: Dict[str, RegionData] = {
         LocationName.Yallam_16_coins
     ],
     [
-        EntranceName.YallamToTaopoSwamp
+        EntranceName.YallamSouth_To_Overworld,
+        EntranceName.YallamNorth_To_Overworld,
+
+    ]),
+    RegionName.Overworld_NorthEasternOsenia:RegionData(RegionName.Overworld_NorthEasternOsenia,
+    [
+    ],
+    [
+        EntranceName.Overworld_NorthEastOsenia_To_YallamNorth,
+        EntranceName.Overworld_NorthEastOsenia_To_TaopoSwamp
     ]),
     RegionName.TaopoSwamp: RegionData(RegionName.TaopoSwamp,
     [
@@ -751,6 +830,9 @@ regions: Dict[str, RegionData] = {
         LocationName.Taopo_Swamp_Tear_Stone,
         LocationName.Taopo_Swamp_Tear_Stone_Two,
         LocationName.Flower
+    ],
+    [
+        EntranceName.TaopoSwamp_To_Overworld
     ]),
     RegionName.SeaOfTime: RegionData(RegionName.SeaOfTime,
     [
