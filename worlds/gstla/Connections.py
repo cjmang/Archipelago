@@ -53,6 +53,8 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_SouthEastOsenia_To_YallamSouth, RegionName.Yallam, '2:34', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_NorthEastOsenia_To_YallamNorth, RegionName.Yallam, '2:33', ERTestGroups.SOUTH | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_NorthEastOsenia_To_TaopoSwamp, RegionName.TaopoSwamp, '2:35', ERTestGroups.EAST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_SouthWestAttekaIslet_To_SouthWestAttekaIslet, RegionName.SouthWestAttekaIslet, '2:47', ERTestGroups.WEST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_KaltIsland_To_KaltIsland, RegionName.KaltIsland, '2:50', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
 
     #Indra
     EntranceData(EntranceName.Idejima_To_Overworld, RegionName.Indra_IdejimaArea, '9:4', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK, EntranceType.ONE_WAY),
@@ -145,6 +147,18 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.YallamNorth_To_Overworld, RegionName.Overworld_NorthEasternOsenia, '139:11', ERTestGroups.NORTH | ERTestGroups.SCREEN_EDGE_WALK),
     EntranceData(EntranceName.TaopoSwamp_To_Overworld, RegionName.Overworld_NorthEasternOsenia, '143:1', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK),
 
+    #Western Sea
+    EntranceData(EntranceName.Overworld_WesternSea_To_SouthWestAttekaIslet, RegionName.Overworld_SouthWestAttekaIslet),
+    EntranceData(EntranceName.Overworld_WesternSea_To_KaltIsland, RegionName.Overworld_KaltIsland),
+
+
+    EntranceData(EntranceName.Overworld_SouthWestAttekaIslet_To_WesternSea, RegionName.WesternSea),
+    EntranceData(EntranceName.Overworld_KaltIsland_To_WesternSea, RegionName.WesternSea),
+
+
+    EntranceData(EntranceName.SouthWestAttekaIslet_To_Overworld, RegionName.Overworld_SouthWestAttekaIslet, '221:1', ERTestGroups.NORTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.KaltIsland_To_Overworld, RegionName.Overworld_KaltIsland, '219:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+
 
     EntranceData(EntranceName.MadraToMadraCatacombs, RegionName.MadraCatacombs),
     EntranceData(EntranceName.MadraToLemurianShip, RegionName.Lemurian_Ship),
@@ -162,7 +176,6 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.AnkohlRuinsToAnkohlRuins_Sand, RegionName.AnkohlRuins_Sand),
     EntranceData(EntranceName.SeaOfTimeToLemuria, RegionName.Lemuria),
     EntranceData(EntranceName.LemuriaToShipRevisit, RegionName.Lemurian_Ship_Revisit),
-    EntranceData(EntranceName.WesternSeaToSouthWestAttekaIslet, RegionName.SouthWestAttekaIslet),
     EntranceData(EntranceName.WesternSeaToHesperiaSettlement, RegionName.HesperiaSettlement),
     EntranceData(EntranceName.WesternSeaToShamanVillageCave, RegionName.ShamanVillageCave),
     EntranceData(EntranceName.WesternSeaToAttekaInlet, RegionName.AttekaInlet),
@@ -171,7 +184,6 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.WesternSeaToMagmaRock, RegionName.MagmaRock),
     EntranceData(EntranceName.WesternSeaToLoho, RegionName.Loho),
     EntranceData(EntranceName.WesternSeaToAngaraCavern, RegionName.AngaraCavern),
-    EntranceData(EntranceName.WesternSeaToKaltIsland, RegionName.KaltIsland),
     EntranceData(EntranceName.WesternSeaToProx, RegionName.Prox),
     EntranceData(EntranceName.ShamanVillageCaveToShamanVillage, RegionName.ShamanVillage),
     EntranceData(EntranceName.AttekaInletToContigo, RegionName.Contigo),

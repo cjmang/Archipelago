@@ -112,6 +112,12 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     
     add_rule(world.get_entrance(EntranceName.Overworld_SouthEastOsenia_To_EasternSea),
              lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_SouthWestAttekaIslet_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_KaltIsland_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
 
 
     add_rule(world.get_entrance(EntranceName.SeaOfTimeIsletToIsletCave),

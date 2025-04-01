@@ -135,6 +135,18 @@ class EntranceName():
     Overworld_NorthEastOsenia_To_TaopoSwamp = "Overworld - Taopo Swamp"
     TaopoSwamp_To_Overworld = "Taopo Swamp - Western Exit"
 
+    
+    Overworld_WesternSea_To_SouthWestAttekaIslet = "Western Sea To South West Atteka Islet"
+    Overworld_SouthWestAttekaIslet_To_WesternSea = "Overworld - South West Atteka Islet To Western Sea"
+    Overworld_WesternSea_To_KaltIsland = "Western Sea To Kalt Island"
+    Overworld_KaltIsland_To_WesternSea = "Overworld - Kalt Island To Western Sea"
+
+    
+    Overworld_SouthWestAttekaIslet_To_SouthWestAttekaIslet = "Overworld - South West Atteka Islet"
+    SouthWestAttekaIslet_To_Overworld = "South West Atteka Islet - North Eastern Exit"
+    Overworld_KaltIsland_To_KaltIsland = "Overworld - Kalt Island"
+    KaltIsland_To_Overworld = "Kalt Island - Southern Exit"
+
 
     #TODO
     MadraToMadraCatacombs = "Madra To Madra Catacombs"
@@ -154,7 +166,6 @@ class EntranceName():
     AnkohlRuinsToAnkohlRuins_Sand = "Ankohl Ruins To Ankohl Ruins - Post Sand"
     SeaOfTimeToLemuria = "Sea Of Time To Lemuria"
     LemuriaToShipRevisit = "Lemuria To Ship Revisit"
-    WesternSeaToSouthWestAttekaIslet = "Western Sea To South West Atteka Islet"
     WesternSeaToHesperiaSettlement = "Western Sea To Hesperia Settlement"
     WesternSeaToShamanVillageCave = "Western Sea To Shaman Village Cave"
     WesternSeaToAttekaInlet = "Western Sea To Atteka Inlet"
@@ -163,7 +174,6 @@ class EntranceName():
     WesternSeaToMagmaRock = "Western Sea To Magma Rock"
     WesternSeaToLoho = "Western Sea To Loho"
     WesternSeaToAngaraCavern = "Western Sea To Angara Cavern"
-    WesternSeaToKaltIsland = "Western Sea To Kalt Island"
     WesternSeaToProx = "Western Sea To Prox"
     ShamanVillageCaveToShamanVillage = "Shaman Village Cave To Shaman Village"
     AttekaInletToContigo = "Atteka Inlet To Contigo"

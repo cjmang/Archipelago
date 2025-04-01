@@ -863,7 +863,9 @@ regions: Dict[str, RegionData] = {
         LocationName.Overworld_Rusty_Staff,
     ],
     [
-        EntranceName.WesternSeaToSouthWestAttekaIslet,
+        EntranceName.Overworld_WesternSea_To_SouthWestAttekaIslet,
+        EntranceName.Overworld_WesternSea_To_KaltIsland,
+
         EntranceName.WesternSeaToHesperiaSettlement,
         EntranceName.WesternSeaToShamanVillageCave,
         EntranceName.WesternSeaToAttekaInlet,
@@ -872,13 +874,36 @@ regions: Dict[str, RegionData] = {
         EntranceName.WesternSeaToMagmaRock,
         EntranceName.WesternSeaToLoho,
         EntranceName.WesternSeaToAngaraCavern,
-        EntranceName.WesternSeaToKaltIsland,
         EntranceName.WesternSeaToProx
+    ]),
+    RegionName.Overworld_SouthWestAttekaIslet: RegionData(RegionName.Overworld_SouthWestAttekaIslet,
+    [
+    ],
+    [
+        EntranceName.Overworld_SouthWestAttekaIslet_To_SouthWestAttekaIslet,
+        EntranceName.Overworld_SouthWestAttekaIslet_To_WesternSea
     ]),
     RegionName.SouthWestAttekaIslet: RegionData(RegionName.SouthWestAttekaIslet,
     [
         LocationName.Luff, # Random djinn from gs1 spot
         LocationName.SW_Atteka_Islet_Dragon_Skin
+    ],
+    [
+        EntranceName.SouthWestAttekaIslet_To_Overworld
+    ]),
+    RegionName.Overworld_KaltIsland: RegionData(RegionName.Overworld_KaltIsland,
+    [
+    ],
+    [
+        EntranceName.Overworld_KaltIsland_To_WesternSea,
+        EntranceName.Overworld_KaltIsland_To_KaltIsland
+    ]),
+    RegionName.KaltIsland: RegionData(RegionName.KaltIsland,
+    [
+        LocationName.Gel
+    ],
+    [
+        EntranceName.KaltIsland_To_Overworld
     ]),
     RegionName.HesperiaSettlement: RegionData(RegionName.HesperiaSettlement,
     [
@@ -998,10 +1023,6 @@ regions: Dict[str, RegionData] = {
     RegionName.AngaraCavern: RegionData(RegionName.AngaraCavern,
     [
         LocationName.Angara_Cavern_Haures
-    ]),
-    RegionName.KaltIsland: RegionData(RegionName.KaltIsland,
-    [
-        LocationName.Gel
     ]),
     RegionName.Prox: RegionData(RegionName.Prox,
     [

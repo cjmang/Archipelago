@@ -76,9 +76,13 @@ class RegionName():
     Champa = "Champa"
     Overworld_SouthEasternOsenia = "Overworld - SouthEastern Osenia"
     Yallam = "Yallam"
-
     Overworld_NorthEasternOsenia = "Overworld - NorthEastern Osenia"
     TaopoSwamp = "Taopo Swamp"
+
+    SouthWestAttekaIslet = "South West Atteka Islet"
+    Overworld_SouthWestAttekaIslet = "Overworld - South West Atteka Islet"
+    KaltIsland = "Kalt Island"
+    Overworld_KaltIsland = "Overworld - Kalt Island"
 
     SeaOfTime = "Sea Of Time"
     Lemuria = "Lemuria"
@@ -98,8 +102,6 @@ class RegionName():
     Contigo = "Contigo"
     JupiterLighthouse = "Jupiter Lighthouse"
     AnemosSanctum = "Anemos Sanctum"
-    SouthWestAttekaIslet = "South West Atteka Islet"
-    KaltIsland = "Kalt Island"
     Prox = "Prox"
     MarsLighthouse = "Mars Lighthouse"
     MarsLighthouse_Activated = "MarsLighthouse Activated"
