@@ -865,15 +865,14 @@ regions: Dict[str, RegionData] = {
     [
         EntranceName.Overworld_WesternSea_To_SouthWestAttekaIslet,
         EntranceName.Overworld_WesternSea_To_KaltIsland,
+        EntranceName.Overworld_WesternSea_To_WestGondowan,
+        EntranceName.Overworld_WesternSea_To_WesternAngara,
+        EntranceName.Overworld_WesternSea_To_NeHesperia,
+        EntranceName.Overworld_WesternSea_To_WestHesperia,
+        EntranceName.Overworld_WesternSea_To_CentralHesperia,
 
-        EntranceName.WesternSeaToHesperiaSettlement,
-        EntranceName.WesternSeaToShamanVillageCave,
         EntranceName.WesternSeaToAttekaInlet,
         EntranceName.WesternSeaToAttekaCavern,
-        EntranceName.WesternSeaToGondowanSettlement,
-        EntranceName.WesternSeaToMagmaRock,
-        EntranceName.WesternSeaToLoho,
-        EntranceName.WesternSeaToAngaraCavern,
         EntranceName.WesternSeaToProx
     ]),
     RegionName.Overworld_SouthWestAttekaIslet: RegionData(RegionName.Overworld_SouthWestAttekaIslet,
@@ -905,18 +904,47 @@ regions: Dict[str, RegionData] = {
     [
         EntranceName.KaltIsland_To_Overworld
     ]),
+    RegionName.Overworld_WesternHesperia: RegionData(RegionName.Overworld_WesternHesperia,
+    [
+    ],
+    [
+        EntranceName.Overworld_WesternHesperia_To_WesternSea,
+        EntranceName.Overworld_WeHesperia_HesperiaSettlement,
+    ]),
     RegionName.HesperiaSettlement: RegionData(RegionName.HesperiaSettlement,
     [
         LocationName.Hesperia_Settlement_166_coins,
         LocationName.Tinder
+    ],
+    [
+        EntranceName.HesperiaSettlement_To_Overworld
+    ]),
+    RegionName.Overworld_NeHesperia: RegionData(RegionName.Overworld_NeHesperia,
+    [
+        LocationName.Petra,
+    ]),
+    RegionName.Overworld_CentralHesperia: RegionData(RegionName.Overworld_CentralHesperia,
+    [
+    ],
+    [
+        EntranceName.Overworld_CentralHesperia_To_WesternSea,
+        EntranceName.Overworld_CentralHesperia_To_ShamanVillageCave,
     ]),
     RegionName.ShamanVillageCave: RegionData(RegionName.ShamanVillageCave,
     [
-        LocationName.Petra,
         LocationName.Eddy
     ],
     [
-        EntranceName.ShamanVillageCaveToShamanVillage
+        EntranceName.ShamanVillageCave_SouthWest_To_Overworld,
+        EntranceName.ShamanVillageCave_East_To_Overworld,
+
+    ]),
+    RegionName.Overworld_ShamanHesperia: RegionData(RegionName.Overworld_ShamanHesperia,
+    [
+    ],
+    [
+        EntranceName.Overworld_ShamanHesperia_To_ShamanVillageCave,
+        EntranceName.Overworld_ShamanHesperia_To_ShamanVillage
     ]),
     RegionName.ShamanVillage: RegionData(RegionName.ShamanVillage,
     [
@@ -931,6 +959,9 @@ regions: Dict[str, RegionData] = {
         LocationName.Shaman_Village_Hover_Jade,
         LocationName.Aroma,
         LocationName.Gasp
+    ],
+    [
+        EntranceName.ShamanVillage_To_Overworld
     ]),
     RegionName.AttekaInlet: RegionData(RegionName.AttekaInlet,
     [
@@ -986,10 +1017,20 @@ regions: Dict[str, RegionData] = {
     ]),
     RegionName.AnemosSanctum: RegionData(RegionName.AnemosSanctum,
     []),
+    RegionName.Gondowan_WesternGondowan: RegionData(RegionName.Gondowan_WesternGondowan,
+    [],
+    [
+        EntranceName.Overworld_WestGondowan_To_WesternSea,
+        EntranceName.Overworld_WestGondowan_To_GondowanSettlement,
+        EntranceName.Overworld_WestGondowan_To_MagmaRock,
+    ]),
     RegionName.GondowanSettlement: RegionData(RegionName.GondowanSettlement,
     [
         LocationName.Gondowan_Settlement_Lucky_Medal,
         LocationName.Gondowan_Settlement_Star_Dust
+    ],
+    [
+        EntranceName.GondowanSettlement_To_Overworld
     ]),
     RegionName.MagmaRock: RegionData(RegionName.MagmaRock,
     [
@@ -999,6 +1040,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Magma_Rock_Oil_Drop
     ],
     [
+        EntranceName.MagmaRock_To_Overworld,
         EntranceName.MagmaRockToMagmaRockInterior
     ]),
     RegionName.MagmaRockInterior: RegionData(RegionName.MagmaRockInterior,
@@ -1012,6 +1054,14 @@ regions: Dict[str, RegionData] = {
         LocationName.Magma_Rock_Blaze,
         LocationName.Magma_Rock_Magma_Ball
     ]),
+    RegionName.Overworld_WesternAngara: RegionData(RegionName.Overworld_WesternAngara,
+    [
+    ],
+    [
+        EntranceName.Overworld_WesternAngara_To_WesternSea,
+        EntranceName.Overworld_WestAngara_To_Loho,
+        EntranceName.Overworld_WestAngara_To_AngaraCavern,
+    ]),
     RegionName.Loho: RegionData(RegionName.Loho,
     [
         LocationName.Loho_Crystal_Powder,
@@ -1019,10 +1069,16 @@ regions: Dict[str, RegionData] = {
         LocationName.Loho_Golem_Core,
         LocationName.Loho_Golem_Core_Two,
         LocationName.Lull
+    ],
+    [
+        EntranceName.Loho_To_Overworld
     ]),
     RegionName.AngaraCavern: RegionData(RegionName.AngaraCavern,
     [
         LocationName.Angara_Cavern_Haures
+    ],
+    [
+        EntranceName.AngaraCavern_To_Overworld
     ]),
     RegionName.Prox: RegionData(RegionName.Prox,
     [

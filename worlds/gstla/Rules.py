@@ -118,6 +118,18 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     
     add_rule(world.get_entrance(EntranceName.Overworld_KaltIsland_To_WesternSea),
              lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_WestGondowan_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_WesternAngara_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_WesternHesperia_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_CentralHesperia_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
 
 
     add_rule(world.get_entrance(EntranceName.SeaOfTimeIsletToIsletCave),
@@ -149,7 +161,7 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.WesternSeaToAttekaCavern),
              lambda state: state.has(ItemName.Wings_of_Anemos, player) and state.has(ItemName.Hover_Jade, player))
 
-    add_rule(world.get_entrance(EntranceName.WesternSeaToMagmaRock),
+    add_rule(world.get_entrance(EntranceName.Overworld_WestGondowan_To_MagmaRock),
              lambda state: state.has(ItemName.Lifting_Gem, player))
     add_rule(world.get_entrance(EntranceName.MagmaRockToMagmaRockInterior),
              lambda state: state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Growth, player) and state.has(ItemName.Lash_Pebble, player))
@@ -169,7 +181,7 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.ContigoToReunion),
              lambda state: state.has(ItemName.Jupiter_Beacon_Lit, player))
 
-    add_rule(world.get_entrance(EntranceName.ShamanVillageCaveToShamanVillage),
+    add_rule(world.get_entrance(EntranceName.Overworld_ShamanHesperia_To_ShamanVillage),
              lambda state: state.has(ItemName.Whirlwind, player) or state.has_all([ItemName.Lifting_Gem, ItemName.Frost_Jewel], player))
 
     add_rule(world.get_entrance(EntranceName.WesternSeaToProx),

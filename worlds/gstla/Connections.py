@@ -55,6 +55,14 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.Overworld_NorthEastOsenia_To_TaopoSwamp, RegionName.TaopoSwamp, '2:35', ERTestGroups.EAST | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_SouthWestAttekaIslet_To_SouthWestAttekaIslet, RegionName.SouthWestAttekaIslet, '2:47', ERTestGroups.WEST | ERTestGroups.OW_WALK),
     EntranceData(EntranceName.Overworld_KaltIsland_To_KaltIsland, RegionName.KaltIsland, '2:50', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_WestGondowan_To_GondowanSettlement, RegionName.GondowanSettlement, '2:48', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_WestGondowan_To_MagmaRock, RegionName.MagmaRock, '2:51', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_WestAngara_To_Loho, RegionName.Loho, '2:59', ERTestGroups.EAST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_WestAngara_To_AngaraCavern, RegionName.AngaraCavern, '2:89', ERTestGroups.EAST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_WeHesperia_HesperiaSettlement, RegionName.HesperiaSettlement, '2:49', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_CentralHesperia_To_ShamanVillageCave, RegionName.ShamanVillageCave, '2:56', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_ShamanHesperia_To_ShamanVillageCave, RegionName.ShamanVillageCave, '2:57', ERTestGroups.WEST | ERTestGroups.OW_WALK),
+    EntranceData(EntranceName.Overworld_ShamanHesperia_To_ShamanVillage, RegionName.ShamanVillage, '2:58', ERTestGroups.NORTH | ERTestGroups.OW_WALK),
 
     #Indra
     EntranceData(EntranceName.Idejima_To_Overworld, RegionName.Indra_IdejimaArea, '9:4', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK, EntranceType.ONE_WAY),
@@ -150,14 +158,30 @@ vanilla_connections: List[EntranceData] = \
     #Western Sea
     EntranceData(EntranceName.Overworld_WesternSea_To_SouthWestAttekaIslet, RegionName.Overworld_SouthWestAttekaIslet),
     EntranceData(EntranceName.Overworld_WesternSea_To_KaltIsland, RegionName.Overworld_KaltIsland),
-
+    EntranceData(EntranceName.Overworld_WesternSea_To_WestGondowan, RegionName.Gondowan_WesternGondowan),
+    EntranceData(EntranceName.Overworld_WesternSea_To_WesternAngara, RegionName.Overworld_WesternAngara),
+    EntranceData(EntranceName.Overworld_WesternSea_To_NeHesperia, RegionName.Overworld_NeHesperia),
+    EntranceData(EntranceName.Overworld_WesternSea_To_WestHesperia, RegionName.Overworld_WesternHesperia),
+    EntranceData(EntranceName.Overworld_WesternSea_To_CentralHesperia, RegionName.Overworld_CentralHesperia),
 
     EntranceData(EntranceName.Overworld_SouthWestAttekaIslet_To_WesternSea, RegionName.WesternSea),
     EntranceData(EntranceName.Overworld_KaltIsland_To_WesternSea, RegionName.WesternSea),
-
+    EntranceData(EntranceName.Overworld_WestGondowan_To_WesternSea, RegionName.WesternSea),
+    EntranceData(EntranceName.Overworld_WesternAngara_To_WesternSea, RegionName.WesternSea),
+    EntranceData(EntranceName.Overworld_WesternHesperia_To_WesternSea, RegionName.WesternSea),
+    EntranceData(EntranceName.Overworld_CentralHesperia_To_WesternSea, RegionName.WesternSea),
 
     EntranceData(EntranceName.SouthWestAttekaIslet_To_Overworld, RegionName.Overworld_SouthWestAttekaIslet, '221:1', ERTestGroups.NORTH | ERTestGroups.SCREEN_EDGE_WALK),
     EntranceData(EntranceName.KaltIsland_To_Overworld, RegionName.Overworld_KaltIsland, '219:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.GondowanSettlement_To_Overworld, RegionName.Gondowan_WesternGondowan, '213:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.MagmaRock_To_Overworld, RegionName.Gondowan_WesternGondowan, '223:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.Loho_To_Overworld, RegionName.Overworld_WesternAngara, '266:1', ERTestGroups.WEST | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.AngaraCavern_To_Overworld, RegionName.Overworld_WesternAngara, '278:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.HesperiaSettlement_To_Overworld, RegionName.Overworld_WesternHesperia, '216:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.ShamanVillageCave_SouthWest_To_Overworld, RegionName.Overworld_CentralHesperia, '240:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.ShamanVillageCave_East_To_Overworld, RegionName.Overworld_ShamanHesperia, '240:10', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+    EntranceData(EntranceName.ShamanVillage_To_Overworld, RegionName.Overworld_ShamanHesperia, '242:1', ERTestGroups.SOUTH | ERTestGroups.SCREEN_EDGE_WALK),
+
 
 
     EntranceData(EntranceName.MadraToMadraCatacombs, RegionName.MadraCatacombs),
@@ -176,16 +200,9 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.AnkohlRuinsToAnkohlRuins_Sand, RegionName.AnkohlRuins_Sand),
     EntranceData(EntranceName.SeaOfTimeToLemuria, RegionName.Lemuria),
     EntranceData(EntranceName.LemuriaToShipRevisit, RegionName.Lemurian_Ship_Revisit),
-    EntranceData(EntranceName.WesternSeaToHesperiaSettlement, RegionName.HesperiaSettlement),
-    EntranceData(EntranceName.WesternSeaToShamanVillageCave, RegionName.ShamanVillageCave),
     EntranceData(EntranceName.WesternSeaToAttekaInlet, RegionName.AttekaInlet),
     EntranceData(EntranceName.WesternSeaToAttekaCavern, RegionName.AttekaCavern),
-    EntranceData(EntranceName.WesternSeaToGondowanSettlement, RegionName.GondowanSettlement),
-    EntranceData(EntranceName.WesternSeaToMagmaRock, RegionName.MagmaRock),
-    EntranceData(EntranceName.WesternSeaToLoho, RegionName.Loho),
-    EntranceData(EntranceName.WesternSeaToAngaraCavern, RegionName.AngaraCavern),
     EntranceData(EntranceName.WesternSeaToProx, RegionName.Prox),
-    EntranceData(EntranceName.ShamanVillageCaveToShamanVillage, RegionName.ShamanVillage),
     EntranceData(EntranceName.AttekaInletToContigo, RegionName.Contigo),
     EntranceData(EntranceName.AttekaInletToShipRevisit, RegionName.Lemurian_Ship_Revisit),
     EntranceData(EntranceName.ContigoToJupiterLighthouse, RegionName.JupiterLighthouse),
