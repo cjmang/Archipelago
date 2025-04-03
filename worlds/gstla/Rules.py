@@ -131,7 +131,12 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.Overworld_CentralHesperia_To_WesternSea),
              lambda state: state.has(ItemName.Ship, player))
 
-
+    add_rule(world.get_entrance(EntranceName.Overworld_WesternSea_To_SouthernAtteka),
+             lambda state: state.has(ItemName.Ship, player) and state.has(ItemName.Wings_of_Anemos, player) and state.has(ItemName.Hover_Jade, player))
+    
+    add_rule(world.get_entrance(EntranceName.Overworld_SouthernAtteka_To_WesternSea),
+             lambda state: state.has(ItemName.Ship, player))
+    
     add_rule(world.get_entrance(EntranceName.SeaOfTimeIsletToIsletCave),
              lambda state: state.has(ItemName.Mind_Read, player) and state.has(ItemName.Lil_Turtle, player))
 
@@ -157,9 +162,6 @@ def set_entrance_rules(world: 'GSTLAWorld'):
 
     add_rule(world.get_entrance(EntranceName.EasternSeaToWesternSea),
              lambda state: state.has(ItemName.Grindstone, player) or (state.has(ItemName.Wings_of_Anemos, player) and state.has(ItemName.Hover_Jade, player)))
-    
-    add_rule(world.get_entrance(EntranceName.WesternSeaToAttekaCavern),
-             lambda state: state.has(ItemName.Wings_of_Anemos, player) and state.has(ItemName.Hover_Jade, player))
 
     add_rule(world.get_entrance(EntranceName.Overworld_WestGondowan_To_MagmaRock),
              lambda state: state.has(ItemName.Lifting_Gem, player))
@@ -175,7 +177,7 @@ def set_entrance_rules(world: 'GSTLAWorld'):
         add_rule(world.get_entrance(EntranceName.ContigoToAnemosInnerSanctum),
                 lambda state: state.count_group(ItemType.Djinn.name, player) >= 28)
         
-    add_rule(world.get_entrance(EntranceName.ContigoToJupiterLighthouse),
+    add_rule(world.get_entrance(EntranceName.Overworld_CentralAtteka_To_Contigo),
              lambda state: state.has(ItemName.Cyclone_Chip, player))
 
     add_rule(world.get_entrance(EntranceName.ContigoToReunion),

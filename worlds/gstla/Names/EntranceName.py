@@ -149,6 +149,9 @@ class EntranceName():
     Overworld_WesternHesperia_To_WesternSea = "Overworld - Western Hesperia To Western Sea"
     Overworld_WesternSea_To_CentralHesperia = "Western Sea To Central Hesperia"
     Overworld_CentralHesperia_To_WesternSea = "Overworld - Central Hesperia To Western Sea"
+    Overworld_WesternSea_To_WesternAtteka = "Western Sea To Western Atteka"
+    Overworld_WesternSea_To_SouthernAtteka = "Western Sea To Southern Atteka"
+    Overworld_SouthernAtteka_To_WesternSea = "Overworld - Southern Atteka to Western Sea"
 
     
     Overworld_SouthWestAttekaIslet_To_SouthWestAttekaIslet = "Overworld - South West Atteka Islet"
@@ -171,6 +174,21 @@ class EntranceName():
     Overworld_ShamanHesperia_To_ShamanVillageCave = "Overworld - Shaman Village Cave Eastern Side"
     Overworld_ShamanHesperia_To_ShamanVillage = "Overworld - Shaman Village"
     ShamanVillage_To_Overworld = "Shaman Village - Southern Exit"
+    Overworld_SouthernAtteka_To_AttekaCavern = "Overworld - Atteka Cavern"
+    AttekaCavern_To_Overworld = "Atteka Cavern - Southern Exit"
+    Overworld_CentralAtteka_To_AttekaInlet_Land = "Overworld - Atteka Inlet Land"
+    AttekaInlet_To_Overworld_Land = "Atteka Inlet - Northern Exit"
+    Overworld_CentralAtteka_To_Contigo = "Overworld - Contigo"
+    Contigo_To_Overworld = "Contigo - Southern Exit"
+    Overworld_CentralAtteka_To_JupiterLighthouse = "Overworld - Jupiter Lighthouse"
+    JupiterLighthouse_To_Overworld = "Jupiter Lightouse - Southern Exit"
+
+    Overworld_LowNorthernReaches_To_Prox = "Overworld - Prox South Side"
+    Prox_To_Overworld_SouthSide = "Prox - Southern Exit"
+    Prox_To_Overworld_NorthSide = "Prox - Northern Exit"
+    Overworld_HighNorthenReaches_To_Prox = "Overworld - Prox North Side"
+    Overworld_HighNorthenReaches_To_MarsLighthouse = "Overworld - Mars Lighthouse"
+    MarsLighthouse_To_Overworld = "Mars Lighthouse - Southern Exit"
 
 
     #TODO
@@ -192,15 +210,11 @@ class EntranceName():
     SeaOfTimeToLemuria = "Sea Of Time To Lemuria"
     LemuriaToShipRevisit = "Lemuria To Ship Revisit"
     WesternSeaToAttekaInlet = "Western Sea To Atteka Inlet"
-    WesternSeaToAttekaCavern = "Western Sea To Atteka Cavern"
     WesternSeaToProx = "Western Sea To Prox"
-    AttekaInletToContigo = "Atteka Inlet To Contigo"
     AttekaInletToShipRevisit = "Atteka Inlet To Ship Revisit"
-    ContigoToJupiterLighthouse = "Contigo To Jupiter Lighthouse"
     ContigoToReunion = "Contigo To Reunion"
     ContigoToAnemosInnerSanctum = "Contigo To Anemos Inner Sanctum"
     MagmaRockToMagmaRockInterior = "Magma Rock To Magma Rock Interior"
-    ProxToMarsLighthouse = "Prox To Mars Lighthouse"
     MarsLighthouseToMarsLighthouse_Activated = "Mars Lighthouse To Mars Lighthouse - Activated"
     SeaOfTimeIsletToIsletCave = "Sea Of Time Islet To Islet Cave"
     AnywhereToJoinedPartyMembers = "Joined Party Characters"

@@ -870,9 +870,10 @@ regions: Dict[str, RegionData] = {
         EntranceName.Overworld_WesternSea_To_NeHesperia,
         EntranceName.Overworld_WesternSea_To_WestHesperia,
         EntranceName.Overworld_WesternSea_To_CentralHesperia,
+        EntranceName.Overworld_WesternSea_To_WesternAtteka,
+        EntranceName.Overworld_WesternSea_To_SouthernAtteka,
 
         EntranceName.WesternSeaToAttekaInlet,
-        EntranceName.WesternSeaToAttekaCavern,
         EntranceName.WesternSeaToProx
     ]),
     RegionName.Overworld_SouthWestAttekaIslet: RegionData(RegionName.Overworld_SouthWestAttekaIslet,
@@ -963,14 +964,26 @@ regions: Dict[str, RegionData] = {
     [
         EntranceName.ShamanVillage_To_Overworld
     ]),
+    RegionName.Overworld_WesternAtteka: RegionData(RegionName.Overworld_WesternAtteka,
+    [
+        LocationName.Core,
+    ]),
     RegionName.AttekaInlet: RegionData(RegionName.AttekaInlet,
     [
         LocationName.Atteka_Inlet_Vial,
         LocationName.Geode
     ],
     [
-        EntranceName.AttekaInletToContigo,
+        EntranceName.AttekaInlet_To_Overworld_Land,
         EntranceName.AttekaInletToShipRevisit
+    ]),
+    RegionName.Overworld_CentralAtteka: RegionData(RegionName.Overworld_CentralAtteka,
+    [
+    ],
+    [
+        EntranceName.Overworld_CentralAtteka_To_AttekaInlet_Land,
+        EntranceName.Overworld_CentralAtteka_To_Contigo,
+        EntranceName.Overworld_CentralAtteka_To_JupiterLighthouse
     ]),
     RegionName.Contigo: RegionData(RegionName.Contigo,
     [
@@ -979,11 +992,10 @@ regions: Dict[str, RegionData] = {
         LocationName.Contigo_Dragon_Skin,
         LocationName.Contigo_Power_Bread,
         LocationName.Salt,
-        LocationName.Core,
         LocationName.Shine,
     ],
     [
-        EntranceName.ContigoToJupiterLighthouse,
+        EntranceName.Contigo_To_Overworld,
         EntranceName.ContigoToAnemosInnerSanctum,
         EntranceName.ContigoToReunion
     ]),
@@ -1003,6 +1015,9 @@ regions: Dict[str, RegionData] = {
         LocationName.Jupiter_Lighthouse_Water_of_Life,
         LocationName.Whorl,
         LocationName.Jupiter_Lighthouse_Aeri_Agatio_and_Karst_fight
+    ],
+    [
+        EntranceName.JupiterLighthouse_To_Overworld
     ]),
     RegionName.Reunion: RegionData(RegionName.Reunion,
     [
@@ -1011,9 +1026,19 @@ regions: Dict[str, RegionData] = {
         LocationName.Contigo_Ivan,
         LocationName.Contigo_Mia
     ]),
+    RegionName.Overworld_SouthernAtteka: RegionData(RegionName.Overworld_SouthernAtteka,
+    [
+    ],
+    [
+        EntranceName.Overworld_SouthernAtteka_To_WesternSea,
+        EntranceName.Overworld_SouthernAtteka_To_AttekaCavern
+    ]),
     RegionName.AttekaCavern: RegionData(RegionName.AttekaCavern,
     [
         LocationName.Atteka_Cavern_Coatlicue
+    ],
+    [
+        EntranceName.AttekaCavern_To_Overworld
     ]),
     RegionName.AnemosSanctum: RegionData(RegionName.AnemosSanctum,
     []),
@@ -1080,6 +1105,12 @@ regions: Dict[str, RegionData] = {
     [
         EntranceName.AngaraCavern_To_Overworld
     ]),
+    RegionName.Overworld_Lower_NorthernReaches: RegionData(RegionName.Overworld_Lower_NorthernReaches,
+    [
+    ],
+    [
+        EntranceName.Overworld_LowNorthernReaches_To_Prox
+    ]),
     RegionName.Prox: RegionData(RegionName.Prox,
     [
         LocationName.Dew, #Random djinn from Gs1 spot
@@ -1090,7 +1121,15 @@ regions: Dict[str, RegionData] = {
         LocationName.Mold
     ],
     [
-        EntranceName.ProxToMarsLighthouse
+        EntranceName.Prox_To_Overworld_SouthSide,
+        EntranceName.Prox_To_Overworld_NorthSide
+    ]),
+    RegionName.Overworld_Upper_NorthernReaches: RegionData(RegionName.Overworld_Upper_NorthernReaches,
+    [
+    ],
+    [
+        EntranceName.Overworld_HighNorthenReaches_To_Prox,
+        EntranceName.Overworld_HighNorthenReaches_To_MarsLighthouse
     ]),
     RegionName.MarsLighthouse: RegionData(RegionName.MarsLighthouse,
     [
@@ -1105,6 +1144,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Balm,
     ],
     [
+        EntranceName.MarsLighthouse_To_Overworld,
         EntranceName.MarsLighthouseToMarsLighthouse_Activated
     ]),
     RegionName.MarsLighthouse_Activated: RegionData(RegionName.MarsLighthouse_Activated,
