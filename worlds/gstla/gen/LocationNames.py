@@ -246,6 +246,9 @@ class LocationName(str, Enum):
     Mars_Lighthouse_Flame_Dragons_fight = "Mars Lighthouse - Flame Dragons fight"
     Lemurian_Ship_Engine_Room = "Lemurian Ship - Engine Room"
     Contigo_Wings_of_Anemos = "Contigo - Wings of Anemos"
+    KandoreanTemple_MastersRoom = "Kandorean Temple - Master's Room"
+    MadraCatacombs_MainRuinsArea_PushableLog = "Madra Catacombs - MainRuins Area Pushable Log"
+    MadraCatacombs_WestBedroom_ItemOnShelf = "Madra Catacombs - West Bedroom Item On Shelf"
     
 
     ##remainder
@@ -520,6 +523,9 @@ ids_by_loc_name: Dict[LocationName, int] = {
     "Mars Lighthouse - Flame Dragons fight": 5010,
     "Lemurian Ship - Engine Room": 5011,
     "Contigo - Wings of Anemos": 5012,
+    "Kandorean Temple - Master's Room": 5013,
+    "Madra Catacombs - MainRuins Area Pushable Log": 5014,
+    "Madra Catacombs - West Bedroom Item On Shelf": 5015,
     "Daila - North-East Jar": 991776,
     "Daila - South-West Barrel": 991784,
     "Daila - Buried Item": 991812,
@@ -838,7 +844,7 @@ ids_by_loc_name: Dict[LocationName, int] = {
     "Contigo - Recruit Mia": 16384390,
     "Idejima - Recruit Jenna": 16384392,
     "Idejima - Recruit Sheba": 16384394,
-    "Kibombo - Recruit Piers": 16384396,
+    "Kibombo - Recruit Piers": 16384396
     
 }
 
@@ -927,6 +933,9 @@ loc_names_by_id: Dict[int, LocationName] = {
     5010: "Mars Lighthouse - Flame Dragons fight",
     5011: "Lemurian Ship - Engine Room",
     5012: "Contigo - Wings of Anemos",
+    5013: "Kandorean Temple - Master's Room",
+    5014: "Madra Catacombs - MainRuins Area Pushable Log",
+    5015: "Madra Catacombs - West Bedroom Item On Shelf",
     991776: "Daila - North-East Jar",
     991784: "Daila - South-West Barrel",
     991812: "Daila - Buried Item",

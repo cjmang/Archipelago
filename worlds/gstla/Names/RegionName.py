@@ -4,21 +4,137 @@ class RegionName():
     #Overworld
     EasternSea = "Eastern Sea"
     WesternSea = "Western Sea"
-
-
-    #Indra
     Indra_IdejimaArea = "Overworld - Indra Idejima Area"
     Indra_NorthernIndra = "Overworld - Northern Indra"
     Indra_SouthernIndra = "Overworld - Southern Indra"
     Indra_MadraDrawBridgeArea = "Overworld - Madra Drawbridge Area"
+
+    #Idejima
     Indra_Idejima = "Indra - Idejima"
+
+    #Daila
     Indra_Daila = "Indra - Daila"
-    Indra_ShrineOfTheSeaGod = "Indra - Shrine of the Sea God"
-    Indra_KandoreanTemple = "Indra - Kandorean Temple"
-    Indra_DehkanPlateau = "Indra - Dehkan Plateau"
+
+    #Shrine of the Sea God
+    ShrineOfTheSeaGod_EntryRoom_LowerHalf = "Shrine of the Sea God - Entry Room Lower Half"
+    ShrineOfTheSeaGod_EntryRoom_UpperHalf = "Shrine of the Sea God - Entry Room Upper Half"
+    ShrineOfTheSeaGod_Torched_DeadEnd= "Shrine of the Sea God - Toched Dead End"
+    ShrineOfTheSeaGod_Quad_Bridge_Upper_Ridges = "Shrine of the Sea God - Quad Bridges Upper Ridges"
+    ShrineOfTheSeaGod_SkippingStones_DeadEnd= "Shrine of the Sea God - Skipping Stones Dead End"
+    ShrineOfTheSeaGod_Quad_Bridge_Dropped_Area= "Shrine of the Sea God - Quad Bridges Dropped Area"
+    ShrineOfTheSeaGod_Djinn_Footsteps_Area = "Shrine of the Sea God - Foot Steps Area"
+    ShrineOfTheSeaGod_Djinn_Fleeing_Bridge = "Shrine of the Sea God - Djinn Fleeing Bridge"
+    ShrineOfTheSeaGod_Djinn_Torch_Corner = "Shrine of the Sea God - Djinn Torch Corner"
+    ShrineOfTheSeaGod_NearDjinn_Frost_Ledge = "Shrine of the Sea God - Near Djinn Frost Ledge"
+    ShrineOfTheSeaGod_OceansView = "Shrine of the Sea God - Oceans View"
+    ShrineOfTheSeaGod_RushingWaterBridges = "Shrine of the Sea God - Rushing Water Bridges"
+    ShrineOfTheSeaGod_RushingWaterLash = "Shrine of the Sea God - Rushing Water Near Lash Rope"
+    ShrineOfTheSeaGod_QuadBridgeWestLedge = "Shrine of the Sea God - Quad Bridges Western Ledge"
+    ShrineOfTheSeaGod_WateryShrineInWater = "Shrine of the Sea God - Skipping Stones to Shrine"
+    ShrineOfTheSeaGod_ElevatedShrine = "Shrine of the Sea God - Elevated Shrine Area"
+    ShrineOfTheSeaGod_UpperTowerArea = "Shrine of the Sea God - Upper Shrine Area"
+    ShrineOfTheSeaGod_TopOfTheShrine = "Shrine of the Sea God - Top of the Shrine"
+
+    #Kandorean Temple
+    KandoreanTemple_Outside_OuterEdge = "Kandorean Temple - Outside Outer Gates"
+    KandoreanTemple_WellPathway = "Kandorean Temple - Well pathway"
+    KandoreanTemple_Outside_Templegrounds = "Kandorean Temple - Outside Temple Grounds"
+    KandoreanTemple_PreChallenge_Lobby = "Kandorean Temple - Pre-Challenge Lobby"
+    KandoreanTemple_PreChallenge_DropDownLedge = "Kandorean Temple - Pre-Challenge Drop Down Ledge"
+    KandoreanTemple_PreChallenge_LashLedge = "Kandorean Temple - Pre-Challenge Lash Ledge"
+    KandoreanTemple_Challenge_Entry_Room = "Kandorean Temple - Challenge Entry Room"
+    KandoreanTemple_Challenge_ZigZagColumns_Room = "Kandorean Temple - Challenge Zigzag Columns Area"
+    KandoreanTemple_Challenge_CliffsEdge = "Kandorean Temple - Challenge Cliffs Edge Area"
+    KandoreanTemple_Challenge_WaterStream = "Kandorean Temple - Challenge Water Stream Area"
+    KandoreanTemple_Challenge_GeyserPuzzles = "Kandorean Temple - Challenge Geyser Puzzle Area"
+    KandoreanTemple_Challenge_TightRopeIsolated = "Kandorean Temple - Challenge East Geyser Upper Area"
+    KandoreanTemple_Challenge_TightRopeArea = "Kandorean Temple - Challenge Tight Rope Area"
+    KandoreanTemple_Challenge_GeyserPuzzleLedgeArea = "Kandorean Temple - Challenge Geyser Puzzle Ledge Area"
+    KandoreanTemple_Challenge_DjinnRoom = "Kandorean Temple - Challenge Djinn Room"
+    KandoreanTemple_Challenge_StairWell = "Kandorean Temple - Challenge Stairwell"
+    KandoreanTemple_Challenge_BurningPotRoom = "Kandorean Temple - Challenge Burning Pot Room"
+    KandoreanTemple_Challenge_PurpleHallway = "Kandorean Temple - Challenge Purple Hallway"
+    KandoreanTemple_Challenge_MastersRoom = "Kandorean Temple - Challenge Masters Room"
+
+    #Dehkan Platea
+    DehkanPlateau_TripleStairs = "Dehkan Plateau - Triple Stair Entry"
+    DehkanPlateau_AboveTripleStairs = "Dekhan Plateau - Above Triple Stairs"
+    DehkanPlateau_IsolatedNearTripleStairs = "Dekhan Plateau - Isolated Ledge Near Triple Stairs"
+    DehkanPlateau_HorizontalOvalShapedCavern = "Dekhan Plateau - Horizontal Oval Shaped Cavern"
+
+    DehkanPlateau_TripleStonePillars = "Dekhan Plateau - Triple Stone Pillars"
+    DehkanPlateau_StonePillarsLogLedge = "Dehkan Plateau - Triple Stone Pillars Log Ledge"
+    DehkanPlateau_TeasingCavernLowerSide = "Dekhan Plateau - Teasing Item Cavern Lower Side"
+    DehkanPlateau_TeasingCavernUpperSide = "Dekhan Plateau - Teasing Item Cavern Upper Side"
+    DehkanPlateau_UShapedCavern = "Dekhan Plateau - U Shaped Cavern"
+
+    DehkanPlateau_StonePillarMaze = "Dekhan Plateau - Stone Pillar Maze"
+
+    DehkanPlateau_CrackedFloorsRockSlide = "Dekhan Plateau - Cracked Floors near Rockslides"
+    DehkanPlateau_BalloonCavern = "Dekhan Plateau - Balloon Shaped Cavern"
+    DehkanPlateau_MirrorJCavern = "Dekhan Plateau - Mirrored J Shaped Cavern"
+    DehkanPlateau_IsolatedCrackedFloors = "Dekhan Plateau - Isolated Cracked Floors Area"
+    DehkanPlateau_SideEyeCavern = "Dekhan Plateau - SideEye Shaped Cavern"
+    DehkanPlateau_RockslideArea = "Dekhan Plateau - Rockslide Area"
+
+    DehkanPlateau_RopeBridgeArea = "Dekhan Plateau - Rope Bridge Area"
+    DehkanPlateau_RopeBridgeCrackedFloorArea = "Dekhan Plateau - Rope Bridge Cracked Floors Area"
+    DehkanPlateau_BottleCavern = "Dekhan Plateau - Bottle Shaped Cavern"
+    DehkanPlateau_BelowRopeBridgeArea = "Dekhan Plateau - Below Rope Bridge Area"
+
+    DehkanPlateau_CrampedWesternLedge = "Dekhan Plateau - Cramped Western Ledge"
+    DehkanPlateau_MiddleLedgeBetweenStonePillars = "Dekhan Plateau - Middle Ledge Between Stone Pillars Area"
+    DehkanPlateau_ThreeAngledCavern = "Dekhan Plateau - Three-Angled Cavern"
+    DehkanPlateau_CrackedFloorCavernLowerHalf = "Dekhan Plateau - Cracked Floors Cavern Lower Half"
+    DehkanPlateau_CrackedFloorCavernCrackedFloor = "Dekhan Plateau - Cracked Floors Cavern Cracked Floor Area"
+    DehkanPlateau_CrackedFloorCavernDjinnDropDown = "Dekhan Plateau - Cracked Floors Cavern Djinn DropDown Spot"
+    DehkanPlateau_CrackedFloorCavernUpperHalf = "Dekhan Plateau -  Cracked Floors Cavern Upper Half"
+
+    DehkanPlateau_DeepCavernDropDownArea = "Dekhan Plateau - Deep Cavern Drop Down Area"
+    DehkanPlateau_PoundPillarCavernUpperHalf = "Dekhan Plateau - Pound Pillar Cavern Upper Half"
+    DehkanPlateau_PoundPillarCavernLowerHalf = "Dekhan Plateau - Pound Pillar Cavern Lower Half"
+
+    DehkanPlateau_CrackedFloorsNorthOfCrackedPillar = "Dekhan Plateau - Cracked Floors North of Cracked Stone Pillar"
+    DehkanPlateau_DeepCavernUpperLedge = "Dekhan Plateau - Deep Cavern Upper Ledge"
+
+    DehkanPlateau_DjinnCombatCavern = "Dekhan Plateau - Djinn Combat Cavern"
+    DehkanPlateau_FlatHallwayCavern = "Dekhan Plateau - Flat Hallway Cavern"
+    DehkanPlateau_QuadStairs = "Dekhan Plateau - Quad Stairs Entry"
+
+    #Madra
     Madra = "Indra - Madra"
-    MadraCatacombs = "Indra - Madra - Madra Catacombs"
+
+    #Madra Catacombs
+    MadraCatacombsLadderRoomEast = "Madra Catacombs - Eastern Laddern Room"
+    MadraCatacombsLadderRoomWest = "Madra Catacombs - Western Laddern Room"
+    MadraCatacombsEastConnectorRoom = "Madra Catacombs - Eastern Connector Room"
+    MadraCatacombsRockBlockedRoom = "Madra Catacombs - Eastern Rock Blocked Room"
+    MadraCatacombsRockLedgeEastRidge = "Madra Catacombs - Eastern Rocky Ledge"
+    MadraCatacombsRockLedgeWestRidge = "Madra Catacombs - Western Rocky Ledge"
+    MadraCatacombs_RuinsEntry = "Madra Catacombs - Ruins Entry"
+    MadraCatacombsMainRuinsArea = "Madra Catacombs - Main Ruins Area"
+    MadraCatacombsBackRuinsArea = "Madra Catacombs - Back Ruins Area"
+    MadraCatacombsUpperRuinsArea = "Madra Catacombs - Upper Ruins Area"
+    MadraCatacombsRuinedBuilding_EasternHallway_EasternLedge = "Madra Catacombs - Eastern Hallway - Eastern Ledge"
+    MadraCatacombsRuinedBuilding_TightRidge = "Madra Catacombs - Basement Tight Ridge"
+    MadraCatacombsRuinedBuilding_TremorRoom = "Madra Catacombs - Basement TremorBit Room"
+    MadraCatacombsRuinedBuilding_EntryHall = "Madra Catacombs - Entry Hall"
+    MadraCatacombsRuinedBuilding_CollapsedHall_SouthSide = "Madra Catacombs - Collapsed Hallway Southside"
+    MadraCatacombsRuinedBuilding_CentralRoom = "Madra Catacombs - Central Room"
+    MadraCatacombsRuinedBuilding_MainUpstairsEastArea = "Madra Catacombs - Main Upstairs - East Side"
+    MadraCatacombsRuinedBuilding_EastBedroom = "Madra Catacombs - Upstairs Eastern Bedroom"
+    MadraCatacombsRuinedBuilding_EasternHallway_WesternLedge = "Madra Catacombs - Eastern Hallway - Western Ledge"
+    MadraCatacombsRuinedBuilding_LockedRoom = "Madra Catacombs - Locked Room"
+    MadraCatacombsRuinedBuilding_LongHallway = "Madra Catacombs - Upstairs Longhallway"
+    MadraCatacombsRuinedBuilding_CollapsedHall_NorthSide = "Madra Catacombs - Collapsed Hallway Northside"
+    MadraCatacombsRuinedBuilding_MainUpstairsWestArea = "Madra Catacombs - Main Upstairs - West Side"
+    MadraCatacombsRuinedBuilding_WestBedroom = "Madra Catacombs - Upstairs Western Bedroom"
+
+
+    #Indra Cavern
     IndraCavern = "Indra - Indra Cavern"
+
+    #Madra Drawbridge
     MadraDrawBridge = "Indra - Madra Drawbridge"
 
     #Osenia

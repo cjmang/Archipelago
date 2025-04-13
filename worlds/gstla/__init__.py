@@ -33,6 +33,7 @@ from .Names.RegionName import RegionName
 from .LocationGroups import goldensuntla_location_groups
 from .Rom import GSTLAPatchExtension, GSTLADeltaPatch, CHECKSUM_GSTLA
 from .BizClient import GSTLAClient
+from .EntrandoRando import perform_entrance_rando
 
 
 import logging
@@ -174,9 +175,6 @@ class GSTLAWorld(World):
         create_regions(self)
         create_vanilla_connections(self.multiworld, self.player)
 
-        from Utils import visualize_regions
-        visualize_regions(self.get_region("Menu"), "regions_graph.puml")
-
     def create_items(self) -> None:
         create_events(self)
         create_items(self, self.player)
@@ -188,6 +186,12 @@ class GSTLAWorld(World):
 
         self.multiworld.completion_condition[self.player] = \
             lambda state: state.has(ItemName.Victory, self.player)
+
+    def connect_entrances(self):
+        collection_state = perform_entrance_rando(self)
+
+        from Utils import visualize_regions
+        visualize_regions(self.get_region("Menu"), "regions_graph.puml", show_locations = False, show_entrance_names= False)
 
     def get_pre_fill_items(self) -> List["Item"]:
         pre_fill = []

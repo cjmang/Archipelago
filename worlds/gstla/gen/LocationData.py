@@ -280,6 +280,14 @@ events = [
         5011, True, True, LocationType.Event, LocationRestriction(7), True), # Lemurian Ship - Engine Room Ship
     LocationData(2271, 2271, 5012, 5012, [0], 0,
         5012, True, True, LocationType.Event, LocationRestriction(7), True), # Contigo - Wings of Anemos Wings of Anemos
+
+    #Todo event flags
+    LocationData(9999, 9999, 5013, 5013, [0], 0,
+        5013, True, True, LocationType.Event, LocationRestriction(7), True), # Kandorean Temple - Master's Room
+    LocationData(9999, 9999, 5014, 5014, [0], 0,
+        5014, True, True, LocationType.Event, LocationRestriction(7), True), # Madra Catacombs - MainRuins Area Pushable Log
+    LocationData(9999, 9999, 5015, 5015, [0], 0,
+        5015, True, True, LocationType.Event, LocationRestriction(7), True), # Madra Catacombs - West Bedroom Item On Shelf
     
 ]
 

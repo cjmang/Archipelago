@@ -40,33 +40,34 @@ class ERTestGroups(IntEnum):
     OW_SHIP = 2 << 3
 
     #Dungeon/Village
-    SCREEN_EDGE_SHIP = 3 << 3
-    SCREEN_EDGE_WALK = 4 << 3
-    DOOR = 5 << 3
-    RISE = 6 << 3
-    FALL = 7 << 3
-    LADDER = 8 << 3
-    TELEPORT = 9 << 3
-    CYCLONE = 10 << 3
-    GEYSER = 11 << 3
+    SCREEN_EDGE_WALK = 3 << 3
+    SCREEN_EDGE_SHIP = 4 << 3
+    FALL = 5 << 3
+    LADDER = 6 << 3
+    TELEPORT = 7 << 3
+    CYCLONE = 8 << 3
+    GEYSER = 9 << 3
+
+    #Connectors
+    CONNECTOR1 = 1 << 7 #Daila
+    CONNECTOR2 = 2 << 7 #Madra Drawbridge
+    CONNECTOR3 = 3 << 7 #Naribwe
+    CONNECTOR4 = 4 << 7 #Yallam
+    CONNECTOR5 = 5 << 7 #Prox
+    CONNECTOR6 = 6 << 7 #Atteka Inlet, alteast 1 connection requires ship
+    CONNECTOR7 = 7 << 7 #Sea of Time, atleast 1 connection requires ship
+    CONNECTOR8 = 8 << 7 #Gondowan Cliffs (Sea), atleast 1 connection requires ship
+    CONNECTOR9 = 9 << 7 #Dehkan Plateau
+    CONNECTOR10 = 10 << 7 #Osenia Cliffs
+    CONNECTOR11 = 11 << 7 #Yampi Desert
+    CONNECTOR12 = 12 << 7 #Gondown Cliffs (Land)
+    CONNECTOR13 = 13 << 7 #Kibombo Mountains
+    CONNECTOR14 = 14 << 7 #Shaman Villaga Cave
 
     #Bitmasks
-    DIRECTION_MASK = OW_WALK - 1
-    TRANSITION_MAST = ~0 << 3
-
-
-directionally_matched_group_lookup = {
-    ERTestGroups.OW_WALK: [ERTestGroups.OW_WALK],
-    ERTestGroups.OW_SHIP: [ERTestGroups.OW_SHIP],
-    ERTestGroups.SCREEN_EDGE_SHIP: [ERTestGroups.SCREEN_EDGE_SHIP],
-    ERTestGroups.SCREEN_EDGE_WALK: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE],
-    ERTestGroups.DOOR: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE],
-    ERTestGroups.RISE: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE],
-    ERTestGroups.FALL: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE],
-    ERTestGroups.LADDER: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE],
-    ERTestGroups.TELEPORT: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE],
-    ERTestGroups.CYCLONE: [ERTestGroups.SCREEN_EDGE_WALK, ERTestGroups.DOOR, ERTestGroups.RISE, ERTestGroups.FALL,ERTestGroups.LADDER,ERTestGroups.TELEPORT,ERTestGroups.CYCLONE]
-}
+    DIRECTION_MASK = 7
+    TRANSITION_MASK = 15 << 3
+    CONNECTORS_MASK = 15 << 7
 
 class EntranceData:
     source_entrance: str
@@ -74,10 +75,14 @@ class EntranceData:
     gs_id: str
     rando_group: int
     rando_type: EntranceType
+    target_rando_group: int
+    target_name: str
 
-    def __init__(self, _source_entrance: str, _target: str, _gs_id: int = None, _ap_rando_group: int = 0, _ap_rando_type: EntranceType = EntranceType.TWO_WAY ):
+    def __init__(self, _source_entrance: str, _target: str, _gs_id: int = None, _ap_rando_group: int = 0, _ap_target_rando_group: int = 0, _ap_target_name: str = None, _ap_rando_type: EntranceType = EntranceType.TWO_WAY ):
         self.source_entrance = _source_entrance
         self.target = _target
         self.gs_id = _gs_id
         self.rando_group = _ap_rando_group
         self.rando_type = _ap_rando_type
+        self.target_rando_group = _ap_target_rando_group
+        self.target_name = _ap_target_name

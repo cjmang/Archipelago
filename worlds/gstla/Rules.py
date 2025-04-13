@@ -19,14 +19,42 @@ if TYPE_CHECKING:
 
 def set_entrance_rules(world: 'GSTLAWorld'):
     player = world.player
-    add_rule(world.get_entrance(EntranceName.Overworld_To_ShrineOfTheSeaGod),
+    add_rule(world.get_entrance(EntranceName.ShrineOfTheSeaGod_EntryLow_LashRope),
              lambda state: state.has(ItemName.Lash_Pebble, player))
+    add_rule(world.get_entrance(EntranceName.ShrineOfTheSeaGod_DjinnTorchCorner_FrostJumps),
+             lambda state: state.has(ItemName.Frost_Jewel, player))
+    add_rule(world.get_entrance(EntranceName.ShrineOfTheSeaGod_RushingWaterBridgesLash_LashRope),
+             lambda state: state.has(ItemName.Lash_Pebble, player))
+    add_rule(world.get_entrance(EntranceName.ShrineOfTheSeaGod_WateryShrineInWater_ElevateShrine),
+             lambda state: state.has_all([ItemName.Lash_Pebble, ItemName.Reveal, ItemName.Sea_Gods_Tear], player))
+    add_rule(world.get_entrance(EntranceName.ShrineOfTheSeaGod_ElevatedShrine_LoweringShrine),
+             lambda state: state.has(ItemName.Sea_Gods_Tear, player))
 
-    add_rule(world.get_entrance(EntranceName.Overworld_To_KandoreanTemple),
+    add_rule(world.get_entrance(EntranceName.KandoreanTemple_Outside_SideCave),
              lambda state: state.has(ItemName.Whirlwind, player))
+    add_rule(world.get_entrance(EntranceName.KandoreanTemple_Lobby_LashRope),
+             lambda state: state.has(ItemName.Lash_Pebble, player))
+    add_rule(world.get_entrance(EntranceName.KandoreanTemple_Outside_SideCave),
+             lambda state: state.has(ItemName.Clear_Kandorean_Temple, player))
+    add_rule(world.get_entrance(EntranceName.KandoreanTemple_Outside_SideCave),
+             lambda state: state.has(ItemName.Clear_Kandorean_Temple, player))
 
-    add_rule(world.get_entrance(EntranceName.MadraToMadraCatacombs),
+
+
+    add_rule(world.get_entrance(EntranceName.DehkanPlateau_PoundPillarCavernUpperHalf_ToLowerHalf),
+             lambda state: state.has(ItemName.Pound_Cube, player))
+    add_rule(world.get_entrance(EntranceName.DehkanPlateau_PoundPillarCavernLowerHalf_ToUpperHalf),
+             lambda state: state.has(ItemName.Pound_Cube, player))
+
+
+    add_rule(world.get_entrance(EntranceName.MadraCatacombsRockLedgeEastRidge_LashRope),
+             lambda state: state.has(ItemName.Lash_Pebble, player))
+    add_rule(world.get_entrance(EntranceName.MadraCatacombsRuinsEntry_RevealDoor),
              lambda state: state.has(ItemName.Reveal, player))
+    add_rule(world.get_entrance(EntranceName.MadraCatacombsMainRuins_RevealDoor),
+             lambda state: state.has(ItemName.Reveal, player))
+    add_rule(world.get_entrance(EntranceName.MadraCatacombsBackRuins_ScalingTheRuins),
+             lambda state: state.has_all([ItemName.Lash_Pebble, ItemName.Frost_Jewel, ItemName.MadraCatacombs_MainRuins_LogPushed], player))
 
     add_rule(world.get_entrance(EntranceName.YampiDesertFrontToYampiDesertBack),
              lambda state: state.has(ItemName.Scoop_Gem, player))
@@ -298,12 +326,7 @@ def set_access_rules(world: 'GSTLAWorld'):
 
     #Shrine of the Sea God
     add_rule(world.get_location(LocationName.Shrine_of_the_Sea_God_Rusty_Staff),
-             lambda state: state.has(ItemName.Frost_Jewel, player))
-
-    add_rule(world.get_location(LocationName.Shrine_of_the_Sea_God_Right_Prong),
-             lambda state: state.has(ItemName.Frost_Jewel, player) and state.has(ItemName.Reveal, player)
-                and state.has(ItemName.Sea_Gods_Tear, player))
-
+             lambda state: state.has(ItemName.Lash_Pebble, player))
 
     #Indra Cavern
     add_rule(world.get_location(LocationName.Indra_Cavern_Zagan),
@@ -317,14 +340,14 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Healing_Fungus, player))
 
     #Madra Catacombs
-    add_rule(world.get_location(LocationName.Madra_Catacombs_Ruin_Key),
-             lambda state: state.has(ItemName.Tremor_Bit, player) and state.has(ItemName.Lash_Pebble, player) and state.has(ItemName.Frost_Jewel, player))
-
-    add_rule(world.get_location(LocationName.Madra_Catacombs_Mist_Potion),
-             lambda state: state.has(ItemName.Lash_Pebble, player) and state.has(ItemName.Frost_Jewel, player))
+    add_rule(world.get_location(LocationName.MadraCatacombs_WestBedroom_ItemOnShelf),
+             lambda state: state.has(ItemName.Tremor_Bit, player))
 
     add_rule(world.get_location(LocationName.Madra_Catacombs_Moloch),
              lambda state: state.has(ItemName.Ruin_Key, player))
+    
+    add_rule(world.get_location(LocationName.Madra_Catacombs_Ruin_Key),
+             lambda state: state.has(ItemName.MadraCatacombs_WestBedroom_ItemDropped, player))
 
     #Yampi Desert
     add_rule(world.get_location(LocationName.Blitz),

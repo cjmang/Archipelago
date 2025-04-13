@@ -143,38 +143,548 @@ regions: Dict[str, RegionData] = {
         EntranceName.Overworld_To_DehkanPlateau_NorthWestSide,
         EntranceName.Overworld_Indra_North_To_EasternSea
     ]),
-    RegionName.Indra_KandoreanTemple: RegionData(RegionName.Indra_KandoreanTemple,
+    RegionName.KandoreanTemple_Outside_OuterEdge: RegionData(RegionName.KandoreanTemple_Outside_OuterEdge,
     [
-        LocationName.Kandorean_Temple_Mimic,
-        LocationName.Kandorean_Temple_Lash_Pebble,
-        LocationName.Kandorean_Temple_Mysterious_Card,
+
+    ],
+    [
+        EntranceName.KandoreanTemple_To_Overworld,
+        EntranceName.KandoreanTemple_Outside_SideCave,
+        EntranceName.KandoreanTemple_Outside_Outer_Gates
+    ]),
+    RegionName.KandoreanTemple_WellPathway: RegionData(RegionName.KandoreanTemple_WellPathway,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_WellPath_To_CaveExit,
+        EntranceName.KandoreanTemple_WellPath_To_WellRope
+    ]),
+    RegionName.KandoreanTemple_Outside_Templegrounds: RegionData(RegionName.KandoreanTemple_Outside_Templegrounds,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_TempleGrounds_WellRope,
+        EntranceName.KandoreanTemple_TempleGrounds_SouthGates,
+        EntranceName.KandoreanTemple_TempleGrounds_NorthDoor
+    ]),
+    RegionName.KandoreanTemple_PreChallenge_Lobby: RegionData(RegionName.KandoreanTemple_PreChallenge_Lobby,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_Lobby_To_SouthDoor,
+        EntranceName.KandoreanTemple_Lobby_LashRope,
+        EntranceName.KandoreanTemple_Lobby_To_NorthDoor
+    ]),
+    RegionName.KandoreanTemple_PreChallenge_DropDownLedge: RegionData(RegionName.KandoreanTemple_PreChallenge_DropDownLedge,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_DropDownLedge_Dropdown,
+        EntranceName.KandoreanTemple_DropDownLedge_Door
+    ]),
+    RegionName.KandoreanTemple_PreChallenge_LashLedge: RegionData(RegionName.KandoreanTemple_PreChallenge_LashLedge,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_LashLedge_Door
+    ]),
+    RegionName.KandoreanTemple_Challenge_Entry_Room: RegionData(RegionName.KandoreanTemple_Challenge_Entry_Room,
+    [
+        LocationName.Kandorean_Temple_Mimic
+    ],
+    [
+        EntranceName.KandoreanTemple_EntryRoom_SouthDoor,
+        EntranceName.KandoreanTemple_EntryRoom_BackStaircase
+    ]),
+    RegionName.KandoreanTemple_Challenge_ZigZagColumns_Room: RegionData(RegionName.KandoreanTemple_Challenge_ZigZagColumns_Room,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_JumpColumns_CentralStaircase,
+        EntranceName.KandoreanTemple_JumpColumns_ZigZagsDoor
+    ]),
+    RegionName.KandoreanTemple_Challenge_CliffsEdge: RegionData(RegionName.KandoreanTemple_Challenge_CliffsEdge,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_CliffsEdge_SouthDoor,
+        EntranceName.KandoreanTemple_CliffsEdge_Staircase
+
+    ]),
+    RegionName.KandoreanTemple_Challenge_WaterStream: RegionData(RegionName.KandoreanTemple_Challenge_WaterStream,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_WaterStream_WestsideStaircase,
+        EntranceName.KandoreanTemple_WaterStream_EastsideDoorway
+
+    ]),
+    RegionName.KandoreanTemple_Challenge_GeyserPuzzles: RegionData(RegionName.KandoreanTemple_Challenge_GeyserPuzzles,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_GeyserPuzzles_SouthDoor,
+        EntranceName.KandoreanTemple_GeyserPuzzles_WestGeyser,
+        EntranceName.KandoreanTemple_GeyserPuzzles_EastGeyser
+
+    ]),
+    RegionName.KandoreanTemple_Challenge_TightRopeIsolated: RegionData(RegionName.KandoreanTemple_Challenge_TightRopeIsolated,
+    [
+        LocationName.Kandorean_Temple_Mysterious_Card
+    ],
+    [
+        EntranceName.KandoreanTemple_TightRopeArea_EastGeyserPlatform
+    ]),
+    RegionName.KandoreanTemple_Challenge_TightRopeArea: RegionData(RegionName.KandoreanTemple_Challenge_TightRopeArea,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_TightRopeArea_WestGeyserPlatform,
+        EntranceName.KandoreanTemple_TightRopeArea_RopeGeyser,
+        EntranceName.KandoreanTemple_TightRopeArea_StairsNearRopes,
+        EntranceName.KandoreanTemple_TightRopeArea_SouthEastDoor,
+    ]),
+    RegionName.KandoreanTemple_Challenge_GeyserPuzzleLedgeArea: RegionData(RegionName.KandoreanTemple_Challenge_GeyserPuzzleLedgeArea,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_GeyzerPuzzleLedge_Staircase
+
+    ]),
+    RegionName.KandoreanTemple_Challenge_DjinnRoom: RegionData(RegionName.KandoreanTemple_Challenge_DjinnRoom,
+    [
         LocationName.Fog
     ],
     [
-        EntranceName.KandoreanTemple_To_Overworld
+        EntranceName.KandoreanTemple_DjinnRoom_DoorNearLashRope,
+        EntranceName.KandoreanTemple_DjinnRoom_SouthStairs
     ]),
-    RegionName.Indra_ShrineOfTheSeaGod: RegionData(RegionName.Indra_ShrineOfTheSeaGod, [
-        LocationName.Breath,
-        LocationName.Shrine_of_the_Sea_God_Rusty_Staff,
+    RegionName.KandoreanTemple_Challenge_StairWell: RegionData(RegionName.KandoreanTemple_Challenge_StairWell,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_StairWell_WestStairs,
+        EntranceName.KandoreanTemple_StairWell_EastStairs
+    ]),
+    RegionName.KandoreanTemple_Challenge_BurningPotRoom: RegionData(RegionName.KandoreanTemple_Challenge_BurningPotRoom,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_PotRoom_SouthStairs,
+        EntranceName.KandoreanTemple_PotRoom_NorthLadder
+    ]),
+    RegionName.KandoreanTemple_Challenge_PurpleHallway: RegionData(RegionName.KandoreanTemple_Challenge_PurpleHallway,
+    [
+
+    ],
+    [
+        EntranceName.KandoreanTemple_PurpleHallway_NorthLadder,
+        EntranceName.KandoreanTemple_PurpleHallway_SouthDoor
+    ]),
+    RegionName.KandoreanTemple_Challenge_MastersRoom: RegionData(RegionName.KandoreanTemple_Challenge_MastersRoom,
+    [
+        LocationName.Kandorean_Temple_Lash_Pebble,
+        LocationName.KandoreanTemple_MastersRoom
+    ],
+    [
+        EntranceName.KandoreanTemple_MastersRoom_NorthWestDoor,
+        EntranceName.KandoreanTemple_MastersRoom_SouthWestDoor,
+        EntranceName.KandoreanTemple_MastersRoom_SouthEastDoor,
+    ]),
+    RegionName.ShrineOfTheSeaGod_EntryRoom_LowerHalf: RegionData(RegionName.ShrineOfTheSeaGod_EntryRoom_LowerHalf, [
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_To_Overworld,
+        EntranceName.ShrineOfTheSeaGod_EntryLow_LashRope,
+        EntranceName.ShrineOfTheSeaGod_EntryLow_EastDoor
+    ]),
+    RegionName.ShrineOfTheSeaGod_EntryRoom_UpperHalf: RegionData(RegionName.ShrineOfTheSeaGod_EntryRoom_UpperHalf, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_EntryHigh_WestDoor,
+        EntranceName.ShrineOfTheSeaGod_EntryHigh_DropDown
+    ]),
+    RegionName.ShrineOfTheSeaGod_Torched_DeadEnd: RegionData(RegionName.ShrineOfTheSeaGod_Torched_DeadEnd, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_TorchedDeadEnd_WestDoor
+    ]),
+    RegionName.ShrineOfTheSeaGod_Quad_Bridge_Upper_Ridges: RegionData(RegionName.ShrineOfTheSeaGod_Quad_Bridge_Upper_Ridges, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesUpper_EasternDoor,
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesUpper_Stairs,
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesUpper_BridgeDropDown,
+    ]),
+    RegionName.ShrineOfTheSeaGod_SkippingStones_DeadEnd: RegionData(RegionName.ShrineOfTheSeaGod_SkippingStones_DeadEnd, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_SkippingStonesDeadEnd_Staircase
+    ]),
+    RegionName.ShrineOfTheSeaGod_Quad_Bridge_Dropped_Area: RegionData(RegionName.ShrineOfTheSeaGod_Quad_Bridge_Dropped_Area, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesDroppedArea_DropDown,
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesDroppedArea_SouthStairs
+    ]),
+    RegionName.ShrineOfTheSeaGod_Djinn_Footsteps_Area: RegionData(RegionName.ShrineOfTheSeaGod_Djinn_Footsteps_Area, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_DjinnFootstepsArea_NorthernStairs,
+        EntranceName.ShrineOfTheSeaGod_DjinnFootstepsArea_WesternStairs,
+        EntranceName.ShrineOfTheSeaGod_DjinnFootstepsArea_EasternStairs,
+        EntranceName.ShrineOfTheSeaGod_DjinnFootstepsArea_SouthernStairs
+    ]),
+    RegionName.ShrineOfTheSeaGod_Djinn_Fleeing_Bridge: RegionData(RegionName.ShrineOfTheSeaGod_Djinn_Fleeing_Bridge, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_DjinnFleeingBridge_WesternStairs,
+        EntranceName.ShrineOfTheSeaGod_DjinnFleeingBridge_EasternStairs
+    ]),
+    RegionName.ShrineOfTheSeaGod_Djinn_Torch_Corner: RegionData(RegionName.ShrineOfTheSeaGod_Djinn_Torch_Corner, [
+        LocationName.Breath
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_DjinnTorchCorner_SouthernStairs,
+        EntranceName.ShrineOfTheSeaGod_DjinnTorchCorner_FrostJumps
+    ]),
+    RegionName.ShrineOfTheSeaGod_NearDjinn_Frost_Ledge: RegionData(RegionName.ShrineOfTheSeaGod_NearDjinn_Frost_Ledge, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_FrostLedge_NorthernDoor
+    ]),
+    RegionName.ShrineOfTheSeaGod_OceansView: RegionData(RegionName.ShrineOfTheSeaGod_OceansView, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_OceansView_SouthernDoor,
+        EntranceName.ShrineOfTheSeaGod_OceansView_NorthEasternStairs
+    ]),
+    RegionName.ShrineOfTheSeaGod_RushingWaterBridges: RegionData(RegionName.ShrineOfTheSeaGod_RushingWaterBridges, [
+        LocationName.Shrine_of_the_Sea_God_Rusty_Staff
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_RushingWaterBridges_WesternStairs,
+        EntranceName.ShrineOfTheSeaGod_RushingWaterBridges_BridgeDropDown
+    ]),
+    RegionName.ShrineOfTheSeaGod_RushingWaterLash: RegionData(RegionName.ShrineOfTheSeaGod_RushingWaterLash, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_RushingWaterBridgesLash_EasternStairs,
+        EntranceName.ShrineOfTheSeaGod_RushingWaterBridgesLash_LashRope
+    ]),
+    RegionName.ShrineOfTheSeaGod_QuadBridgeWestLedge: RegionData(RegionName.ShrineOfTheSeaGod_QuadBridgeWestLedge, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesWest_WesternStairs,
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesWest_EasternStairs,
+        EntranceName.ShrineOfTheSeaGod_QuadBridgesWest_LogJump
+    ]),
+    RegionName.ShrineOfTheSeaGod_WateryShrineInWater: RegionData(RegionName.ShrineOfTheSeaGod_WateryShrineInWater, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_WateryShrineInWater_SouthWestStairs,
+        EntranceName.ShrineOfTheSeaGod_WateryShrineInWater_ElevateShrine
+    ]),
+    RegionName.ShrineOfTheSeaGod_ElevatedShrine: RegionData(RegionName.ShrineOfTheSeaGod_ElevatedShrine, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_ElevatedShrine_LoweringShrine,
+        EntranceName.ShrineOfTheSeaGod_ElevatedShrine_NorthWestLadder
+    ]),
+    RegionName.ShrineOfTheSeaGod_UpperTowerArea: RegionData(RegionName.ShrineOfTheSeaGod_UpperTowerArea, [
+
+    ],
+    [
+        EntranceName.ShrineOfTheSeaGod_UpperTowerArea_WestLadder,
+        EntranceName.ShrineOfTheSeaGod_UpperTowerArea_EastLadder
+    ]),
+    RegionName.ShrineOfTheSeaGod_TopOfTheShrine: RegionData(RegionName.ShrineOfTheSeaGod_TopOfTheShrine, [
         LocationName.Shrine_of_the_Sea_God_Right_Prong
     ],
     [
-        EntranceName.ShrineOfTheSeaGod_To_Overworld
+        EntranceName.ShrineOfTheSeaGod_TopOfTheShrine_EastLadder
     ]),
-    RegionName.Indra_DehkanPlateau: RegionData(RegionName.Indra_DehkanPlateau,
+    RegionName.DehkanPlateau_TripleStairs: RegionData(RegionName.DehkanPlateau_TripleStairs,
     [
-        LocationName.Dehkan_Plateau_Elixir,
-        LocationName.Dehkan_Plateau_Pound_Cube,
-        LocationName.Dehkan_Plateau_Themis_Axe,
-        LocationName.Dehkan_Plateau_Full_Metal_Vest,
-        LocationName.Dehkan_Plateau_Mint,
-        LocationName.Dehkan_Plateau_Nut,
-        LocationName.Cannon
     ],
     [
         EntranceName.DehkanPlateau_West_To_Overworld,
+        EntranceName.DehkanPlateau_TripleStairsCrackedFloor
+    ]),
+    RegionName.DehkanPlateau_AboveTripleStairs: RegionData(RegionName.DehkanPlateau_AboveTripleStairs,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_TripleStairsUpperLedgeEasternExit,
+        EntranceName.DehkanPlateau_TripleStairsUpperLedgeDoorway,
+        EntranceName.DehkanPlateau_TripleStairsUpperLedgeDropDown,
+    ]),
+    RegionName.DehkanPlateau_IsolatedNearTripleStairs: RegionData(RegionName.DehkanPlateau_IsolatedNearTripleStairs,
+    [
+        LocationName.Dehkan_Plateau_Full_Metal_Vest
+    ],
+    [
+        EntranceName.DehkanPlateau_IsolatedNearTripleStairs_Doorway
+    ]),
+    RegionName.DehkanPlateau_HorizontalOvalShapedCavern: RegionData(RegionName.DehkanPlateau_HorizontalOvalShapedCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_HorizontalOvalShapedCave_NorthDoorway,
+        EntranceName.DehkanPlateau_HorizontalOvalShapedCave_SouthDoorway
+    ]),
+    RegionName.DehkanPlateau_TripleStonePillars: RegionData(RegionName.DehkanPlateau_TripleStonePillars,
+    [
+        LocationName.Dehkan_Plateau_Elixir
+    ],
+    [
+        EntranceName.DehkanPlateau_TripleStonePillars_WesternExit,
+        EntranceName.DehkanPlateau_TripleStonePillars_NorthernExit,
+        EntranceName.DehkanPlateau_TripleStonePillars_CrackedFloor
+    ]),
+    RegionName.DehkanPlateau_TeasingCavernLowerSide: RegionData(RegionName.DehkanPlateau_TeasingCavernLowerSide,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_TeasingCavernSouthernExit
+    ]),
+    RegionName.DehkanPlateau_TeasingCavernUpperSide: RegionData(RegionName.DehkanPlateau_TeasingCavernUpperSide,
+    [
+        LocationName.Dehkan_Plateau_Mint
+    ],
+    [
+        EntranceName.DehkanPlateau_TeasingCavernDropDown
+    ]),
+    RegionName.DehkanPlateau_UShapedCavern: RegionData(RegionName.DehkanPlateau_UShapedCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_UShapedCavern_WestDoorway,
+        EntranceName.DehkanPlateau_UShapedCavern_EastDoorway
+    ]),
+    RegionName.DehkanPlateau_StonePillarsLogLedge: RegionData(RegionName.DehkanPlateau_StonePillarsLogLedge,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_StonePillarsLogLedge_LogJump,
+        EntranceName.DehkanPlateau_StonePillarsLogLedge_Doorway
+    ]),
+    RegionName.DehkanPlateau_StonePillarMaze: RegionData(RegionName.DehkanPlateau_StonePillarMaze,
+    [
+        LocationName.Dehkan_Plateau_Themis_Axe
+    ],
+    [
+        EntranceName.DehkanPlateau_StonePillarMaze_SouthernExit,
+        EntranceName.DehkanPlateau_StonePillarMaze_EasternExit
+    ]),
+    RegionName.DehkanPlateau_CrackedFloorsRockSlide: RegionData(RegionName.DehkanPlateau_CrackedFloorsRockSlide,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_CrackedFloorsRockSlide_WesternExit,
+        EntranceName.DehkanPlateau_CrackedFloorsRockSlide_CrackedFloor
+    ]),
+    RegionName.DehkanPlateau_BalloonCavern: RegionData(RegionName.DehkanPlateau_BalloonCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_BalloonCavern_SouthernExit
+    ]),
+    RegionName.DehkanPlateau_MirrorJCavern: RegionData(RegionName.DehkanPlateau_MirrorJCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_MirrorJCavern_WesternExit,
+        EntranceName.DehkanPlateau_MirrorJCavern_EasternExit
+    ]),
+    RegionName.DehkanPlateau_IsolatedCrackedFloors: RegionData(RegionName.DehkanPlateau_IsolatedCrackedFloors,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_IsolatedCrakcedFloorsArea_Doorway,
+        EntranceName.DehkanPlateau_IsolatedCrakcedFloorsArea_CrackedFloor
+    ]),
+    RegionName.DehkanPlateau_SideEyeCavern: RegionData(RegionName.DehkanPlateau_SideEyeCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_SideEyeCavern_Doorway
+    ]),
+    RegionName.DehkanPlateau_RockslideArea: RegionData(RegionName.DehkanPlateau_RockslideArea,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_RockSlideArea_Doorway,
+        EntranceName.DehkanPlateau_RockSlideArea_EasternExit,
+        EntranceName.DehkanPlateau_RockSlideArea_LogJump
+    ]),
+    RegionName.DehkanPlateau_RopeBridgeArea: RegionData(RegionName.DehkanPlateau_RopeBridgeArea,
+    [
+        LocationName.Dehkan_Plateau_Nut
+    ],
+    [
+        EntranceName.DehkanPlateau_RopeBridge_WesternExit,
+        EntranceName.DehkanPlateau_RopeBridge_Doorway,
+        EntranceName.DehkanPlateau_RopeBridge_ToCrackedFloorArea,
+        EntranceName.DehkanPlateau_RopeBridge_VineLogClimb
+    ]),
+    RegionName.DehkanPlateau_RopeBridgeCrackedFloorArea: RegionData(RegionName.DehkanPlateau_RopeBridgeCrackedFloorArea,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_RopeBridge_CrackedFloor
+    ]),
+    RegionName.DehkanPlateau_BottleCavern: RegionData(RegionName.DehkanPlateau_BottleCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_BottleCavern_Doorway
+    ]),
+    RegionName.DehkanPlateau_BelowRopeBridgeArea: RegionData(RegionName.DehkanPlateau_BelowRopeBridgeArea,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_BelowRopeBridge_ToCrackedFloorArea,
+        EntranceName.DehkanPlateau_BelowRopeBridge_EasternExit
+    ]),
+    RegionName.DehkanPlateau_CrampedWesternLedge: RegionData(RegionName.DehkanPlateau_CrampedWesternLedge,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_CrampedWesternLedge_WesternExit,
+        EntranceName.DehkanPlateau_CrampedWesternLedge_LogJumpToMCentralLedge
+    ]),
+    RegionName.DehkanPlateau_MiddleLedgeBetweenStonePillars: RegionData(RegionName.DehkanPlateau_MiddleLedgeBetweenStonePillars,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_MiddleLedgeBetweenPillars_Doorway,
+        EntranceName.DehkanPlateau_MiddleLedgeBetweenPillars_Dropdown
+    ]),
+    RegionName.DehkanPlateau_ThreeAngledCavern: RegionData(RegionName.DehkanPlateau_ThreeAngledCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_ThreeAngledCavern_NorthernDoorway,
+        EntranceName.DehkanPlateau_ThreeAngledCavern_EasternDoorway
+    ]),
+    RegionName.DehkanPlateau_CrackedFloorCavernLowerHalf: RegionData(RegionName.DehkanPlateau_CrackedFloorCavernLowerHalf,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_CrackedFloorCaveLowerHalf_EasternDoorway,
+        EntranceName.DehkanPlateau_CrackedFloorCaveLowerHalf_SouthernDoorway,
+        EntranceName.DehkanPlateau_CrackedFloorCaveLowerHalf_WesternDoorway,
+        EntranceName.DehkanPlateau_CrackedFloorCaveLowerHalf_ToCrackedFloorArea
+    ]),
+    RegionName.DehkanPlateau_CrackedFloorCavernCrackedFloor: RegionData(RegionName.DehkanPlateau_CrackedFloorCavernCrackedFloor,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_CrackedFloorCave_CrackedFloor
+    ]),
+    RegionName.DehkanPlateau_CrackedFloorCavernDjinnDropDown: RegionData(RegionName.DehkanPlateau_CrackedFloorCavernDjinnDropDown,
+    [
+        LocationName.Dehkan_Plateau_Pound_Cube
+    ],
+    [
+        EntranceName.DehkanPlateau_CrackedFloorCaveDjinnDrop_ToLowerHalf,
+        EntranceName.DehkanPlateau_CrackedFloorCaveDjinnDrop_ToUpperHalf
+    ]),
+    RegionName.DehkanPlateau_CrackedFloorCavernUpperHalf: RegionData(RegionName.DehkanPlateau_CrackedFloorCavernUpperHalf,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_CrackedFloorCaveUpperHalf_ToCrackedFloorArea,
+        EntranceName.DehkanPlateau_CrackedFloorCaveUpperHalf_NorthenDoorway
+    ]),
+    RegionName.DehkanPlateau_DeepCavernDropDownArea: RegionData(RegionName.DehkanPlateau_DeepCavernDropDownArea,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_DeepCavenDropDownArea_Doorway
+    ]),
+    RegionName.DehkanPlateau_PoundPillarCavernUpperHalf: RegionData(RegionName.DehkanPlateau_PoundPillarCavernUpperHalf,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_PoundPillarCavernUpperHalf_WesternDoorway,
+        EntranceName.DehkanPlateau_PoundPillarCavernUpperHalf_EasternDoorway,
+        EntranceName.DehkanPlateau_PoundPillarCavernUpperHalf_ToLowerHalf
+    ]),
+    RegionName.DehkanPlateau_PoundPillarCavernLowerHalf: RegionData(RegionName.DehkanPlateau_PoundPillarCavernLowerHalf,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_PoundPillarCavernLowerHalf_WesternDoorway,
+        EntranceName.DehkanPlateau_PoundPillarCavernLowerHalf_EasternDoorway,
+        EntranceName.DehkanPlateau_PoundPillarCavernLowerHalf_ToUpperHalf
+    ]),
+    RegionName.DehkanPlateau_CrackedFloorsNorthOfCrackedPillar: RegionData(RegionName.DehkanPlateau_CrackedFloorsNorthOfCrackedPillar,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_CrackedFloorsNorthOfPillar_Doorway,
+        EntranceName.DehkanPlateau_CrackedFloorsNorthOfPillar_CrackedFloor
+    ]),
+    RegionName.DehkanPlateau_DeepCavernUpperLedge: RegionData(RegionName.DehkanPlateau_DeepCavernUpperLedge,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_DeepCavernUpperLedge_NorthernDoorway,
+        EntranceName.DehkanPlateau_DeepCavernUpperLedge_SouthernDoorway
+    ]),
+    RegionName.DehkanPlateau_DjinnCombatCavern: RegionData(RegionName.DehkanPlateau_DjinnCombatCavern,
+    [
+        LocationName.Cannon
+    ],
+    [
+        EntranceName.DehkanPlateau_DjinnCombatCavernRoom_NorthernDoorway,
+        EntranceName.DehkanPlateau_DjinnCombatCavernRoom_SouthernDoorway
+    ]),
+    RegionName.DehkanPlateau_FlatHallwayCavern: RegionData(RegionName.DehkanPlateau_FlatHallwayCavern,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_FlatHallwayDeepCavern_WesternDoorway,
+        EntranceName.DehkanPlateau_FlatHallwayDeepCavern_EasternDoorway
+    ]),
+    RegionName.DehkanPlateau_QuadStairs: RegionData(RegionName.DehkanPlateau_QuadStairs,
+    [
+    ],
+    [
+        EntranceName.DehkanPlateau_QuadStairs_LogVines,
+        EntranceName.DehkanPlateau_QuadStairs_EasternDoorway,
         EntranceName.DehkanPlateau_East_To_Overworld
     ]),
+
+
     RegionName.Indra_SouthernIndra: RegionData(RegionName.Indra_SouthernIndra,
     [
         LocationName.Iron,
@@ -209,16 +719,182 @@ regions: Dict[str, RegionData] = {
     ],
     [
         EntranceName.Madra_To_Overworld,
-        EntranceName.MadraToMadraCatacombs,
+        EntranceName.MadraToMadraCatacombsEast,
+        EntranceName.MadraToMadraCatacombsWest,
     ]),
-    RegionName.MadraCatacombs: RegionData(RegionName.MadraCatacombs,
+    RegionName.MadraCatacombsLadderRoomEast: RegionData(RegionName.MadraCatacombsLadderRoomEast,
     [
-        LocationName.Madra_Catacombs_Ruin_Key,
-        LocationName.Madra_Catacombs_Tremor_Bit,
+    ],
+    [
+        EntranceName.MadraCatacombsEastToMadra,
+        EntranceName.MadraCatacombsLadderRoomEast_SouthernDoorway,
+    ]),
+    RegionName.MadraCatacombsLadderRoomWest: RegionData(RegionName.MadraCatacombsLadderRoomWest,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsWestToMadra,
+        EntranceName.MadraCatacombsLadderRoomWest_SouthernDoorway,
+    ]),
+    RegionName.MadraCatacombsEastConnectorRoom: RegionData(RegionName.MadraCatacombsEastConnectorRoom,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsEastConnectorRoom_NorthEasternDoorway,
+        EntranceName.MadraCatacombsEastConnectorRoom_NorthWesternDoorway,
+        EntranceName.MadraCatacombsEastConnectorRoom_SouthWesternDoorway
+    ]),
+    RegionName.MadraCatacombsRockBlockedRoom: RegionData(RegionName.MadraCatacombsRockBlockedRoom,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRockBlockedRoom_SouthernDoorway
+    ]),
+    RegionName.MadraCatacombsRockLedgeEastRidge: RegionData(RegionName.MadraCatacombsRockLedgeEastRidge,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRockLedgeEastRidge_Doorway,
+        EntranceName.MadraCatacombsRockLedgeEastRidge_LashRope #Lash
+    ]),
+    RegionName.MadraCatacombsRockLedgeWestRidge: RegionData(RegionName.MadraCatacombsRockLedgeWestRidge,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRockLedgeWestRidge_NorthernDoorway,
+        EntranceName.MadraCatacombsRockLedgeWestRidge_WesternDoorway
+    ]),
+    RegionName.MadraCatacombs_RuinsEntry: RegionData(RegionName.MadraCatacombs_RuinsEntry,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinsEntry_EasternDoorway,
+        EntranceName.MadraCatacombsRuinsEntry_RevealDoor #Reveal
+    ]),
+    RegionName.MadraCatacombsMainRuinsArea: RegionData(RegionName.MadraCatacombsMainRuinsArea,
+    [
         LocationName.Madra_Catacombs_Apple,
-        LocationName.Madra_Catacombs_Lucky_Medal,
-        LocationName.Madra_Catacombs_Mist_Potion,
+        LocationName.MadraCatacombs_MainRuinsArea_PushableLog
+    ],
+    [
+        EntranceName.MadraCatacombsMainRuins_RevealDoor, #Reveal
+        EntranceName.MadraCatacombsMainRuins_VineClimb,
+        EntranceName.MadraCatacombsMainRuinsArea_MainRuinEntry
+    ]),
+    RegionName.MadraCatacombsBackRuinsArea: RegionData(RegionName.MadraCatacombsBackRuinsArea,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsBackRuins_EasternRuinEntry,
+        EntranceName.MadraCatacombsBackRuins_ScalingTheRuins #Require LogPush, Frost, Lash
+    ]),
+    RegionName.MadraCatacombsUpperRuinsArea: RegionData(RegionName.MadraCatacombsUpperRuinsArea,
+    [
+        LocationName.Madra_Catacombs_Mist_Potion
+    ],
+    [
+        EntranceName.MadraCatacombsUpperRuins_DropDown,
+        EntranceName.MadraCatacombsUpperRuinsArea_RuinsUpperDoorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_EasternHallway_EasternLedge: RegionData(RegionName.MadraCatacombsRuinedBuilding_EasternHallway_EasternLedge,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_EasternHallway_EasternLedge_SouthExit,
+        EntranceName.MadraCatacombsRuinedBuilding_EasternHallway_EasternLedge_Stairway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_TightRidge: RegionData(RegionName.MadraCatacombsRuinedBuilding_TightRidge,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_TightRidge_Stairway,
+        EntranceName.MadraCatacombsRuinedBuilding_TightRidge_Doorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_TremorRoom: RegionData(RegionName.MadraCatacombsRuinedBuilding_TremorRoom,
+    [
+        LocationName.Madra_Catacombs_Tremor_Bit
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_TremorRoom_SouthDoorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_EntryHall: RegionData(RegionName.MadraCatacombsRuinedBuilding_EntryHall,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_EntryHall_SouthernDoorway,
+        EntranceName.MadraCatacombsRuinedBuilding_EntryHall_WesternDoorway,
+        EntranceName.MadraCatacombsRuinedBuilding_EntryHall_NorthernDoorway,
+        EntranceName.MadraCatacombsRuinedBuilding_EntryHall_EastStairs,
+        EntranceName.MadraCatacombsRuinedBuilding_EntryHall_EasternDoorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_CollapsedHall_SouthSide: RegionData(RegionName.MadraCatacombsRuinedBuilding_CollapsedHall_SouthSide,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_CollapsedHall_SouthDoorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_CentralRoom: RegionData(RegionName.MadraCatacombsRuinedBuilding_CentralRoom,
+    [
+        LocationName.Madra_Catacombs_Ruin_Key
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_CentralRoom_SouthDoor
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_MainUpstairsEastArea: RegionData(RegionName.MadraCatacombsRuinedBuilding_MainUpstairsEastArea,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_MainUpstairsEastArea_EastStairs,
+        EntranceName.MadraCatacombsRuinedBuilding_MainUpstairsEastArea_EastDoorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_EastBedroom: RegionData(RegionName.MadraCatacombsRuinedBuilding_EastBedroom,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_EastBedroom_Doorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_EasternHallway_WesternLedge: RegionData(RegionName.MadraCatacombsRuinedBuilding_EasternHallway_WesternLedge,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_EasternHallway_WesternLedge_SouthDoor,
+        EntranceName.MadraCatacombsRuinedBuilding_EasternHallway_WesternLedge_DownStairway,
+        EntranceName.MadraCatacombsRuinedBuilding_EasternHallway_WesternLedge_UpStairway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_LockedRoom: RegionData(RegionName.MadraCatacombsRuinedBuilding_LockedRoom,
+    [
         LocationName.Madra_Catacombs_Moloch
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_LockedRoom_Stairway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_LongHallway: RegionData(RegionName.MadraCatacombsRuinedBuilding_LongHallway,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_LongHallway_EastDownStairway,
+        EntranceName.MadraCatacombsRuinedBuilding_LongHallway_WestDownStairway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_CollapsedHall_NorthSide: RegionData(RegionName.MadraCatacombsRuinedBuilding_CollapsedHall_NorthSide,
+    [
+        LocationName.Madra_Catacombs_Lucky_Medal
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_CollapsedHall_NorthSide_Stairway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_MainUpstairsWestArea: RegionData(RegionName.MadraCatacombsRuinedBuilding_MainUpstairsWestArea,
+    [
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_MainUpstairsWestArea_SouthDoorway,
+        EntranceName.MadraCatacombsRuinedBuilding_MainUpstairsWestArea_NorthDoorway
+    ]),
+    RegionName.MadraCatacombsRuinedBuilding_WestBedroom: RegionData(RegionName.MadraCatacombsRuinedBuilding_WestBedroom,
+    [
+        LocationName.MadraCatacombs_WestBedroom_ItemOnShelf
+    ],
+    [
+        EntranceName.MadraCatacombsRuinedBuilding_WestBedroom_Doorway
     ]),
     RegionName.MadraDrawBridge: RegionData(RegionName.MadraDrawBridge,
     [],

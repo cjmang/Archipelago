@@ -212,6 +212,9 @@ events: List[EventItemData] = [
     EventItemData(5010, 2635, "Mars Lighthouse - Flame Dragons fight", "Flame Dragons - defeated"),
     EventItemData(5011, 2270, "Lemurian Ship - Engine Room", "Ship"),
     EventItemData(5012, 2271, "Contigo - Wings of Anemos", "Wings of Anemos"),
+    EventItemData(5013, 9999, "Kandorean Temple - Master's Room", "Clear Kandorean Temple"),
+    EventItemData(5014, 9999, "Madra Catacombs - MainRuins Area Pushable Log", "Madra Catacombs Main Ruins - Log Pushed"),
+    EventItemData(5015, 9999, "Madra Catacombs - West Bedroom Item On Shelf", "Madra Catacombs West Bedroom - Tremored Item Down"),
     
 ]
 

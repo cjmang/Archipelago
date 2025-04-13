@@ -527,6 +527,9 @@ class ItemName(str, Enum):
     Flame_Dragons_defeated = "Flame Dragons - defeated"
     Ship = "Ship"
     Wings_of_Anemos = "Wings of Anemos"
+    Clear_Kandorean_Temple = "Clear Kandorean Temple"
+    MadraCatacombs_MainRuins_LogPushed = "Madra Catacombs Main Ruins - Log Pushed"
+    MadraCatacombs_WestBedroom_ItemDropped = "Madra Catacombs West Bedroom - Tremored Item Down"
     
 
     # Characters
@@ -965,6 +968,9 @@ item_id_by_name: Dict[ItemName, int] = {
     "Flame Dragons - defeated": 5010,
     "Ship": 5011,
     "Wings of Anemos": 5012,
+    "Clear Kandorean Temple": 5013,
+    "Madra Catacombs Main Ruins - Log Pushed": 5014,
+    "Madra Catacombs West Bedroom - Tremored Item Down": 5015,
     "Flint": 16384000,
     "Granite": 16384002,
     "Quartz": 16384004,
@@ -1479,6 +1485,9 @@ name_by_item_id: Dict[int, ItemName] = {
     5010: "Flame Dragons - defeated",
     5011: "Ship",
     5012: "Wings of Anemos",
+    5013: "Clear Kandorean Temple",
+    5014: "Madra Catacombs Main Ruins - Log Pushed",
+    5015: "Madra Catacombs West Bedroom - Tremored Item Down",
     16384000: "Flint",
     16384002: "Granite",
     16384004: "Quartz",
