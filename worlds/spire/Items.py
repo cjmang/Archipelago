@@ -1,26 +1,27 @@
 import typing
 
-from BaseClasses import Item
+from BaseClasses import Item, ItemClassification
 from typing import Dict
 
 
 class ItemData(typing.NamedTuple):
     code: typing.Optional[int]
-    progression: bool
+    classification: ItemClassification = ItemClassification.progression
     event: bool = False
 
-
 item_table: Dict[str, ItemData] = {
-    'Card Draw': ItemData(8000, True),
-    'Rare Card Draw': ItemData(8001, True),
-    'Relic': ItemData(8002, True),
-    'Boss Relic': ItemData(8003, True),
+    'Card Draw': ItemData(8000),
+    'Rare Card Draw': ItemData(8001),
+    'Relic': ItemData(8002),
+    'Boss Relic': ItemData(8003),
+    'One Gold': ItemData(8004, ItemClassification.filler),
+    'Five Gold': ItemData(8005, ItemClassification.filler),
 
     # Event Items
-    'Victory': ItemData(None, True, True),
-    'Beat Act 1 Boss': ItemData(None, True, True),
-    'Beat Act 2 Boss': ItemData(None, True, True),
-    'Beat Act 3 Boss': ItemData(None, True, True),
+    'Victory': ItemData(None, ItemClassification.progression, True),
+    'Beat Act 1 Boss': ItemData(None, ItemClassification.progression, True),
+    'Beat Act 2 Boss': ItemData(None, ItemClassification.progression, True),
+    'Beat Act 3 Boss': ItemData(None, ItemClassification.progression, True),
 
 }
 

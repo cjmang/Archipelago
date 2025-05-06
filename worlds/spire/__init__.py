@@ -42,7 +42,7 @@ class SpireWorld(World):
         pool = []
         for name, data in item_table.items():
             if not data.event:
-                for amount in range(item_pool.get(name, 1)):
+                for amount in range(item_pool.get(name, 0)):
                     item = SpireItem(name, self.player)
                     pool.append(item)
 
@@ -98,6 +98,6 @@ class SpireItem(Item):
         item_data = item_table[name]
         super(SpireItem, self).__init__(
             name,
-            ItemClassification.progression if item_data.progression else ItemClassification.filler,
+            item_data.classification,
             item_data.code, player
         )
