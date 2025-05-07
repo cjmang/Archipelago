@@ -1,4 +1,6 @@
-location_table = {
+from typing import Optional
+
+location_table: dict[str, Optional[int]] = {
     'Card Draw 1': 19001,
     'Card Draw 2': 19002,
     'Card Draw 3': 19003,

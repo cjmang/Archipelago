@@ -27,24 +27,41 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Relic 2", player), lambda state: state._spire_has_cards(player, 2))
     set_rule(world.get_location("Relic 3", player), lambda state: state._spire_has_cards(player, 2))
 
+    set_rule(world.get_entrance('Late Act 1', player), lambda state: state._spire_has_cards(player, 2))
+
     # Act 1 Boss Event
-    set_rule(world.get_location("Act 1 Boss", player), lambda state: state._spire_has_cards(player, 3) and state._spire_has_relics(player, 2))
+    set_rule(world.get_location("Act 1 Boss", player), lambda state: state._spire_has_cards(player, 3) and
+                                                                     state._spire_has_relics(player, 2))
 
     # Act 1 Boss Rewards
     set_rule(world.get_location("Rare Card Draw 1", player), lambda state: state.has("Beat Act 1 Boss", player))
     set_rule(world.get_location("Boss Relic 1", player), lambda state: state.has("Beat Act 1 Boss", player))
 
+    set_rule(world.get_entrance('Early Act 2', player), lambda state: state.has("Beat Act 1 Boss", player))
+
     # Act 2 Card Draws
     set_rule(world.get_location("Card Draw 6", player), lambda state: state.has("Beat Act 1 Boss", player))
     set_rule(world.get_location("Card Draw 7", player), lambda state: state.has("Beat Act 1 Boss", player))
-    set_rule(world.get_location("Card Draw 8", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 6) and state._spire_has_relics(player, 3))
-    set_rule(world.get_location("Card Draw 9", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 6) and state._spire_has_relics(player, 4))
-    set_rule(world.get_location("Card Draw 10", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 7) and state._spire_has_relics(player, 4))
+    set_rule(world.get_location("Card Draw 8", player), lambda state: state.has("Beat Act 1 Boss", player) and
+                                                                      state._spire_has_cards(player, 6) and state._spire_has_relics(player, 3))
+    set_rule(world.get_location("Card Draw 9", player), lambda state: state.has("Beat Act 1 Boss", player) and
+                                                                      state._spire_has_cards(player, 6) and state._spire_has_relics(player, 4))
+    set_rule(world.get_location("Card Draw 10", player), lambda state: state.has("Beat Act 1 Boss", player) and
+                                                                       state._spire_has_cards(player, 7) and state._spire_has_relics(player, 4))
 
     # Act 2 Relics
-    set_rule(world.get_location("Relic 4", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 7) and state._spire_has_relics(player, 2))
-    set_rule(world.get_location("Relic 5", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 7) and state._spire_has_relics(player, 2))
-    set_rule(world.get_location("Relic 6", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 7) and state._spire_has_relics(player, 3))
+    set_rule(world.get_location("Relic 4", player), lambda state: state.has("Beat Act 1 Boss", player) and
+                                                                  state._spire_has_cards(player, 7) and state._spire_has_relics(player, 2))
+    set_rule(world.get_location("Relic 5", player), lambda state: state.has("Beat Act 1 Boss", player) and
+                                                                  state._spire_has_cards(player, 7) and state._spire_has_relics(player, 2))
+    set_rule(world.get_location("Relic 6", player), lambda state: state.has("Beat Act 1 Boss", player) and
+                                                                  state._spire_has_cards(player, 7) and state._spire_has_relics(player, 3))
+
+    set_rule(world.get_entrance('Mid Act 2', player), lambda state: state._spire_has_cards(player, 6) and
+                                                                    state._spire_has_relics(player, 2))
+
+    set_rule(world.get_entrance('Late Act 2', player), lambda state: state._spire_has_cards(player, 6) and
+                                                                     state._spire_has_relics(player, 3))
 
     # Act 2 Boss Event
     set_rule(world.get_location("Act 2 Boss", player), lambda state: state.has("Beat Act 1 Boss", player) and state._spire_has_cards(player, 7) and state._spire_has_relics(player, 4) and state.has("Boss Relic", player))
@@ -52,6 +69,8 @@ def set_rules(world: MultiWorld, player: int):
     # Act 2 Boss Rewards
     set_rule(world.get_location("Rare Card Draw 2", player), lambda state: state.has("Beat Act 2 Boss", player))
     set_rule(world.get_location("Boss Relic 2", player), lambda state: state.has("Beat Act 2 Boss", player))
+
+    set_rule(world.get_entrance('Early Act 3', player), lambda state: state.has('Beat Act 2 Boss', player))
 
     # Act 3 Card Draws
     set_rule(world.get_location("Card Draw 11", player), lambda state: state.has("Beat Act 2 Boss", player))
@@ -66,9 +85,12 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Relic 9", player), lambda state: state.has("Beat Act 2 Boss", player) and state._spire_has_relics(player, 5))
     set_rule(world.get_location("Relic 10", player), lambda state: state.has("Beat Act 2 Boss", player) and state._spire_has_relics(player, 5))
 
+    set_rule(world.get_entrance('Mid Act 3', player), lambda state: state._spire_has_relics(player, 4))
+    # set_rule(world.get_entrance('Late Act 3', player), lambda state: state._spire_has_relics(player, 4))
+
     # Act 3 Boss Event
     set_rule(world.get_location("Act 3 Boss", player), lambda state: state.has("Beat Act 2 Boss", player) and state._spire_has_relics(player, 7) and state.has("Boss Relic", player, 2))
 
-    set_rule(world.get_location("Heart Room", player), lambda state: state.has("Beat Act 3 Boss", player))
+    set_rule(world.get_entrance("Act 4", player), lambda state: state.has("Beat Act 3 Boss", player))
 
     world.completion_condition[player] = lambda state: state.has("Victory", player)

@@ -1,4 +1,5 @@
 import string
+from typing import Optional, List
 
 from BaseClasses import Entrance, Item, ItemClassification, Location, MultiWorld, Region, Tutorial
 from .Items import event_item_pairs, item_pool, item_table
@@ -60,7 +61,7 @@ class SpireWorld(World):
         return SpireItem(name, self.player)
 
     def create_regions(self):
-        create_regions(self.multiworld, self.player)
+        create_regions(self, self.player)
 
     def fill_slot_data(self) -> dict:
         slot_data = {
@@ -73,17 +74,17 @@ class SpireWorld(World):
         return self.random.choice(["Card Draw", "Card Draw", "Card Draw", "Relic", "Relic"])
 
 
-def create_region(world: MultiWorld, player: int, name: str, locations=None, exits=None):
+def create_region(world: MultiWorld, player: int, name: str, locations: List[str] = None, exits: List[str] =None):
     ret = Region(name, player, world)
     if locations:
+        locs: dict[str, Optional[int]] = dict()
         for location in locations:
             loc_id = location_table.get(location, 0)
-            location = SpireLocation(player, location, loc_id, ret)
-            ret.locations.append(location)
+            locs[location] = loc_id
+        ret.add_locations(locs, SpireLocation)
     if exits:
         for exit in exits:
-            ret.exits.append(Entrance(player, exit, ret))
-
+            ret.create_exit(exit)
     return ret
 
 

@@ -85,7 +85,7 @@ class LogicTestBase(SpireTestBase):
             with self.subTest(f"Can access {location} with all reqs", reqs=power):
                 loc = self.world.get_location(location)
                 self.assertTrue(loc.can_reach(state),
-                                f"Location {location} cannot be reached with power level {power}")
+                                f"Location {location} cannot be reached with power level {power} and state {state.prog_items}")
 
 
 class LogicTests(LogicTestBase):
