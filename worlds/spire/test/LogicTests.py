@@ -10,6 +10,9 @@ class PowerLevel(NamedTuple):
     relic: int = 0
     boss_relic: int = 0
 
+def _create_floor_check(start: int, end: int) -> List[str]:
+    return [f"Reached Floor {i}" for i in range(start, end + 1)]
+
 
 class LogicTestBase(SpireTestBase):
 
@@ -95,6 +98,7 @@ class LogicTests(LogicTestBase):
             "Card Draw 1",
             "Card Draw 2",
             "Card Draw 3",
+            *_create_floor_check(1,10)
         ],
         PowerLevel(1): [
             "Relic 1",
@@ -106,6 +110,7 @@ class LogicTests(LogicTestBase):
         PowerLevel(2): [
             "Relic 2",
             "Relic 3",
+            *_create_floor_check(11, 15)
         ],
         PowerLevel(3,2): [
             "Act 1 Boss",
@@ -113,9 +118,14 @@ class LogicTests(LogicTestBase):
             "Boss Relic 1",
             "Card Draw 6",
             "Card Draw 7",
+            *_create_floor_check(16, 22)
+        ],
+        PowerLevel(6,2): [
+            *_create_floor_check(23, 27)
         ],
         PowerLevel(6, 3): [
             "Card Draw 8",
+            *_create_floor_check(28, 32)
         ],
         PowerLevel(6, 4): [
             "Card Draw 9",
@@ -140,6 +150,7 @@ class LogicTests(LogicTestBase):
             "Card Draw 14",
             "Card Draw 15",
             "Relic 7",
+            *_create_floor_check(33, 49)
         ],
         PowerLevel(7,4,1): [
             "Relic 8",
@@ -148,7 +159,8 @@ class LogicTests(LogicTestBase):
         ],
         PowerLevel(7,5,2): [
             "Act 3 Boss",
-            "Heart Room"
+            "Heart Room",
+            * _create_floor_check(50, 55)
         ],
     }
 
@@ -159,3 +171,4 @@ class LogicTests(LogicTestBase):
     def test_inaccessible(self):
         for key, value in self.power_map.items():
             self._test_inaccessible(key, value)
+

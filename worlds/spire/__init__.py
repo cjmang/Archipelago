@@ -47,8 +47,19 @@ class SpireWorld(World):
                     item = SpireItem(name, self.player)
                     pool.append(item)
 
-        self.multiworld.itempool += pool
 
+        remaining_checks = 51
+
+        if self.options.final_act:
+            remaining_checks += 4
+        if self.options.ascension >= 20:
+            remaining_checks += 1
+
+        for name in self.random.choices(['One Gold', 'Five Gold'], weights=[40,60],k=remaining_checks):
+            item = SpireItem(name, self.player)
+            pool.append(item)
+
+        self.multiworld.itempool += pool
         # Pair up our event locations with our event items
         for event, item in event_item_pairs.items():
             event_item = SpireItem(item, self.player)
@@ -71,7 +82,7 @@ class SpireWorld(World):
         return slot_data
 
     def get_filler_item_name(self) -> str:
-        return self.random.choice(["Card Draw", "Card Draw", "Card Draw", "Relic", "Relic"])
+        return self.random.choice(['One Gold', 'Five Gold'])
 
 
 def create_region(world: MultiWorld, player: int, name: str, locations: List[str] = None, exits: List[str] =None):

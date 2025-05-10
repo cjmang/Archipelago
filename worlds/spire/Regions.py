@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from . import SpireWorld
@@ -20,6 +20,7 @@ def create_regions(world: 'SpireWorld', player: int):
                                        "Card Draw 1",
                                        "Card Draw 2",
                                        "Card Draw 3",
+                                       *_create_floor_check(1,5)
                                    ],
                                         ["Mid Act 1"]))
 
@@ -29,27 +30,36 @@ def create_regions(world: 'SpireWorld', player: int):
                                        'Card Draw 5',
                                        'Relic 1',
                                        'Relic 2',
+                                       *_create_floor_check(6, 10)
                                    ],["Late Act 1"]))
 
     multiworld.regions.append(create_region(multiworld, player, 'Late Act 1',
                                    [
                                        'Relic 3',
-                                       'Act 1 Boss',
-                                       'Rare Card Draw 1',
-                                       'Boss Relic 1'
-                                   ], ["Early Act 2"]))
+                                       *_create_floor_check(11, 15)
+                                   ], ['Act 1 Boss Arena']))
+
+    multiworld.regions.append(create_region(multiworld, player, 'Act 1 Boss Arena',
+                                            [
+                                                'Act 1 Boss',
+                                                'Rare Card Draw 1',
+                                                'Boss Relic 1',
+                                                * _create_floor_check(16, 17)
+                                            ], ['Early Act 2']))
 
     multiworld.regions.append(create_region(multiworld, player, 'Early Act 2',
                                    [
                                        "Card Draw 6",
                                        "Card Draw 7",
+                                       *_create_floor_check(18, 22)
                                    ], ["Mid Act 2"]))
 
     multiworld.regions.append(create_region(multiworld, player, 'Mid Act 2',
                                    [
                                         'Card Draw 8',
                                        'Relic 4',
-                                       'Relic 5'
+                                       'Relic 5',
+                                       * _create_floor_check(23, 27)
                                    ], ["Late Act 2"]))
 
     multiworld.regions.append(create_region(multiworld, player, 'Late Act 2',
@@ -57,15 +67,22 @@ def create_regions(world: 'SpireWorld', player: int):
                                        'Card Draw 9',
                                        'Card Draw 10',
                                        'Relic 6',
-                                       'Act 2 Boss',
-                                       'Rare Card Draw 2',
-                                       'Boss Relic 2',
-                                   ], ["Early Act 3"]))
+                                       *_create_floor_check(28, 32),
+                                   ], ['Act 2 Boss Arena']))
+
+    multiworld.regions.append(create_region(multiworld, player, 'Act 2 Boss Arena',
+                                            [
+                                                'Act 2 Boss',
+                                                'Rare Card Draw 2',
+                                                'Boss Relic 2',
+                                                *_create_floor_check(33, 34),
+                                            ], ['Early Act 3']))
 
     multiworld.regions.append(create_region(multiworld, player, 'Early Act 3',
                                    [
                                        "Card Draw 11",
                                        "Card Draw 12",
+                                       *_create_floor_check(35, 39),
                                    ], ["Mid Act 3"]))
 
     multiworld.regions.append(create_region(multiworld, player, 'Mid Act 3',
@@ -73,6 +90,7 @@ def create_regions(world: 'SpireWorld', player: int):
                                        "Card Draw 13",
                                        "Relic 7",
                                        "Relic 8",
+                                       *_create_floor_check(40, 44),
                                    ], ["Late Act 3"]))
 
     multiworld.regions.append(create_region(multiworld, player, 'Late Act 3',
@@ -81,12 +99,21 @@ def create_regions(world: 'SpireWorld', player: int):
                                        "Card Draw 15",
                                        "Relic 9",
                                        "Relic 10",
-                                       "Act 3 Boss"
-                                   ], ["Act 4"]))
+                                       *_create_floor_check(45, 49),
+                                   ], ['Act 3 Boss Arena']))
+
+    acension_mod = 1 if world.options.ascension >= 20 else 0
+
+    multiworld.regions.append(create_region(multiworld, player, 'Act 3 Boss Arena',
+                                            [
+                                                "Act 3 Boss",
+                                                *_create_floor_check(50, 51 + acension_mod),
+                                            ], ["Act 4"]))
 
     multiworld.regions.append(create_region(multiworld, player, 'Act 4',
                                    [
-                                        "Heart Room"
+                                        "Heart Room",
+                                       *(_create_floor_check(52 + acension_mod,55 + acension_mod) if world.options.final_act else [])
                                    ]))
 
     for region in multiworld.get_regions(player):
@@ -94,3 +121,7 @@ def create_regions(world: 'SpireWorld', player: int):
             continue
         entrance = world.get_entrance(region.name)
         entrance.connect(region)
+
+
+def _create_floor_check(start: int, end: int) -> List[str]:
+    return [f"Reached Floor {i}" for i in range(start, end + 1)]

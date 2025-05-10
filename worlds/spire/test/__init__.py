@@ -1,4 +1,3 @@
-from BaseClasses import CollectionState
 from test.bases import WorldTestBase
 from worlds.spire import SpireWorld
 

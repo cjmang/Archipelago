@@ -33,5 +33,8 @@ location_table: dict[str, Optional[int]] = {
     'Heart Room': None,
     'Act 1 Boss': None,
     'Act 2 Boss': None,
-    'Act 3 Boss': None
+    'Act 3 Boss': None,
 }
+
+for i in range(1, 56):
+    location_table[f"Reached Floor {i}"] = i
