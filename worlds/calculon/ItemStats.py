@@ -1,3 +1,4 @@
+from collections import defaultdict
 from statistics import median, mode
 from typing import Optional, List, Any
 
@@ -10,6 +11,7 @@ class ItemStats:
         "game",
         "player",
         "name",
+        "group_name",
         "count",
         "total_checks",
         "total_obtained",
@@ -29,14 +31,21 @@ class ItemStats:
         "importance",
     ]
 
-    def __init__(self, item: Item, name: Optional[str] = None, mid_game_stats: Optional['ItemStats'] = None):
+    def __init__(self,
+                 item: Item,
+                 player: str,
+                 name: Optional[str] = None,
+                 mid_game_stats: Optional['ItemStats'] = None):
         if name is None:
             self.name: str = item.name
         else:
             self.name = name
         self.item: Item = item
+        self.equivalent_items: dict[Item, int] = dict()
+        self.name_to_item: dict[str, Item] = dict()
+        self.name_to_item[item.name] = item
         self.game = item.game
-        self.player = item.player
+        self.player = player
         self.count: int = 1
         self.total_checks: int = 0
         self.goal_count: int = 0
@@ -53,8 +62,12 @@ class ItemStats:
         self.mid_score_ = None
         self.late_score_ = None
 
-    def add_copy(self):
-        self.count += 1
+    def add_copy(self, item: Optional[Item] = None):
+        if item != self.item:
+            self.equivalent_items[item] = self.equivalent_items.get(item,0) + 1
+            self.name_to_item[item.name] = item
+        else:
+            self.count += 1
 
     def goaled(self):
         self.goal_count += 1
@@ -73,8 +86,10 @@ class ItemStats:
             return 2
         elif importance == "Decent":
             return 3
-        else:
+        elif importance == "Ok I Guess":
             return 4
+        else:
+            return 5
 
     def add_checks(self, new_checks: int, scale: float):
         if scale >= (1.0 - 1e-3):
@@ -124,8 +139,16 @@ class ItemStats:
         ret = dict()
         ret["game"] = self.game
         ret["player"] = self.player
-        ret["name"] = self.name
-        ret["count"] = self.count
+        name = self.item.name
+        count = self.count
+        if len(self.equivalent_items) > 0:
+            name = name + ";" + ";".join([x.name for x in self.equivalent_items.keys()])
+            for x in self.equivalent_items.values():
+                count += x
+
+        ret["name"] = name
+        ret["group_name"] = self.name
+        ret["count"] = count
         ret["total_obtained"] = self.total_obtained
         ret["goal_count"] = self.goal_count
         ret['avg_obtained'] = self.total_obtained / num_sims
@@ -143,6 +166,7 @@ class ItemStats:
         ret["early_score"] = self.early_score_
         ret["late_score"] = self.late_score_
         ret["mid_score"] = self.mid_score_
+        ret["best_score"] = max(self.early_score_, self.mid_score_, self.late_score_)
         importance = "Uh..."
         if self.early_score_ > 0.5:
             importance = "Critical Items"
@@ -150,7 +174,9 @@ class ItemStats:
             importance = "Mid Game Powerhouses"
         elif self.late_score_ > 0.5:
             importance = "End Game Essentials"
-        elif max(self.early_score_, self.mid_score_, self.late_score_) > 0.2:
+        elif ret["best_score"] >= 0.2:
             importance = "Decent"
+        elif ret["best_score"] >= 0.1:
+            importance = "Ok I Guess"
         ret["importance"] = importance
         return ret

@@ -14,7 +14,7 @@ class Skip(OptionSet):
     default = {"Clique", "APBingo", "Slotlock"}
 
 class NumberOfSims(Range):
-    default = 10
+    default = 200
     range_start = 10
     range_end = 10000
 
@@ -39,6 +39,8 @@ class ItemGroups(OptionDict):
                 - "item name 1"
                 - "item name 2"
 
+    The two approaches can both exist simultaneously.
+
     Note in either case that the items cannot be in multiple groups at the same time.  This will cause the analysis
     to fail.
     """
@@ -47,7 +49,7 @@ class ItemGroups(OptionDict):
             "item_groups": [ "Character" ],
         },
         "Hollow Knight": {
-            "item_groups": ["Dive", "Fireball", "Charms", "Dreamers", "Scream"],
+            "item_groups": ["Dive", "Fireball", "Charms", "Dreamers", "Scream", "DreamNails"],
         }
     }
     schema = Schema({
