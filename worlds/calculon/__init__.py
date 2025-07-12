@@ -44,7 +44,6 @@ class CalculonWorld(World):
     logger = logging.getLogger("Calculon")
 
     def generate_output(self, output_directory: str) -> None:
-
         worlds_to_analyze = []
         whitelist = self.options.games.value
         blacklist = self.options.skip_games.value
@@ -54,25 +53,10 @@ class CalculonWorld(World):
             if len(whitelist) == 0 or world.game in whitelist:
                 if world.game not in blacklist:
                     worlds_to_analyze.append(world)
-            # if world.game == "Slay the Spire":
-            # if world.game == "VVVVVV":
-            # if world.game == "Minecraft":
-            # if world.game == "Hollow Knight":
-        #     if world.game == "Golden Sun The Lost Age":
-        #     # if world.game == "Kingdom Hearts 2":
-        #     # if world.game == "Pokemon Mystery Dungeon Explorers of Sky":
-        #     # if world.game == "Sonic Adventure 2 Battle":
-        #
-        #         victim = world
-        #         vampire = player
-        #         break
-        # else:
-        #     raise Exception("Didn't find v6")
         if len(worlds_to_analyze) == 0:
             # Nothing to do
             self.logger.warning("No worlds to analyze; why do you have me in here?")
             return
-
         with open(os.path.join(output_directory, f"multiworld_analysis_{self.multiworld.seed_name}.csv"), 'w', newline="") as output:
             writer = csv.DictWriter(output, ItemStats.fieldnames)
             writer.writeheader()
@@ -184,15 +168,31 @@ class CalculonWorld(World):
                                      x.advancement and x.item.name not in prog_items}
             # self._sweep_for_advancements(state, exclude=prog_items.keys())
             self._sweep_for_advancements(state, locations=advancement_locations)
-            count = 0
-            for loc in locations:
-                if not loc.can_reach(state):
-                    count += 1
-            stats.checks_hard_required(count)
+            remaining_locations = [loc for loc in locations if not loc.can_reach(state)]
+            stats.checks_hard_required(len(remaining_locations))
             if not self.multiworld.completion_condition[world.player](state):
                 stats.required_for_goal = True
             stats.total_locations = len(locations)
-
+            had_remaining_locations = len(remaining_locations) != 0
+            for i in range(stats.count):
+                state.collect(stats.item, prevent_sweep=True)
+                self._sweep_for_advancements(state, locations=advancement_locations)
+                remaining_locations = [loc for loc in locations if not loc.can_reach(state)]
+                if had_remaining_locations and len(remaining_locations) == 0 and stats.min_required_for_checks == 0:
+                    stats.min_required_for_checks = i + 1
+                if stats.required_for_goal and stats.min_required_for_goal == 0 and self.multiworld.completion_condition[world.player](state):
+                    stats.min_required_for_goal = i + 1
+            extras = 0
+            for item, count in stats.equivalent_items.items():
+                for j in range(count):
+                    extras += 1
+                    state.collect(item, prevent_sweep=True)
+                    self._sweep_for_advancements(state, locations=advancement_locations)
+                    remaining_locations = [loc for loc in locations if not loc.can_reach(state)]
+                    if had_remaining_locations and len(remaining_locations) == 0 and stats.min_required_for_checks == 0:
+                        stats.min_required_for_checks = stats.count + extras
+                    if stats.required_for_goal and stats.min_required_for_goal == 0 and self.multiworld.completion_condition[world.player](state):
+                        stats.min_required_for_goal = stats.count + extras
 
     def _run_simulation(self, sim_data: SimulationData, pre_collect: Optional[dict[str, ItemStats]] = None, mid_game: Optional[bool]=False):
         world = sim_data.world

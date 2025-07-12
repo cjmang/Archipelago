@@ -25,9 +25,12 @@ class ItemStats:
         # "weighted_score",
         "required_for_goal",
         "hard_required_for_checks",
+        "min_required_for_goal",
+        "min_required_for_checks",
         "early_score",
         "mid_score",
         "late_score",
+        "best_score",
         "importance",
     ]
 
@@ -56,11 +59,13 @@ class ItemStats:
         self.score = 0.0
         self.total_locations = 0
         self.current_run_obtained = 0
+        self.min_required_for_goal = 0
+        self.min_required_for_checks = 0
         self.mid_game_stats = mid_game_stats
         # self.weighted_score = 0.0
-        self.early_score_ = None
-        self.mid_score_ = None
-        self.late_score_ = None
+        self.early_score_ = 0
+        self.mid_score_ = 0
+        self.late_score_ = 0
 
     def add_copy(self, item: Optional[Item] = None):
         if item != self.item:
@@ -163,6 +168,8 @@ class ItemStats:
         ret["score"] = 0 if self.total_obtained == 0 else self.score/self.total_locations
         ret["required_for_goal"] = self.required_for_goal
         ret["hard_required_for_checks"] = self.blocked_checks
+        ret["min_required_for_goal"] = self.min_required_for_goal
+        ret["min_required_for_checks"] = self.min_required_for_checks
         ret["early_score"] = self.early_score_
         ret["late_score"] = self.late_score_
         ret["mid_score"] = self.mid_score_
