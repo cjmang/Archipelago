@@ -217,7 +217,7 @@ class CalculonWorld(World):
                     state.collect(stats.item, prevent_sweep=True)
                     # self._sweep_for_advancements(state, exclude=prog_items.keys(), locations=advancement_locations)
                     self._sweep_for_advancements(state, locations=advancement_locations)
-                for item, count in stats.equivalent_items:
+                for item, count in stats.equivalent_items.items():
                     for _ in range(count):
                         state.collect(item, prevent_sweep=True)
                         # self._sweep_for_advancements(state, exclude=prog_items.keys(), locations=advancement_locations)
