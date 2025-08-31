@@ -720,7 +720,7 @@ class DisableShopGameTickets(Toggle):
 
 
 class ShortcutMarsLighthouse(Toggle):
-    """Removes the requirement to heat up the lighthouse to be able to do the 4 elemental wing puzzles that unlocked the teleporter to the Aerie of Mars Lighthouse.
+    """The 4 elemental wing puzzles to unlock the teleport pad can be accessed with just the Mars Star instead of requiring to heatup the lighthouse.
     Note the lighthouse is still frozen so the Mars Djinni Fugue is still inaccessible and requires heating up the lighthouse."""
     internal_name = "shortcut_mars_lighthouse"
     display_name = "Shortcut Mars Lighthouse"

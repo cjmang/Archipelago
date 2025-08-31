@@ -232,6 +232,8 @@ class GSTLAWorld(World):
                 "omit_locations": self.options.omit_locations.value,
                 "lemurian_ship": self.options.lemurian_ship.value,
                 "start_with_wings": self.options.start_with_wings_of_anemos.value,
+                "shortcut_mars_lighthouse": self.options.shortcut_mars_lighthouse.value,
+                "shortcut_magma_rock": self.options.shortcut_magma_rock.value,
                 # AP logically requires 28 djinn, though the randomizer is the one which sets the number
                 "anemos_inner_sanctum_access": self.options.anemos_inner_sanctum_access.value,
                 "djinn_logic": self.options.djinn_logic.value,
@@ -644,7 +646,7 @@ class GSTLAWorld(World):
         write_me += self.options.shortcut_magma_rock << 3 #shortcut-magma-rock
         debug_file.write('Shortcut Magma Rock: ' + self.options.shortcut_magma_rock.name_lookup[self.options.shortcut_magma_rock] + '\n')
         #write_me += 0 #door-shuffle
-        debug_file.write('Door Shufflek: disabled\n')
+        debug_file.write('Door Shuffle: disabled\n')
         rando_file.write(write_me.to_bytes(length=1, byteorder='big'))
 
         
