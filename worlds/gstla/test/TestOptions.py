@@ -1219,3 +1219,103 @@ class TestFullPCShuffle(TestFormatBase):
         jenna_loc = world.get_location(LocationName.Idejima_Jenna)
         self.assertEqual(ItemType.Character, jenna_loc.item.item_data.type)
 
+
+class TestShortcutMarsLighthouse(TestFormatBase):
+    options = {
+        'shortcut_mars_lighthouse': 1
+    }
+
+    def test_shortcut_msl_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x10, 0x10 & data)
+
+    def test_shortcut_msl_logic(self):
+        world = self.get_world()
+        state = self.multiworld.state
+        for item in [ItemName.Ship, ItemName.Ship_Cannon, ItemName.Grindstone]:
+            state.collect(world.create_item(item), True)
+        ml_apple = world.get_location(LocationName.Mars_Lighthouse_Apple)
+        ml_upper = world.get_location(LocationName.Mars_Lighthouse_Alastors_Hood)
+
+        self.assertFalse(ml_upper.can_reach(state))
+        self.assertTrue(ml_apple.can_reach(state))
+
+        state.collect(world.create_item(ItemName.Mars_Star), True)
+        self.assertTrue(ml_upper.can_reach(state))
+
+
+class TestVanillaMarsLighthouse(TestFormatBase):
+    options = {
+        'shortcut_mars_lighthouse': 0
+    }
+
+    def test_vanilla_msl_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x0, 0x10 & data)
+
+    def test_vanilla_msl_logic(self):
+        world = self.get_world()
+        state = self.multiworld.state
+        for item in [ItemName.Ship, ItemName.Ship_Cannon, ItemName.Grindstone]:
+            state.collect(world.create_item(item), True)
+
+        ml_apple = world.get_location(LocationName.Mars_Lighthouse_Apple)
+        ml_upper = world.get_location(LocationName.Mars_Lighthouse_Alastors_Hood)
+        self.assertFalse(ml_upper.can_reach(state))
+        self.assertTrue(ml_apple.can_reach(state))
+
+        state.collect(world.create_item(ItemName.Mars_Star), True)
+        state.collect(world.create_item(ItemName.Mars_Lighthouse_Heated), True)
+        self.assertTrue(ml_upper.can_reach(state))
+
+
+class TestShortcutMagmaRock(TestFormatBase):
+    options = {
+        'shortcut_magma_rock': 1
+    }
+
+    def test_shortcut_mr_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x8, 0x8 & data)
+
+    def test_shortcut_mr_logic(self):
+        world = self.get_world()
+        state = self.multiworld.state
+        for item in [ItemName.Ship, ItemName.Ship_Cannon, ItemName.Grindstone, ItemName.Lifting_Gem, ItemName.Burst_Brooch]:
+            state.collect(world.create_item(item), True)
+        mr_interior = world.get_location(LocationName.Magma_Rock_Blaze)
+        mr_deep_interior = world.get_location(LocationName.Magma_Rock_Golem_Core)
+        mr_front = world.get_location(LocationName.Magma_Rock_Mimic)
+        self.assertTrue(mr_front.can_reach(state))
+        self.assertTrue(mr_interior.can_reach(state))
+        self.assertFalse(mr_deep_interior.can_reach(state))
+
+        state.collect(world.create_item(ItemName.Whirlwind), True)
+        self.assertTrue(mr_deep_interior.can_reach(state))
+
+class TestVanillaMagmaRock(TestFormatBase):
+    options = {
+        'shortcut_magma_rock': 0
+    }
+
+    def test_vanilla_mr_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x0, 0x8 & data)
+
+    def test_vanilla_mr_logic(self):
+        world = self.get_world()
+        state = self.multiworld.state
+        for item in [ItemName.Ship, ItemName.Ship_Cannon, ItemName.Grindstone, ItemName.Lifting_Gem, ItemName.Burst_Brooch]:
+            state.collect(world.create_item(item), True)
+        mr_interior = world.get_location(LocationName.Magma_Rock_Blaze)
+        mr_deep_interior = world.get_location(LocationName.Magma_Rock_Golem_Core)
+        mr_front = world.get_location(LocationName.Magma_Rock_Mimic)
+        self.assertTrue(mr_front.can_reach(state))
+        self.assertFalse(mr_interior.can_reach(state))
+        self.assertFalse(mr_deep_interior.can_reach(state))
+
+        state.collect(world.create_item(ItemName.Whirlwind), True)
+        state.collect(world.create_item(ItemName.Growth), True)
+        state.collect(world.create_item(ItemName.Lash_Pebble), True)
+        self.assertTrue(mr_deep_interior.can_reach(state))
+
