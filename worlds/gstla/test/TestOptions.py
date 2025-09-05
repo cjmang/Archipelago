@@ -1219,3 +1219,97 @@ class TestFullPCShuffle(TestFormatBase):
         jenna_loc = world.get_location(LocationName.Idejima_Jenna)
         self.assertEqual(ItemType.Character, jenna_loc.item.item_data.type)
 
+
+class TestShortcutMarsLighthouse(TestFormatBase):
+    options = {
+        'shortcut_mars_lighthouse': 1,
+        'item_shuffle': 3,
+        'lemurian_ship': 2
+    }
+
+    def test_shortcut_msl_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x10, 0x10 & data)
+
+    def test_shortcut_msl_logic(self):
+        self.collect_by_name([ItemName.Grindstone])
+        self.collect(self.get_item_by_name(ItemName.Ship_Cannon))
+
+        self.assertFalse(self.can_reach_location(LocationName.Mars_Lighthouse_Alastors_Hood))
+        self.assertTrue(self.can_reach_location(LocationName.Mars_Lighthouse_Apple))
+
+        self.collect_by_name(ItemName.Mars_Star)
+        self.assertTrue(self.can_reach_location(LocationName.Mars_Lighthouse_Alastors_Hood))
+
+
+class TestVanillaMarsLighthouse(TestFormatBase):
+    options = {
+        'shortcut_mars_lighthouse': 0,
+        'item_shuffle': 3,
+        'lemurian_ship': 2
+    }
+
+    def test_vanilla_msl_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x0, 0x10 & data)
+
+    def test_vanilla_msl_logic(self):
+        self.collect_by_name([ItemName.Grindstone])
+        self.collect(self.get_item_by_name(ItemName.Ship_Cannon))
+
+        self.assertFalse(self.can_reach_location(LocationName.Mars_Lighthouse_Alastors_Hood))
+        self.assertTrue(self.can_reach_location(LocationName.Mars_Lighthouse_Apple))
+
+        self.collect_by_name(ItemName.Mars_Star)
+        self.assertFalse(self.can_reach_location(LocationName.Mars_Lighthouse_Alastors_Hood))
+
+        self.collect(self.get_item_by_name(ItemName.Mars_Lighthouse_Heated))
+        self.assertTrue(self.can_reach_location(LocationName.Mars_Lighthouse_Alastors_Hood))
+
+
+class TestShortcutMagmaRock(TestFormatBase):
+    options = {
+        'shortcut_magma_rock': 1,
+        'item_shuffle': 3,
+        'lemurian_ship': 2
+    }
+
+    def test_shortcut_mr_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x8, 0x8 & data)
+
+    def test_shortcut_mr_logic(self):
+        self.collect_by_name([ItemName.Grindstone, ItemName.Lifting_Gem, ItemName.Burst_Brooch])
+
+        self.assertFalse(self.can_reach_location(LocationName.Magma_Rock_Golem_Core))
+        self.assertTrue(self.can_reach_location(LocationName.Magma_Rock_Mimic))
+        self.assertTrue(self.can_reach_location(LocationName.Magma_Rock_Blaze))
+
+        self.collect_by_name(ItemName.Whirlwind)
+        self.assertTrue(self.can_reach_location(LocationName.Magma_Rock_Golem_Core))
+
+class TestVanillaMagmaRock(TestFormatBase):
+    options = {
+        'shortcut_magma_rock': 0,
+        'item_shuffle': 3,
+        'lemurian_ship': 2
+    }
+
+    def test_vanilla_mr_option(self):
+        data = self._get_option_byte(12)
+        self.assertEqual(0x0, 0x8 & data)
+
+    def test_vanilla_mr_logic(self):
+        self.collect_by_name([ItemName.Grindstone, ItemName.Lifting_Gem, ItemName.Burst_Brooch])
+
+        self.assertFalse(self.can_reach_location(LocationName.Magma_Rock_Golem_Core))
+        self.assertTrue(self.can_reach_location(LocationName.Magma_Rock_Mimic))
+        self.assertFalse(self.can_reach_location(LocationName.Magma_Rock_Blaze))
+
+        self.collect_by_name(ItemName.Whirlwind)
+        self.assertFalse(self.can_reach_location(LocationName.Magma_Rock_Golem_Core))
+        
+        self.collect_by_name(ItemName.Growth)
+        self.collect_by_name(ItemName.Lash_Pebble)
+        self.assertTrue(self.can_reach_location(LocationName.Magma_Rock_Golem_Core))
+
