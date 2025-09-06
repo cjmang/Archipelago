@@ -21,9 +21,9 @@ clear it.
 
 ## Generating and Patching a Game
 
-1. Create your options file &#40;YAML&#41;. See `&template` in the AP discord server.  <!-- You can make one on the
+1. Create your options file &#40;YAML&#41; through the Archipelago Launcher with Generate Template Options. See `&template` in the AP discord server for full information.  <!-- You can make one on the
 [Golden Sun The Lost Age options page](../../../games/Golden%20Sun%20The%20Lost%20Age/player-options). -->
-2. Follow the general Archipelago instructions for [generating a game](../../Archipelago/setup/en#generating-a-game).
+2. Follow the general Archipelago instructions for [generating a game](https://archipelago.gg/tutorial/Archipelago/setup_en#generating-a-game).
 This will generate an output file for you. Your patch file will have the `.apgstla` file extension.
 3. Open `ArchipelagoLauncher.exe`
 4. Select "Open Patch" on the left side and select your patch file.
