@@ -1,7 +1,7 @@
 from typing import Dict, TYPE_CHECKING, cast, List, Optional
 from BaseClasses import Item, ItemClassification
+from .gen.InternalItemData import InternalItemData
 from .gen.LocationNames import loc_names_by_id
-from .gen.LocationData import LocationRestriction
 from .gen.ItemNames import ItemName
 from .gen.LocationNames import LocationName
 from .gen.ItemData import (ItemData, events, mimics, psyenergy_as_item_list, psyenergy_list, summon_list, other_progression,
@@ -10,6 +10,7 @@ from .gen.ItemData import (ItemData, events, mimics, psyenergy_as_item_list, psy
                            TrapType, FillerType, all_items as all_gen_items, djinn_items, characters as character_items)
 from .gen.LocationData import LocationType, location_type_to_data
 from .GameData import ItemType
+
 if TYPE_CHECKING:
     from . import GSTLAWorld, GSTLALocation
 
@@ -26,9 +27,9 @@ class GSTLAItem(Item):
             super(GSTLAItem, self).__init__(item.name, classification, item.id, player)
         self.item_data = item
 
-AP_USEFUL_PLACEHOLDER_ITEM = ItemData(0xA00, "AP Useful Placeholder", ItemClassification.useful, -1, ItemType.Consumable)
-AP_PROG_PLACEHOLDER_ITEM = ItemData(0xA0A, "AP Progression Placeholder", ItemClassification.progression, -1, ItemType.Consumable)
-AP_PLACEHOLDER_ITEM = ItemData(0xA0B, "AP Placeholder", ItemClassification.filler, -1, ItemType.Consumable)
+AP_USEFUL_PLACEHOLDER_ITEM = ItemData(InternalItemData(0xA00, "AP Useful Placeholder", ItemClassification.useful, -1, ItemType.Consumable))
+AP_PROG_PLACEHOLDER_ITEM = ItemData(InternalItemData(0xA0A, "AP Progression Placeholder", ItemClassification.progression, -1, ItemType.Consumable))
+AP_PLACEHOLDER_ITEM = ItemData(InternalItemData(0xA0B, "AP Placeholder", ItemClassification.filler, -1, ItemType.Consumable))
 
 all_items = all_gen_items
 item_table: Dict[str, ItemData] = {item.name: item for item in all_items}
@@ -40,7 +41,7 @@ def _get_coin_item(id: int):
     # number of coins is offset from 0x8000
     if id not in coin_items:
         # TODO: is consumable the right item type?
-        coin_item = ItemData(id, f"{id-0x8000} Coins", ItemClassification.filler, 0, ItemType.Consumable)
+        coin_item = ItemData(InternalItemData(id, f"{id-0x8000} Coins", ItemClassification.filler, 0, ItemType.Consumable))
         coin_items[id] = coin_item
         assert coin_item.name not in item_table
         item_table[coin_item.name] = coin_item
@@ -91,6 +92,16 @@ def create_events(world: 'GSTLAWorld'):
         if event.location == LocationName.Contigo_Wings_of_Anemos and world.options.start_with_wings_of_anemos == 1:
             #world.multiworld.push_precollected(event_item)
             continue
+
+        if (event.location == LocationName.Treasure_Isle_Star_Magician or
+                event.location == LocationName.Yampi_Desert_Cave_Valukar or
+                event.location == LocationName.Islet_Cave_Sentinel):
+            if world.options.omit_locations.value == 2:
+                continue
+
+        if event.location == LocationName.Anemos_Inner_Sanctum_Dullahan:
+            if world.options.omit_locations.value > 0:
+                continue
 
         event_location = world.get_location(event.location)
         event_location.place_locked_item(event_item)
@@ -190,11 +201,14 @@ def create_items(world: 'GSTLAWorld', player: int):
         ap_item = create_item_direct(item, player)
         world.multiworld.itempool.append(ap_item)
         sum_locations -= 1
+    summon_classification = None
+    if "Summon Hunt" in world.goal_conditions:
+        summon_classification = ItemClassification.progression_deprioritized_skip_balancing
     for item in summon_list:
         #Ignore summons that are obtained by gaining X djinn
         if item.id < 3856:
             continue
-        ap_item = create_item_direct(item, player)
+        ap_item = create_item_direct(item, player, classification=summon_classification)
         world.multiworld.itempool.append(ap_item)
         sum_locations -= 1
         
@@ -220,18 +234,6 @@ def create_items(world: 'GSTLAWorld', player: int):
         ap_item = create_filler(world, item)
         world.multiworld.itempool.append(ap_item)
         sum_locations -= 1
-        
-    for x in range(2):
-        for item in useful_consumables:
-            ap_item = create_item_direct(item, player)
-            world.multiworld.itempool.append(ap_item)
-            sum_locations -= 1
-
-    for x in range(2):
-        for item in remainder:
-            ap_item = create_item_direct(item, player)
-            world.multiworld.itempool.append(ap_item)
-            sum_locations -= 1
 
     if world.options.add_elvenshirt_clericsring == 1:
         ap_item = create_item(ItemName.Elven_Shirt, player)
@@ -286,6 +288,13 @@ def create_items(world: 'GSTLAWorld', player: int):
 
     #We guarentee a number of filler items when item shuffle all is on, it adds a hefty amount of hidden locations that do not support having a mimic and fail generation.
     #On repeated generations it results into 65-70 mimics failing to be placed, otherwise it works fine.
+    if world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
+        for i in range(40):
+            item = get_filler_item(world, False)
+            ap_item = create_item_direct(item, player)
+            world.multiworld.itempool.append(ap_item)
+            sum_locations -= 1
+
     if world.options.item_shuffle > 2 and world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
         for i in range(60):
             item = get_filler_item(world, False)

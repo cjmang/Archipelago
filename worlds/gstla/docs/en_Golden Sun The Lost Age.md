@@ -1,14 +1,10 @@
 # Golden Sun The Lost Age
 
-## Where is the options page?
-
-You can read through all the options and generate a YAML [here](../player-options).
-
 ## What does randomization do to this game?
 
 This randomizer handles item randomization, psynergy randomization, character randomization, summon randomization and djinn randomization.
 Many options from the base Golden Sun The Lost Age Randomizer are supported in Archipelago and can be enjoyed. Minor adjustments are made to ensure they work well in a multiworld setting.
-Feel free to visit [options page](../player-options) for a more comprehensive list of what can be changed.
+<!-- Feel free to visit [options page](../player-options) for a more comprehensive list of what can be changed. -->
 
 ## What items and locations get randomized?
 

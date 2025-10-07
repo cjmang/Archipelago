@@ -8,12 +8,12 @@ from io import BytesIO, StringIO
 from math import floor
 
 import settings
-from Options import PerGameCommonOptions
+from Options import PerGameCommonOptions, OptionError
 from worlds.AutoWorld import WebWorld, World
 import os
 
 from typing import List, TextIO, BinaryIO, ClassVar, Type, cast, Optional, Sequence, Tuple, Any, Mapping, TYPE_CHECKING, \
-    Dict
+    Dict, Set
 from .Option_groups import gstla_option_groups
 from .Option_presets import gstla_options_presets
 from .Options import GSTLAOptions
@@ -21,7 +21,7 @@ from BaseClasses import Item, ItemClassification, Tutorial
 from .Items import GSTLAItem, item_table, all_items, ItemType, create_events, create_items, create_item, \
     AP_PLACEHOLDER_ITEM, items_by_id, get_filler_item, AP_PROG_PLACEHOLDER_ITEM, create_filler_pool_weights, \
     create_trap_pool_weights, AP_USEFUL_PLACEHOLDER_ITEM, create_item_direct
-from .Locations import GSTLALocation, all_locations, location_name_to_id, location_type_to_data
+from .Locations import GSTLALocation, all_locations, location_name_to_id, location_type_to_data, remote_blacklist
 from .Rules import set_access_rules, set_item_rules, set_entrance_rules
 from .Regions import create_regions
 from .Connections import create_vanilla_connections
@@ -35,10 +35,12 @@ from .Rom import GSTLAPatchExtension, GSTLADeltaPatch, CHECKSUM_GSTLA
 from .BizClient import GSTLAClient
 from .EntrandoRando import perform_entrance_rando
 
+if TYPE_CHECKING:
+    from BaseClasses import MultiWorld
 
 import logging
 
-from ..Files import APTokenTypes
+from worlds.Files import APTokenTypes
 
 logger = logging.getLogger()
 
@@ -109,33 +111,52 @@ class GSTLAWorld(World):
     item_name_groups = {
         ItemType.Djinn.name: {item.name for item in all_items if item.type == ItemType.Djinn},
         ItemType.Character.name: {item.name for item in all_items if item.type == ItemType.Character},
-        ItemType.Mimic.name: {item.name for item in all_items if item.type == ItemType.Mimic},
-        "Lash": {ItemName.Lash_Pebble.value},
-        "Pound": {ItemName.Pound_Cube.value},
-        "Force": {ItemName.Orb_of_Force.value},
-        "Douse": {ItemName.Douse_Drop.value},
-        "Frost": {ItemName.Frost_Jewel.value},
-        "Lift": {ItemName.Lifting_Gem.value},
-        "Carry": {ItemName.Carry_Stone.value},
-        "Catch": {ItemName.Catch_Beads.value},
-        "Tremor": {ItemName.Tremor_Bit.value},
-        "Scoop": {ItemName.Scoop_Gem.value},
-        "Cyclone": {ItemName.Cyclone_Chip.value},
-        "Burst": {ItemName.Burst_Brooch.value},
-        "Grind": {ItemName.Grindstone.value},
-        "Teleport": {ItemName.Teleport_Lapis.value},
-        "Hover": {ItemName.Hover_Jade.value},
-        "Shamans Rod": {ItemName.Shamans_Rod.value},
-        "Sea Gods Tear": {ItemName.Sea_Gods_Tear.value},
-        "Lil Turtle": {ItemName.Lil_Turtle.value}
+        ItemType.Summon.name: {item.name for item in all_items if item.type == ItemType.Summon},
+        "Mimics": {item.name for item in all_items if item.type == ItemType.Mimic},
+        "Lash": {ItemName.Lash_Pebble},
+        "Pound": {ItemName.Pound_Cube},
+        "Force": {ItemName.Orb_of_Force},
+        "Douse": {ItemName.Douse_Drop},
+        "Frost": {ItemName.Frost_Jewel},
+        "Lift": {ItemName.Lifting_Gem},
+        "Carry": {ItemName.Carry_Stone},
+        "Catch": {ItemName.Catch_Beads},
+        "Tremor": {ItemName.Tremor_Bit},
+        "Scoop": {ItemName.Scoop_Gem},
+        "Cyclone": {ItemName.Cyclone_Chip},
+        "Burst": {ItemName.Burst_Brooch},
+        "Grind": {ItemName.Grindstone},
+        "Teleport": {ItemName.Teleport_Lapis},
+        "Hover": {ItemName.Hover_Jade},
+        "Shamans Rod": {ItemName.Shamans_Rod},
+        "Sea Gods Tear": {ItemName.Sea_Gods_Tear},
+        "Lil Turtle": {ItemName.Lil_Turtle}
     }
     location_name_groups = goldensuntla_location_groups
 
     def __init__(self, multiworld: "MultiWorld", player: int):
         super().__init__(multiworld, player)
         self._character_levels: List[Tuple[int, int]] = []
+        self.goal_conditions: Set[str] = set()
 
     def generate_early(self) -> None:
+        if len(self.options.goal.value) == 0:
+            raise OptionError(f"A goal must be selected for Golden Sun TLA for player {self.player_name}")
+
+        if self.options.random_goals.value == 0 or self.options.random_goals.value >= len(self.options.goal.value):
+            self.goal_conditions = self.options.goal.value
+        else:
+            for goal in self.random.sample(list(self.options.goal.value), k=self.options.random_goals.value):
+                self.goal_conditions.add(goal)
+
+        if "Dullahan" in self.goal_conditions:
+            if self.options.omit_locations.value > 0:
+                self.options.omit_locations.value = 0
+
+        if "Valukar" in self.goal_conditions or "Sentinel" in self.goal_conditions or "Star Magician" in self.goal_conditions:
+            if self.options.omit_locations.value == 2:
+                self.options.omit_locations.value = 1
+
         if self.options.shuffle_characters < 2:
             self.options.non_local_items.value -= self.item_name_groups[ItemType.Character.name]
 
@@ -183,11 +204,11 @@ class GSTLAWorld(World):
         set_entrance_rules(self)
         set_item_rules(self)
         set_access_rules(self)
+        self.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.Victory, self.player)
 
-        self.multiworld.completion_condition[self.player] = \
-            lambda state: state.has(ItemName.Victory, self.player)
 
     def connect_entrances(self):
+
         collection_state = perform_entrance_rando(self)
 
         from Utils import visualize_regions
@@ -212,18 +233,40 @@ class GSTLAWorld(World):
         return filler_item.name
 
     def fill_slot_data(self) -> Mapping[str, Any]:
-        ret = dict()
-        ret['start_inventory'] = {
-            item_id_by_name[k]: v
-            for k, v in self.options.start_inventory.items()
+        ret = {
+            "options": {
+                "item_shuffle": self.options.item_shuffle.value,
+                "reveal_hidden_item": self.options.reveal_hidden_item.value,
+                "omit_locations": self.options.omit_locations.value,
+                "lemurian_ship": self.options.lemurian_ship.value,
+                "start_with_wings": self.options.start_with_wings_of_anemos.value,
+                "shortcut_mars_lighthouse": self.options.shortcut_mars_lighthouse.value,
+                "shortcut_magma_rock": self.options.shortcut_magma_rock.value,
+                # AP logically requires 28 djinn, though the randomizer is the one which sets the number
+                "anemos_inner_sanctum_access": self.options.anemos_inner_sanctum_access.value,
+                "djinn_logic": self.options.djinn_logic.value,
+                # If free retreat and no manual retreat glitch, no retreat glitches work
+                "free_retreat": self.options.free_retreat.value,
+                "manual_retreat_glitch": self.options.manual_retreat_glitch.value,
+                "name_puzzles": self.options.name_puzzles.value,
+                "teleport_to_dungeons_and_towns": self.options.teleport_to_dungeons_and_towns.value,
+                "coop": self.options.coop.value,
+            }
         }
-
-        for k,v in self.options.start_inventory_from_pool.items():
-            if item_id_by_name[k] in ret['start_inventory']:
-                ret['start_inventory'][item_id_by_name[k]] += v
-            else:
-                ret['start_inventory'][item_id_by_name[k]] = v
-
+        goal_dict = dict()
+        flags = set()
+        counts = dict()
+        for goal in self.goal_conditions:
+            if "Hunt" in goal:
+                continue
+            flags.add(goal)
+        if "Djinn Hunt" in self.goal_conditions:
+            counts["djinn"] = self.options.djinn_hunt_count.value
+        if "Summon Hunt" in self.goal_conditions:
+            counts["summons"] = self.options.summon_hunt_count.value
+        goal_dict['flags'] = flags
+        goal_dict['counts'] = counts
+        ret["goal"] = goal_dict
         return ret
 
     def generate_output(self, output_directory: str):
@@ -307,6 +350,28 @@ class GSTLAWorld(World):
                 level = min(max(floor((max_level - starting_level) * sphere / max_sphere + starting_level), starting_level), max_level)
                 self._character_levels.append((char.code - 0xD00, level))
 
+    def _should_be_remote(self, location: GSTLALocation) -> bool:
+        ap_item = location.item
+        if ap_item.player != self.player:
+            return True
+        if ap_item.item_data.type == ItemType.Djinn:
+            return False
+        coop_opt = self.options.coop.value
+        if coop_opt == 0:
+            # off
+            return False
+        if location.address in remote_blacklist:
+            return False
+        if coop_opt == 3:
+            # all
+            return True
+        if ap_item.advancement or ap_item.trap:
+            return True
+        if ap_item.useful and coop_opt >= 2:
+            # prog_useful
+            return True
+        # shouldn't make it this far, but just in case
+        return False
 
     def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
@@ -338,7 +403,7 @@ class GSTLAWorld(World):
                     # TODO: need to fill with something else
                     continue
 
-                if ap_item.player != self.player:
+                if self._should_be_remote(location):
                     if ap_item.classification & (ItemClassification.progression | ItemClassification.trap) > 0:
                         item_data = AP_PROG_PLACEHOLDER_ITEM
                     elif ap_item.classification & ItemClassification.useful > 0:
@@ -463,8 +528,8 @@ class GSTLAWorld(World):
         debug_file.write('Class Levels: ' + self.options.psynergy_levels.name_lookup[self.options.psynergy_levels] + '\n')
         write_me += 1 << 2 #qol-cutscenes
         debug_file.write('QoL Cutscenes: true\n')
-        write_me += 1 << 1 #qol-tickets
-        debug_file.write('QoL Tickets: true\n')
+        write_me += self.options.disable_shop_gametickets << 1 #qol-tickets
+        debug_file.write('QoL Tickets: ' + self.options.disable_shop_gametickets.name_lookup[self.options.disable_shop_gametickets] + '\n')
         write_me += 1 #qol-fastship
         debug_file.write('QoL Fastship: true\n')
         rando_file.write(write_me.to_bytes(length=1, byteorder='big'))
@@ -472,10 +537,10 @@ class GSTLAWorld(World):
         write_me = 0
         write_me += self.options.lemurian_ship << 6 #ship
         debug_file.write('Starter Ship: ' + self.options.lemurian_ship.name_lookup[self.options.lemurian_ship] + '\n')
-        #write_me += 0 << 5 #skips-basic, require logic changes
+        #write_me += 0 << 5 #skips-sq, require logic changes
         debug_file.write('Skips Basic: false\n')
         #write_me += 0 << 4 #skips-oob-easy, require logic changes
-        debug_file.write('Skips Oob Easy: false\n')
+        debug_file.write('Skips Save and Quit: false\n')
         #write_me += 0 << 3 #skips-maze, require logic changes
         debug_file.write('Skips Maze: false\n')
         if self.options.djinn_logic == 0:
@@ -493,8 +558,8 @@ class GSTLAWorld(World):
         debug_file.write('Adv Equip: false\n')        
         write_me += self.options.add_non_obtainable_items << 6 #dummy-items
         debug_file.write('Non Obtainabble Items: ' + self.options.add_non_obtainable_items.name_lookup[self.options.add_non_obtainable_items] + '\n')
-        #write_me += 0 << 5 #skips-oob-hard, require logic changes
-        debug_file.write('Skips Oob Hard: false\n')
+        #write_me += 0 << 5 #skips-sanctum, require logic changes
+        debug_file.write('Skips Sanctum: false\n')
         write_me += self.options.shuffle_weapon_attack << 4 #equip-attack
         debug_file.write('Equip Attack: ' + self.options.shuffle_weapon_attack.name_lookup[self.options.shuffle_weapon_attack] + '\n')
         #write_me += 0 << 3 #qol-hints, not supported yet
@@ -504,7 +569,7 @@ class GSTLAWorld(World):
         write_me += self.options.start_with_revive << 1 #start-revive
         debug_file.write('Start Revive: ' + self.options.start_with_revive.name_lookup[self.options.start_with_revive] + '\n')
 
-        if ItemName.Reveal.name in self.options.start_inventory or ItemName.Reveal.name in self.options.start_inventory_from_pool:
+        if ItemName.Reveal in self.options.start_inventory or ItemName.Reveal in self.options.start_inventory_from_pool:
             write_me += 1 #start-reveal
             debug_file.write('Start Reveal: true\n')
         rando_file.write(write_me.to_bytes(length=1, byteorder='big'))
@@ -573,12 +638,28 @@ class GSTLAWorld(World):
         debug_file.write('Anemos Inner Sanctum Access: ' + self.options.anemos_inner_sanctum_access.name_lookup[self.options.anemos_inner_sanctum_access] + '\n')
         write_me += 1 << 1 #char shuffle always on to ensure game understands character items in case of players creating duplicates / plando in weird places
         debug_file.write('Character Shuffle: true\n')
-        write_me += 0 #unused
+        write_me += 0 # skips-oob
+        debug_file.write('Skips Oob: false\n')
         rando_file.write(write_me.to_bytes(length=1, byteorder='big'))
 
         write_me = 0
-        # Placeholder in case we need more flags
-        rando_file.write(write_me.to_bytes(length=4, byteorder='big'))
+        #write_me += 0 << 7 #skips-sand
+        debug_file.write('Skips Sand: false\n')
+        #write_me += 0 << 6 #skips-sand
+        debug_file.write('Skips Storage: false\n')
+        #write_me += 0 << 5 #remove-mimics
+        debug_file.write('Remove Mimics: false\n')
+        write_me += self.options.shortcut_mars_lighthouse << 4 #shortcut-mars-lighthouse
+        debug_file.write('Shortcut Mars Lighthouse: ' + self.options.shortcut_mars_lighthouse.name_lookup[self.options.shortcut_mars_lighthouse] + '\n')
+        write_me += self.options.shortcut_magma_rock << 3 #shortcut-magma-rock
+        debug_file.write('Shortcut Magma Rock: ' + self.options.shortcut_magma_rock.name_lookup[self.options.shortcut_magma_rock] + '\n')
+        #write_me += 0 #door-shuffle
+        debug_file.write('Door Shuffle: disabled\n')
+        rando_file.write(write_me.to_bytes(length=1, byteorder='big'))
+
+        
+        write_me = 0 #place holder for when we have more settings
+        rando_file.write(write_me.to_bytes(length=3, byteorder='big'))
 
     def create_item(self, name: str) -> "Item":
         return create_item(name, self.player)

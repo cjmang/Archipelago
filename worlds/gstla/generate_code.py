@@ -143,7 +143,6 @@ EXCLUDED_ITEMS = {
     223, # Mythril Bag (Jupiter)
     224, # Mythril Bag (Empty)
     225, # Small Jewel
-    228, # Game Ticket
     230, # Dragon's Eye
     232, # Anchor Charm
     234, # Cell Key
@@ -196,10 +195,10 @@ def generate_location_names(env: Environment, data: GameData):
         name_list.append({'name': djinn.name, 'id': djinn.ap_id})
     for event in data.events.values():
         events.append(data.location_names[event.event_id])
-        name_list.append({'name': event.location_name, 'id': event.event_id})
+        name_list.append({'name': data.location_names[event.event_id].py_name, 'id': event.event_id})
     for loc_datum in data.raw_location_data:
         loc_name = data.location_names[loc_datum.id]
-        name_list.append({'name': loc_name.str_name, 'id': loc_datum.addr[0]})
+        name_list.append({'name': loc_name.py_name, 'id': loc_datum.addr[0]})
         if loc_datum.is_summon:
             summon_tablets.append(loc_name)
         elif loc_datum.is_key_item:
@@ -210,7 +209,8 @@ def generate_location_names(env: Environment, data: GameData):
             hidden_items.append(loc_name)
         else:
             remainder.append(loc_name)
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'LocationNames.py'), 'w') as outfile:
+
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalLocationNames.py'), 'w') as outfile:
         write_warning(outfile)
         outfile.write(template.render(hiddenItems=hidden_items, keyItems=key_items,
                                       summonTablets=summon_tablets, majorItems=major_items,
@@ -222,7 +222,7 @@ def generate_location_names(env: Environment, data: GameData):
 def generate_item_names(env: Environment, data: GameData):
     template = env.get_template('ItemNames.py.jinja')
 
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'ItemNames.py'), 'w') as outfile:
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalItemNames.py'), 'w') as outfile:
         write_warning(outfile)
         name_dict = {
             item.id: {
@@ -230,14 +230,14 @@ def generate_item_names(env: Environment, data: GameData):
                 'name': data.item_names[item.id]
             } for item in data.raw_item_data if item.id not in EXCLUDED_ITEMS
         }
-        name_list = [{'name': data.item_names[x.id].str_name, 'id': x.id}
+        name_list = [{'name': data.item_names[x.id].py_name, 'id': x.id}
                      for x in data.raw_item_data if x.id not in EXCLUDED_ITEMS]
         summons = [x for x in data.raw_summon_data]
         name_list += [{'name': x.name, 'id': x.id} for x in summons]
         events = [data.item_names[event.event_id] for event in data.events.values()]
-        name_list += [{'name': data.item_names[x.id].str_name, 'id': x.id} for x in events]
+        name_list += [{'name': data.item_names[x.id].py_name, 'id': x.id} for x in events]
         name_list += [{'name': d.name, 'id': d.ap_id} for d in data.raw_djinn_data]
-        name_list += [{'name': p.name, 'id': p.id} for p in data.raw_psy_data]
+        name_list += [{'name': data.item_names[p.id].py_name, 'id': p.id} for p in data.raw_psy_data]
         name_list += [{'name': c.name, 'id': c.id} for c in data.raw_character_data]
         outfile.write(template.render(
             name_list=name_list,
@@ -252,7 +252,7 @@ def generate_item_names(env: Environment, data: GameData):
 def generate_item_data(env: Environment, data: GameData):
 
     template = env.get_template('ItemData.py.jinja')
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'ItemData.py'), 'w') as outfile:
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalItemData.py'), 'w') as outfile:
         write_warning(outfile)
         names = data.item_names
 
@@ -273,6 +273,7 @@ def generate_item_data(env: Environment, data: GameData):
         misc = []
         remainder = []
         vanilla_item_ids = { x.vanilla_contents for x in data.raw_location_data if x.vanilla_name != 'Mimic'}
+        vanilla_item_ids.add(228) # Game Ticket
         misc_ids = {
             0, # Empty
             231, # Bone
@@ -290,6 +291,10 @@ def generate_item_data(env: Environment, data: GameData):
                 forge_only_ids.add(id)
             vanilla_item_ids.add(id)
         for id in data.lucky_medal_ids:
+            if id not in vanilla_item_ids:
+                lucky_only_ids.add(id)
+            vanilla_item_ids.add(id)
+        for id in data.lucky_wheels_ids:
             if id not in vanilla_item_ids:
                 lucky_only_ids.add(id)
             vanilla_item_ids.add(id)
@@ -364,7 +369,7 @@ def generate_item_data(env: Environment, data: GameData):
 
 def generate_location_data(env: Environment, data: GameData):
     template = env.get_template('LocationData.py.jinja')
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'LocationData.py'), 'w') as outfile:
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalLocationData.py'), 'w') as outfile:
         write_warning(outfile)
         loc_data = data.raw_location_data
         psy_ids = {psy.id for psy in data.raw_psy_data}

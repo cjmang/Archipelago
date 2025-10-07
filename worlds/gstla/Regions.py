@@ -38,11 +38,15 @@ def create_region(world: 'GSTLAWorld', region_data: RegionData):
 def create_regions(world: 'GSTLAWorld'):
     regions_copy = deepcopy(regions)
     if world.options.omit_locations < 2:
+        regions_copy[RegionName.YampiDesertCave].locations.append(LocationName.Yampi_Desert_Cave_Valukar)
         regions_copy[RegionName.YampiDesertCave].locations.append(LocationName.Yampi_Desert_Cave_Daedalus)
+        regions_copy[RegionName.IsletCave].locations.append(LocationName.Islet_Cave_Sentinel)
         regions_copy[RegionName.IsletCave].locations.append(LocationName.Islet_Cave_Catastrophe)
+        regions_copy[RegionName.TreasureIsland_PostReunion].locations.append(LocationName.Treasure_Isle_Star_Magician)
         regions_copy[RegionName.TreasureIsland_PostReunion].locations.append(LocationName.Treasure_Isle_Azul)
 
     if world.options.omit_locations < 1:
+        regions_copy[RegionName.AnemosSanctum].locations.append(LocationName.Anemos_Inner_Sanctum_Dullahan)
         regions_copy[RegionName.AnemosSanctum].locations.append(LocationName.Anemos_Inner_Sanctum_Orihalcon)
         regions_copy[RegionName.AnemosSanctum].locations.append(LocationName.Anemos_Inner_Sanctum_Iris)
         regions_copy[RegionName.AnemosSanctum].locations.append(LocationName.Anemos_Inner_Sanctum_Charon)
@@ -50,9 +54,9 @@ def create_regions(world: 'GSTLAWorld'):
 
     if world.options.lemurian_ship < 2:
         regions_copy[RegionName.Lemurian_Ship].locations.append(LocationName.Lemurian_Ship_Engine_Room)
-        regions_copy[RegionName.Lemurian_Ship].locations.append(LocationName.Lemurian_Ship_Aqua_Hydra_fight)
+        regions_copy[RegionName.Lemurian_Ship].locations.append(LocationName.Lemurian_Ship_Aqua_Hydra)
     else:
-        regions_copy[RegionName.Lemurian_Ship_Revisit].locations.append(LocationName.Lemurian_Ship_Aqua_Hydra_fight)
+        regions_copy[RegionName.Lemurian_Ship_Revisit].locations.append(LocationName.Lemurian_Ship_Aqua_Hydra)
 
     if world.options.start_with_wings_of_anemos == 0:
         regions_copy[RegionName.Reunion].locations.append(LocationName.Contigo_Wings_of_Anemos)
@@ -69,6 +73,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Idejima_Shamans_Rod,
         LocationName.Idejima_Jenna,
         LocationName.Idejima_Sheba,
+        LocationName.Victory_Event,
     ],
     [
         EntranceName.Idejima_To_Overworld,
@@ -264,6 +269,7 @@ regions: Dict[str, RegionData] = {
     ]),
     RegionName.KandoreanTemple_Challenge_DjinnRoom: RegionData(RegionName.KandoreanTemple_Challenge_DjinnRoom,
     [
+        LocationName.Kandorean_Temple_Chestbeaters,
         LocationName.Fog
     ],
     [
@@ -935,7 +941,8 @@ regions: Dict[str, RegionData] = {
         LocationName.Yampi_Desert_Antidote,
         LocationName.Yampi_Desert_Guardian_Ring,
         LocationName.Yampi_Desert_Scoop_Gem,
-        LocationName.Blitz
+        LocationName.Yampi_Desert_King_Scorpion,
+        LocationName.Blitz,
     ],
     [
         EntranceName.YampDesertFront_To_Overworld,
@@ -962,7 +969,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Yampi_Desert_Cave_Orihalcon,
         LocationName.Yampi_Desert_Cave_Dark_Matter,
         LocationName.Yampi_Desert_Cave_Mythril_Silver,
-        LocationName.Crystal
+        LocationName.Crystal,
     ]),
     RegionName.Mikasalla: RegionData(RegionName.Mikasalla,
     [
@@ -1122,7 +1129,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Gabomba_Statue_Mimic,
         LocationName.Gabomba_Statue_Elixir,
         LocationName.Gabomba_Statue_Bone_Armlet,
-        LocationName.Gabomba_Statue,
+        LocationName.Gabomba_Statue_Ritual,
         LocationName.Steel
     ],
     [
@@ -1253,7 +1260,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Islet_Cave_Turtle_Boots,
         LocationName.Islet_Cave_Rusty_Staff,
         LocationName.Meld,
-        LocationName.Serac
+        LocationName.Serac,
     ]),
     RegionName.Overworld_ApojiiIslands:RegionData(RegionName.Overworld_ApojiiIslands,
     [
@@ -1333,7 +1340,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Gaia_Rock_Rusty_Mace,
         LocationName.Gaia_Rock_Cloud_Brand,
         LocationName.Gaia_Rock_Dancing_Idol,
-        LocationName.Gaia_Rock_Serpent_Fight,
+        LocationName.Gaia_Rock_Serpent,
         LocationName.Gaia_Rock_Sand
     ],
     [
@@ -1464,7 +1471,8 @@ regions: Dict[str, RegionData] = {
         LocationName.Champa_Sleep_Bomb,
         LocationName.Champa_Smoke_Bomb,
         LocationName.Champa_Lucky_Medal,
-        LocationName.Champa_Viking_Helm
+        LocationName.Champa_Viking_Helm,
+        LocationName.Champa_Avimander,
     ],
     [
         EntranceName.Champa_To_Overworld,
@@ -1512,7 +1520,7 @@ regions: Dict[str, RegionData] = {
     ]),
     RegionName.SeaOfTime: RegionData(RegionName.SeaOfTime,
     [
-        LocationName.Sea_of_Time_Poseidon_fight,
+        LocationName.Sea_of_Time_Poseidon,
     ],
     [
         EntranceName.SeaOfTimeToLemuria
@@ -1632,7 +1640,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Shaman_Village_Lucky_Medal,
         LocationName.Shaman_Village_Lucky_Pepper,
         LocationName.Shaman_Village_Weasels_Claw,
-        LocationName.Shaman_Village_Moapa_fight,
+        LocationName.Shaman_Village_Moapa,
         LocationName.Shaman_Village_Hover_Jade,
         LocationName.Aroma,
         LocationName.Gasp
@@ -1690,7 +1698,7 @@ regions: Dict[str, RegionData] = {
         LocationName.Jupiter_Lighthouse_Red_Key,
         LocationName.Jupiter_Lighthouse_Water_of_Life,
         LocationName.Whorl,
-        LocationName.Jupiter_Lighthouse_Aeri_Agatio_and_Karst_fight
+        LocationName.Jupiter_Lighthouse_Aeri_Agatio_and_Karst
     ],
     [
         EntranceName.JupiterLighthouse_To_Overworld
@@ -1700,7 +1708,8 @@ regions: Dict[str, RegionData] = {
         LocationName.Contigo_Isaac,
         LocationName.Contigo_Garet,
         LocationName.Contigo_Ivan,
-        LocationName.Contigo_Mia
+        LocationName.Contigo_Mia,
+        LocationName.Contigo_Reunion,
     ]),
     RegionName.Overworld_SouthernAtteka: RegionData(RegionName.Overworld_SouthernAtteka,
     [
@@ -1717,7 +1726,8 @@ regions: Dict[str, RegionData] = {
         EntranceName.AttekaCavern_To_Overworld
     ]),
     RegionName.AnemosSanctum: RegionData(RegionName.AnemosSanctum,
-    []),
+    [
+    ]),
     RegionName.Gondowan_WesternGondowan: RegionData(RegionName.Gondowan_WesternGondowan,
     [],
     [
@@ -1769,7 +1779,8 @@ regions: Dict[str, RegionData] = {
         LocationName.Loho_Mythril_Silver,
         LocationName.Loho_Golem_Core,
         LocationName.Loho_Golem_Core_Two,
-        LocationName.Lull
+        LocationName.Lull,
+        LocationName.Loho_Ship_Cannon,
     ],
     [
         EntranceName.Loho_To_Overworld
@@ -1815,9 +1826,10 @@ regions: Dict[str, RegionData] = {
         LocationName.Mars_Lighthouse_Mimic,
         LocationName.Mars_Lighthouse_Orihalcon,
         LocationName.Mars_Lighthouse_Valkyrie_Mail,
-        LocationName.Mars_Lighthouse_Flame_Dragons_fight,
+        LocationName.Mars_Lighthouse_Flame_Dragons,
         LocationName.Mars_Lighthouse_Teleport_Lapis,
         LocationName.Balm,
+        LocationName.Mars_Lighthouse_Heated,
     ],
     [
         EntranceName.MarsLighthouse_To_Overworld,
@@ -1828,6 +1840,6 @@ regions: Dict[str, RegionData] = {
         LocationName.Fugue,
         LocationName.Mars_Lighthouse_Alastors_Hood,
         LocationName.Mars_Lighthouse_Psy_Crystal,
-        LocationName.Mars_Lighthouse_Doom_Dragon_Fight,
+        LocationName.Mars_Lighthouse_Doom_Dragon,
     ])
 }

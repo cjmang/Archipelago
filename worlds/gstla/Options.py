@@ -1,4 +1,4 @@
-from Options import Choice, Toggle, Range, NamedRange, PerGameCommonOptions, StartInventoryPool
+from Options import Choice, Toggle, Range, NamedRange, PerGameCommonOptions, StartInventoryPool, OptionSet
 from dataclasses import dataclass
 
 class StartWithShip(Choice):
@@ -391,7 +391,8 @@ class EnemyEResShuffle(Choice):
     internal_name = "enemy_elemental_resistance"
     display_name = "Enemy Elemental Resistance Shuffle"
     option_vanilla = 0
-    option_shuffle_elemmental_res = 1
+    option_shuffle_elemental_res = 1
+    alias_shuffle_elemmental_res = option_shuffle_elemental_res
     option_randomize_elemental_res = 2
     default = 0
 
@@ -565,11 +566,11 @@ class ForgedEquipmentFillerWeight(Range):
     range_end = 100
     default = 0
     
-class LuckyFountainEquipmentFillerWeight(Range):
-    """The weight for a filler item to be a lucky item reward from the fountain in Lemuria.
-    Examples of these are Hestia Blade, Mighty Axe, Aegis Shield and Crown of Glory."""
+class LuckyEquipmentFillerWeight(Range):
+    """The weight for a filler item to be a lucky item reward from the fountain in Lemuria or Lucky Wheels in Contigo.
+    Examples of these are Hestia Blade, Mighty Axe, Aegis Shield, Crown of Glory, Quick Boots, Silk Shirt and War Ring."""
     internal_name = "lucky_equipment_filler_weight"
-    display_name = "Lucky Fountain Equipment Filler Weight"
+    display_name = "Lucky Equipment Filler Weight"
     range_start = 0
     range_end = 100
     default = 0
@@ -601,7 +602,7 @@ class CoinsFillerWeight(Range):
 
 class CommonConsumablesFillerWeight(Range):
     """The weight for a filler item to be a common consumable.
-    Examples of these are Herbs, Vials, Antidotes, Elixirs, Smoke Bombs and Lucky Medals"""
+    Examples of these are Herbs, Vials, Antidotes, Elixirs, Smoke Bombs, Lucky Medals and Game Tickets"""
     internal_name = "common_consumable_filler_weight"
     display_name = "Common Consumable Filler Weight"
     range_start = 0
@@ -614,12 +615,137 @@ class AutoRun(Toggle):
     display_name = "Auto Run"
     default = 1
 
+class Coop(Choice):
+    """Enables cooping a seed by making local items the same as remote items, enabling
+     your friends to receive items you pick up.  Also helpful if trying to play a world from multiple devices.
+     You will still need to pickup djinn the other person picks up.
+     off - vanilla
+     progression - Only progression items are treated as remote items
+     prog_useful - Progression and useful items are treated as remote items
+     all - All items are treated as remote items
+     """
+    internal_name = "coop"
+    display_name = "Coop"
+    option_off = 0
+    option_progression = 1
+    option_prog_useful = 2
+    option_all = 3
+    default = 0
+
+
+class Goal(OptionSet):
+    """What conditions must be satisfied for this world to goal.  You can select however many you want, and only
+    when all the selected conditions are satisfied is the world considered goaled.
+
+    Valid options are:
+        - "Chestbeaters"
+        - "King Scorpion"
+        - "Briggs"
+        - "Aqua Hydra"
+        - "Poseidon"
+        - "Serpent"
+        - "Avimander"
+        - "Moapa"
+        - "Reunion"
+        - "Flame Dragons"
+        - "Doom Dragon"
+        - "Star Magician"
+        - "Sentinel"
+        - "Valukar"
+        - "Dullahan"
+        - "Djinn Hunt"
+        - "Summon Hunt"
+
+    IMPORTANT:
+    1. If Doom Dragon is a selected goal, make sure you have a save prior to the fight available if you don't
+    end the world on this fight.  We take no responsibility for borked experiences due to save mismanagement.
+    2. If any of the non-Dullahan superbosses are selected as a goal, then omit_locations is set to 1 (if not 0).
+    If Dullahan is a goal, then the omit_locations option is set to 0.
+    """
+    valid_keys = {
+        "Chestbeaters",
+        "King Scorpion",
+        "Briggs",
+        "Aqua Hydra",
+        "Poseidon",
+        "Serpent",
+        "Avimander",
+        "Moapa",
+        "Reunion",
+        "Flame Dragons",
+        "Doom Dragon",
+        "Star Magician",
+        "Sentinel",
+        "Valukar",
+        "Dullahan",
+        "Djinn Hunt",
+        "Summon Hunt",
+    }
+    internal_name = "goal"
+    display_name = "Goal"
+    default = {"Doom Dragon"}
+
+class RandomGoals(Range):
+    """From the goals configured in "goals", pick the configured number of the goals randomly.
+    0 disables random picking, and all the configured goals are selected."""
+    internal_name = "random_goals"
+    display_name = "Random Goals Count"
+    range_start = 0
+    range_end = 17
+    default = 0
+
+class DjinnHuntCount(Range):
+    """How many djinn you need to obtain in order to satisfy the Djinn Hunt Objective"""
+    internal_name = "djinn_hunt_count"
+    display_name = "Djinn Hunt Count"
+    range_start = 1
+    range_end = 72
+    default = 56
+
+class SummonHuntCount(Range):
+    """How many summons you need to obtain in order to satisfy the Summon Hunt Objective"""
+    internal_name = "summon_hunt_count"
+    display_name = "Summon Hunt Count"
+    range_start = 1
+    range_end = 13
+    default = 10
+
+class DisableShopGameTickets(Toggle):
+    """Disable Shopkeepers offering Game Tickets, in Vanilla this is the main way to get game tickets. 
+    In the randomizer they and/or their rewards may show up as part of the item pool (see common_consumable_filler_weight and lucky_equipment_filler_weight options).
+    Note disabling this setting will make shop interactions take longer each time a game ticket is offered."""
+    internal_name = "disable_shop_gametickets"
+    display_name = "Disable Shopkeeper Gametickets"
+    default = 1
+
+
+class ShortcutMarsLighthouse(Toggle):
+    """The 4 elemental wing puzzles to unlock the teleport pad can be accessed with just the Mars Star instead of requiring to heatup the lighthouse.
+    Note the lighthouse is still frozen so the Mars Djinni Fugue is still inaccessible and requires heating up the lighthouse."""
+    internal_name = "shortcut_mars_lighthouse"
+    display_name = "Shortcut Mars Lighthouse"
+    default = 0
+
+
+class ShortcutMagmaRock(Toggle):
+    """The pushable pillars at the groundfloor and 1st floor in Magma Rock are pushed downwards allowing you to access the Interior immediately without navigating the exterior.
+    Note that you can not leave Magma Rock interior from the top to get outside at the top of Magma Rock exterior."""
+    internal_name = "shortcut_magma_rock"
+    display_name = "Shortcut Magma Rock"
+    default = 0
+
 @dataclass
 class GSTLAOptions(PerGameCommonOptions):
     #Pool and Logic settings
+    goal: Goal
+    random_goals: RandomGoals
+    djinn_hunt_count: DjinnHuntCount
+    summon_hunt_count: SummonHuntCount
     item_shuffle: ItemShuffle
     reveal_hidden_item: RevealHiddenItem
     omit_locations: OmitLocations
+    shortcut_mars_lighthouse: ShortcutMarsLighthouse
+    shortcut_magma_rock: ShortcutMagmaRock
     add_elvenshirt_clericsring: AddGs1Items
     add_non_obtainable_items: AddDummyItems
 
@@ -692,6 +818,8 @@ class GSTLAOptions(PerGameCommonOptions):
     shuffle_music: MusicShuffle
     teleport_to_dungeons_and_towns: TelportEverywhere
     auto_run: AutoRun
+    coop: Coop
+    disable_shop_gametickets: DisableShopGameTickets
     
     start_inventory_from_pool: StartInventoryPool
 
@@ -707,7 +835,7 @@ class GSTLAOptions(PerGameCommonOptions):
     stat_boost_filler_weight: StatBoostFillerWeight
     uncommon_consumable_filler_weight: UncommonConsumableFillerWeight
     forged_equipment_filler_weight: ForgedEquipmentFillerWeight
-    lucky_equipment_filler_weight: LuckyFountainEquipmentFillerWeight
+    lucky_equipment_filler_weight: LuckyEquipmentFillerWeight
     artifacts_are_filler: ArtifactsAreFiller
     shop_equipment_filler_weight: ShopEquipmentFillerWeight
     coins_filler_weight: CoinsFillerWeight

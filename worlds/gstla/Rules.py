@@ -16,6 +16,9 @@ import logging
 
 if TYPE_CHECKING:
     from . import GSTLAWorld
+    from .Items import GSTLAItem
+    from .Locations import GSTLALocation
+
 
 def set_entrance_rules(world: 'GSTLAWorld'):
     player = world.player
@@ -35,9 +38,9 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     add_rule(world.get_entrance(EntranceName.KandoreanTemple_Lobby_LashRope),
              lambda state: state.has(ItemName.Lash_Pebble, player))
     add_rule(world.get_entrance(EntranceName.KandoreanTemple_Outside_SideCave),
-             lambda state: state.has(ItemName.Clear_Kandorean_Temple, player))
+             lambda state: state.has(ItemName.KandoreanTemple_Clear_Kandorean_Temple, player))
     add_rule(world.get_entrance(EntranceName.KandoreanTemple_Outside_SideCave),
-             lambda state: state.has(ItemName.Clear_Kandorean_Temple, player))
+             lambda state: state.has(ItemName.KandoreanTemple_Clear_Kandorean_Temple, player))
 
 
 
@@ -193,8 +196,10 @@ def set_entrance_rules(world: 'GSTLAWorld'):
 
     add_rule(world.get_entrance(EntranceName.Overworld_WestGondowan_To_MagmaRock),
              lambda state: state.has(ItemName.Lifting_Gem, player))
-    add_rule(world.get_entrance(EntranceName.MagmaRockToMagmaRockInterior),
-             lambda state: state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Growth, player) and state.has(ItemName.Lash_Pebble, player))
+    
+    if world.options.shortcut_magma_rock == 0:
+        add_rule(world.get_entrance(EntranceName.MagmaRockToMagmaRockInterior),
+                lambda state: state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Growth, player) and state.has(ItemName.Lash_Pebble, player))
 
     add_rule(world.get_entrance(EntranceName.ContigoToAnemosInnerSanctum),
                 lambda state: state.has(ItemName.Teleport_Lapis, player))
@@ -215,9 +220,15 @@ def set_entrance_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Whirlwind, player) or state.has_all([ItemName.Lifting_Gem, ItemName.Frost_Jewel], player))
 
     add_rule(world.get_entrance(EntranceName.WesternSeaToProx),
-             lambda state: state.has(ItemName.Magma_Ball, player))
-    add_rule(world.get_entrance(EntranceName.MarsLighthouseToMarsLighthouse_Activated),
-            lambda state: state.has(ItemName.Flame_Dragons_defeated, player) and state.has(ItemName.Mars_Star, player))
+             lambda state: state.has(ItemName.Ship_Cannon, player))
+    
+
+    if world.options.shortcut_mars_lighthouse:
+        add_rule(world.get_entrance(EntranceName.MarsLighthouseToMarsLighthouse_Activated),
+                lambda state: state.has(ItemName.Mars_Star, player))
+    else:
+        add_rule(world.get_entrance(EntranceName.MarsLighthouseToMarsLighthouse_Activated),
+                lambda state: state.has(ItemName.Mars_Lighthouse_Heated, player))
     
     if world.options.lemurian_ship == 0:
         add_rule(world.get_entrance(EntranceName.MadraToLemurianShip),
@@ -229,6 +240,53 @@ def set_entrance_rules(world: 'GSTLAWorld'):
 
 def set_access_rules(world: 'GSTLAWorld'):
     player = world.player
+    #Goal
+    goal_conditions = world.goal_conditions
+    needed_items: Set[str] = set()
+
+    if len(goal_conditions) == 0 or "Doom Dragon" in goal_conditions:
+        needed_items.add(ItemName.Doom_Dragon_Defeated)
+    if "Chestbeaters" in goal_conditions:
+        needed_items.add(ItemName.Chestbeaters_defeated)
+    if "King Scorpion" in goal_conditions:
+        needed_items.add(ItemName.King_Scorpion_defeated)
+    if "Briggs" in goal_conditions:
+        needed_items.add(ItemName.Briggs_defeated)
+    if "Aqua Hydra" in goal_conditions:
+        needed_items.add(ItemName.Aqua_Hydra_defeated)
+    if "Poseidon" in goal_conditions:
+        needed_items.add(ItemName.Poseidon_defeated)
+    if "Serpent" in goal_conditions:
+        needed_items.add(ItemName.Serpent_defeated)
+    if "Avimander" in goal_conditions:
+        needed_items.add(ItemName.Avimander_defeated)
+    if "Moapa" in goal_conditions:
+        needed_items.add(ItemName.Moapa_defeated)
+    if "Reunion" in goal_conditions:
+        needed_items.add(ItemName.Reunion)
+    if "Flame Dragons" in goal_conditions:
+        needed_items.add(ItemName.Flame_Dragons_defeated)
+    if "Star Magician" in goal_conditions:
+        needed_items.add(ItemName.Star_Magician_defeated)
+    if "Sentinel" in goal_conditions:
+        needed_items.add(ItemName.Sentinel_defeated)
+    if "Valukar" in goal_conditions:
+        needed_items.add(ItemName.Valukar_defeated)
+    if "Dullahan" in goal_conditions:
+        needed_items.add(ItemName.Dullahan_defeated)
+    if "Djinn Hunt" in goal_conditions:
+        djinn_needed = world.options.djinn_hunt_count.value
+    else:
+        djinn_needed = 0
+    if "Summon Hunt" in goal_conditions:
+        summons_needed = world.options.summon_hunt_count.value
+    else:
+        summons_needed = 0
+
+    add_rule(world.get_location(LocationName.Victory_Event),
+             lambda state: (all([state.has(item, player) for item in needed_items]) and
+            state.count_group(ItemType.Djinn.name, player) >= djinn_needed and
+            state.count_group(ItemType.Summon.name, player) >= summons_needed))
     #Character locations
     add_rule(world.get_location(LocationName.Idejima_Mind_Read),
              lambda state: state.has(ItemName.Sheba, player))
@@ -359,8 +417,11 @@ def set_access_rules(world: 'GSTLAWorld'):
     add_rule(world.get_location(LocationName.Yampi_Desert_Antidote),
              lambda state: state.has(ItemName.Pound_Cube, player) or state.has(ItemName.Sand, player))
 
-    add_rule(world.get_location(LocationName.Yampi_Desert_Scoop_Gem),
+    add_rule(world.get_location(LocationName.Yampi_Desert_King_Scorpion),
              lambda state: state.has(ItemName.Pound_Cube, player))
+
+    add_rule(world.get_location(LocationName.Yampi_Desert_Scoop_Gem),
+             lambda state: state.has(ItemName.King_Scorpion_defeated, player))
 
     #Yamp Desert Backside
     add_rule(world.get_location(LocationName.Yampi_Desert_Lucky_Medal),
@@ -464,7 +525,7 @@ def set_access_rules(world: 'GSTLAWorld'):
 
 
     #Gabomba Statue
-    add_rule(world.get_location(LocationName.Gabomba_Statue),
+    add_rule(world.get_location(LocationName.Gabomba_Statue_Ritual),
              lambda state: state.has(ItemName.Pound_Cube, player))
 
     add_rule(world.get_location(LocationName.Steel),
@@ -486,7 +547,7 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Frost_Jewel, player))
     add_rule(world.get_location(LocationName.Lemurian_Ship_Mist_Potion),
              lambda state: state.has(ItemName.Aqua_Hydra_defeated, player) and state.has(ItemName.Parch, player))
-    add_rule(world.get_location(LocationName.Lemurian_Ship_Aqua_Hydra_fight),
+    add_rule(world.get_location(LocationName.Lemurian_Ship_Aqua_Hydra),
              lambda state: state.count_group(ItemType.Character.name, player) >= 2 and state.has(ItemName.Frost_Jewel, player))
 
 
@@ -514,7 +575,7 @@ def set_access_rules(world: 'GSTLAWorld'):
 
     #Apoji Islands
     add_rule(world.get_location(LocationName.Haze),
-             lambda state: state.has(ItemName.Sand, player) and state.has(ItemName.Whirlwind, player))
+             lambda state: state.has(ItemName.Sand, player) and state.has(ItemName.Whirlwind, player) and state.has(ItemName.Lash_Pebble, player))
 
     #Aqua Rock
     add_rule(world.get_location(LocationName.Aqua_Rock_Water_of_Life),
@@ -576,7 +637,7 @@ def set_access_rules(world: 'GSTLAWorld'):
     add_rule(world.get_location(LocationName.Gaia_Rock_Apple),
              lambda state: state.has(ItemName.Whirlwind, player))
 
-    add_rule(world.get_location(LocationName.Gaia_Rock_Serpent_Fight),
+    add_rule(world.get_location(LocationName.Gaia_Rock_Serpent),
              lambda state: state.count_group(ItemType.Character.name, player) >= 2 and state.has(ItemName.Cyclone_Chip, player)
                            and state.has(ItemName.Dancing_Idol, player) and state.has(ItemName.Growth, player))
 
@@ -611,9 +672,12 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Reveal, player))
 
     #Champa
-    add_rule(world.get_location(LocationName.Champa_Trident),
+    add_rule(world.get_location(LocationName.Champa_Avimander),
              lambda state: state.count_group(ItemType.Character.name, player) >= 2 and state.has(ItemName.Reveal, player) and state.has(ItemName.Briggs_escaped, player) and state.has(ItemName.Left_Prong, player)
                            and state.has(ItemName.Center_Prong, player) and state.has(ItemName.Right_Prong, player))
+
+    add_rule(world.get_location(LocationName.Champa_Trident),
+             lambda state: state.has(ItemName.Avimander_defeated, player))
 
     add_rule(world.get_location(LocationName.Champa_Viking_Helm),
              lambda state: state.has(ItemName.Reveal, player))
@@ -633,7 +697,7 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Whirlwind, player) and state.has(ItemName.Growth, player) and state.has(ItemName.Douse_Drop, player) and state.has(ItemName.Frost_Jewel, player))
 
     #Sea Of Time
-    add_rule(world.get_location(LocationName.Sea_of_Time_Poseidon_fight),
+    add_rule(world.get_location(LocationName.Sea_of_Time_Poseidon),
              lambda state:  state.count_group(ItemType.Character.name, player) >= 3 and state.has(ItemName.Trident, player))
 
     #Lemuria
@@ -687,7 +751,7 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Shamans_Rod, player) and state.has(ItemName.Hover_Jade, player) and 
              state.has(ItemName.Lifting_Gem, player) and state.has(ItemName.Whirlwind, player) and state.has(ItemName.Reveal, player))
     
-    add_rule(world.get_location(LocationName.Shaman_Village_Moapa_fight),
+    add_rule(world.get_location(LocationName.Shaman_Village_Moapa),
              lambda state: state.count_group(ItemType.Character.name, player) >= 3 and state.has_all([ItemName.Shamans_Rod, ItemName.Whirlwind], player))
 
     #Atteka Inlet
@@ -742,7 +806,7 @@ def set_access_rules(world: 'GSTLAWorld'):
     add_rule(world.get_location(LocationName.Whorl),
              lambda state: state.has(ItemName.Hover_Jade, player) and state.has(ItemName.Reveal, player) and state.has(ItemName.Pound_Cube, player) and state.has(ItemName.Blue_Key, player))
 
-    add_rule(world.get_location(LocationName.Jupiter_Lighthouse_Aeri_Agatio_and_Karst_fight),
+    add_rule(world.get_location(LocationName.Jupiter_Lighthouse_Aeri_Agatio_and_Karst),
              lambda state: state.has(ItemName.Hover_Jade, player) and state.has(ItemName.Reveal, player) and state.has(ItemName.Pound_Cube, player) and state.has(ItemName.Blue_Key, player) and state.has(ItemName.Red_Key, player))
 
     #Atteka Cavern
@@ -766,24 +830,37 @@ def set_access_rules(world: 'GSTLAWorld'):
 
     #Magma Rock Interior
     add_rule(world.get_location(LocationName.Magma_Rock_Magma_Ball),
-             lambda state: state.has(ItemName.Whirlwind, player) and state.has(ItemName.Blaze, player))
-
-    add_rule(world.get_location(LocationName.Magma_Rock_Blaze),
-             lambda state: state.has(ItemName.Whirlwind, player))
-
-    add_rule(world.get_location(LocationName.Magma_Rock_Salamander_Tail_Two),
-             lambda state: state.has(ItemName.Whirlwind, player))
+             lambda state: state.has(ItemName.Blaze, player))
 
     add_rule(world.get_location(LocationName.Magma_Rock_Golem_Core),
              lambda state: state.has(ItemName.Whirlwind, player))
 
+    if world.options.shortcut_magma_rock:
+        add_rule(world.get_location(LocationName.Magma_Rock_Lucky_Medal),
+                 lambda state: state.has(ItemName.Burst_Brooch, player))
+        add_rule(world.get_location(LocationName.Magma_Rock_Mist_Potion),
+                 lambda state: state.has(ItemName.Burst_Brooch, player))
+        add_rule(world.get_location(LocationName.Magma_Rock_Salamander_Tail_Two),
+                 lambda state: state.has(ItemName.Burst_Brooch, player))
+        add_rule(world.get_location(LocationName.Magma_Rock_Golem_Core),
+                 lambda state: state.has(ItemName.Burst_Brooch, player))
+    else:
+        add_rule(world.get_location(LocationName.Magma_Rock_Salamander_Tail_Two),
+                 lambda state: state.has(ItemName.Whirlwind, player))
+        add_rule(world.get_location(LocationName.Magma_Rock_Blaze),
+                 lambda state: state.has(ItemName.Whirlwind, player))
+        add_rule(world.get_location(LocationName.Magma_Rock_Magma_Ball),
+                 lambda state: state.has(ItemName.Whirlwind, player))
+
     #Loho
-    add_rule(world.get_location(LocationName.Loho_Golem_Core),
-             lambda state: state.has(ItemName.Magma_Ball, player) and state.has(ItemName.Scoop_Gem, player))
-    add_rule(world.get_location(LocationName.Loho_Golem_Core_Two),
-             lambda state: state.has(ItemName.Magma_Ball, player) and state.has(ItemName.Scoop_Gem, player) and state.has(ItemName.Lifting_Gem, player))
-    add_rule(world.get_location(LocationName.Lull),
+    add_rule(world.get_location(LocationName.Loho_Ship_Cannon),
              lambda state: state.has(ItemName.Magma_Ball, player))
+    add_rule(world.get_location(LocationName.Loho_Golem_Core),
+             lambda state: state.has(ItemName.Ship_Cannon, player) and state.has(ItemName.Scoop_Gem, player))
+    add_rule(world.get_location(LocationName.Loho_Golem_Core_Two),
+             lambda state: state.has(ItemName.Ship_Cannon, player) and state.has(ItemName.Scoop_Gem, player) and state.has(ItemName.Lifting_Gem, player))
+    add_rule(world.get_location(LocationName.Lull),
+             lambda state: state.has(ItemName.Ship_Cannon, player))
 
     #Angara Cavern
     add_rule(world.get_location(LocationName.Angara_Cavern_Haures),
@@ -817,6 +894,9 @@ def set_access_rules(world: 'GSTLAWorld'):
     add_rule(world.get_location(LocationName.Mars_Lighthouse_Mars_Star),
              lambda state: state.has(ItemName.Flame_Dragons_defeated, player))
 
+    add_rule(world.get_location(LocationName.Mars_Lighthouse_Heated),
+             lambda state: state.has(ItemName.Flame_Dragons_defeated, player) and state.has(ItemName.Mars_Star, player))
+
     add_rule(world.get_location(LocationName.Mars_Lighthouse_Orihalcon),
              lambda state: state.has(ItemName.Pound_Cube, player) and state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Blaze, player) and state.has(ItemName.Grindstone, player))
 
@@ -828,17 +908,20 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Pound_Cube, player) and state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Blaze, player) and
                            state.has(ItemName.Reveal, player) and state.has(ItemName.Teleport_Lapis, player) and state.has(ItemName.Grindstone, player))
 
-    add_rule(world.get_location(LocationName.Mars_Lighthouse_Flame_Dragons_fight),
+    add_rule(world.get_location(LocationName.Mars_Lighthouse_Flame_Dragons),
              lambda state: state.count_group(ItemType.Character.name, player) >= 3 and state.has(ItemName.Teleport_Lapis, player) and state.has(ItemName.Pound_Cube, player) and
                            state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Grindstone, player) and state.has(ItemName.Blaze, player) and state.has(ItemName.Reveal, player))
 
 
     #Mars Lighthouse activated
+    if world.options.shortcut_mars_lighthouse == 0:
+        add_rule(world.get_location(LocationName.Fugue),
+                lambda state: state.has(ItemName.Mars_Lighthouse_Heated, player))
 
     add_rule(world.get_location(LocationName.Mars_Lighthouse_Psy_Crystal),
-             lambda state: state.has(ItemName.Cyclone_Chip, player) and state.has(ItemName.Hover_Jade, player))
+             lambda state: state.has(ItemName.Cyclone_Chip, player) and state.has(ItemName.Hover_Jade, player) and state.has(ItemName.Reveal, player))
 
-    add_rule(world.get_location(LocationName.Mars_Lighthouse_Doom_Dragon_Fight),
+    add_rule(world.get_location(LocationName.Mars_Lighthouse_Doom_Dragon),
              lambda state: state.count_group(ItemType.Character.name, player) >= 3 and state.has(ItemName.Cyclone_Chip, player) and state.has(ItemName.Hover_Jade, player) and
                            state.has(ItemName.Frost_Jewel, player) and state.has(ItemName.Burst_Brooch, player) and state.has(ItemName.Blaze, player) and state.has(ItemName.Carry_Stone, player) and 
                            state.has(ItemName.Sand, player) and state.has(ItemName.Reveal, player) and state.has(ItemName.Teleport_Lapis, player))
@@ -847,73 +930,87 @@ def set_access_rules(world: 'GSTLAWorld'):
     if world.options.djinn_logic > 0:
         djinn_percentage = world.options.djinn_logic / 100
 
-        add_rule(world.get_location(LocationName.Yampi_Desert_Scoop_Gem),
+        add_rule(world.get_location(LocationName.Yampi_Desert_King_Scorpion),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(3 * djinn_percentage))
 
         add_rule(world.get_location(LocationName.Alhafra_Briggs),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(6 * djinn_percentage))
 
-        add_rule(world.get_location(LocationName.Lemurian_Ship_Aqua_Hydra_fight),
+        add_rule(world.get_location(LocationName.Lemurian_Ship_Aqua_Hydra),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(10 * djinn_percentage))
 
-        add_rule(world.get_location(LocationName.Gaia_Rock_Serpent_Fight),
+        add_rule(world.get_location(LocationName.Gaia_Rock_Serpent),
                  lambda state: (state.count_group(ItemType.Djinn.name, player) >= math.ceil(24 * djinn_percentage) or
                                 (state.count_group(ItemType.Djinn.name, player) >= math.ceil(16 * djinn_percentage) and state.has(ItemName.Whirlwind, player))))
 
-        add_rule(world.get_location(LocationName.Champa_Trident),
+        add_rule(world.get_location(LocationName.Champa_Avimander),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(20 * djinn_percentage))
 
-        add_rule(world.get_location(LocationName.Sea_of_Time_Poseidon_fight),
+        add_rule(world.get_location(LocationName.Sea_of_Time_Poseidon),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(24 * djinn_percentage))
 
-        add_rule(world.get_location(LocationName.Shaman_Village_Moapa_fight),
+        add_rule(world.get_location(LocationName.Shaman_Village_Moapa),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(28 * djinn_percentage))
 
-        add_rule(world.get_location(LocationName.Mars_Lighthouse_Flame_Dragons_fight),
+        add_rule(world.get_location(LocationName.Mars_Lighthouse_Flame_Dragons),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(48 * djinn_percentage))
 
-        add_rule(world.get_location(LocationName.Mars_Lighthouse_Doom_Dragon_Fight),
+        add_rule(world.get_location(LocationName.Mars_Lighthouse_Doom_Dragon),
                  lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(56 * djinn_percentage))
+
     else:
         #Force whirldwind to be able to get all 4 light orbs to make serpent as weak as possible to beat it logically without djinn
-        add_rule(world.get_location(LocationName.Gaia_Rock_Serpent_Fight),
+        add_rule(world.get_location(LocationName.Gaia_Rock_Serpent),
                  lambda state: state.has(ItemName.Whirlwind, player))
+
 
     #Optional Super Boss content
     if world.options.omit_locations < 2:
+        add_rule(world.get_location(LocationName.Yampi_Desert_Cave_Valukar),
+                 lambda state: state.count_group(ItemType.Character.name, player) >= 7 and state.has(
+                     ItemName.Pound_Cube, player))
+        add_rule(world.get_location(LocationName.Islet_Cave_Sentinel),
+                 lambda state: state.count_group(ItemType.Character.name, player) >= 7 and state.has(
+                     ItemName.Teleport_Lapis, player))
+        add_rule(world.get_location(LocationName.Treasure_Isle_Star_Magician),
+                 lambda state: state.count_group(ItemType.Character.name, player) >= 7)
+
         add_rule(world.get_location(LocationName.Yampi_Desert_Cave_Daedalus),
-             lambda state: state.count_group(ItemType.Character.name, player) >= 7 and state.has(ItemName.Pound_Cube, player))
+             lambda state: state.has(ItemName.Valukar_defeated, player))
 
         add_rule(world.get_location(LocationName.Islet_Cave_Catastrophe),
-             lambda state: state.count_group(ItemType.Character.name, player) >= 7 and state.has(ItemName.Teleport_Lapis, player))
-        
-        add_rule(world.get_location(LocationName.Treasure_Isle_Azul), 
-             lambda state: state.count_group(ItemType.Character.name, player) >= 7)
+             lambda state: state.has(ItemName.Sentinel_defeated, player))
 
-        if world.options.djinn_logic > 0:
-                add_rule(world.get_location(LocationName.Yampi_Desert_Cave_Daedalus),
-                        lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage))
+        add_rule(world.get_location(LocationName.Treasure_Isle_Azul),
+             lambda state: state.has(ItemName.Star_Magician_defeated, player))
+        if world.options.djinn_logic.value > 0:
+            add_rule(world.get_location(LocationName.Yampi_Desert_Cave_Valukar),
+                     lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage))
 
-                add_rule(world.get_location(LocationName.Islet_Cave_Catastrophe),
-                        lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage))
+            add_rule(world.get_location(LocationName.Islet_Cave_Sentinel),
+                     lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage))
 
-                add_rule(world.get_location(LocationName.Treasure_Isle_Azul), 
-                        lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage))
+            add_rule(world.get_location(LocationName.Treasure_Isle_Star_Magician),
+                     lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage))
+
 
 
     if world.options.omit_locations < 1:
         #Anemos Inner Sanctum
+        add_rule(world.get_location(LocationName.Anemos_Inner_Sanctum_Dullahan),
+                 lambda state: state.count_group(ItemType.Character.name, player) >= 7 and state.has(
+                     ItemName.Lifting_Gem, player) and state.has(
+                     ItemName.Sand, player) and state.has(ItemName.Hover_Jade, player))
+
         add_rule(world.get_location(LocationName.Anemos_Inner_Sanctum_Iris),
-             lambda state: state.count_group(ItemType.Character.name, player) >= 7 and state.has(ItemName.Lifting_Gem, player) and state.has(ItemName.Sand, player) and state.has(ItemName.Hover_Jade, player))
+             lambda state: state.has(ItemName.Dullahan_defeated, player))
 
         add_rule(world.get_location(LocationName.Anemos_Inner_Sanctum_Orihalcon),
              lambda state: state.has(ItemName.Lifting_Gem, player))
-        
-        if world.options.djinn_logic > 0:
-            add_rule(world.get_location(LocationName.Anemos_Inner_Sanctum_Iris),
-                lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(72 * djinn_percentage))
 
-
+        if world.options.djinn_logic.value > 0:
+            add_rule(world.get_location(LocationName.Anemos_Inner_Sanctum_Dullahan),
+                     lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(72 * djinn_percentage))
 
     #Hidden Items
     if world.options.item_shuffle > 2:
@@ -1008,13 +1105,16 @@ def set_access_rules(world: 'GSTLAWorld'):
              lambda state: state.has(ItemName.Cyclone_Chip, player))
         
         add_rule(world.get_location(LocationName.Loho_Mythril_Silver),
-             lambda state: state.has(ItemName.Magma_Ball, player) and state.has(ItemName.Scoop_Gem, player))
+             lambda state: state.has(ItemName.Ship_Cannon, player) and state.has(ItemName.Scoop_Gem, player))
 
         if world.options.reveal_hidden_item == 1:
                 for loc in location_type_to_data[LocationType.Hidden]:
+                        loc_name = loc_names_by_id[loc.ap_id]
                         #for all hidden items that are not eventype 131 (these are scoopable or cyclone places), we require reveal
-                        if loc.event_type != 131 or loc_names_by_id[loc.ap_id] == LocationName.Daila_Psy_Crystal:
-                                add_rule(world.get_location(loc_names_by_id[loc.ap_id]),
+                        if (loc.event_type != 131 or loc_name == LocationName.Daila_Psy_Crystal or loc_name== LocationName.Loho_Mythril_Silver or
+                            loc_name == LocationName.Lemuria_Lucky_Medal or loc_name == LocationName.Lemuria_Rusty_Sword or
+                            loc_name == LocationName.Lemuria_Bone or loc_name == LocationName.Lemuria_Star_Dust):
+                                add_rule(world.get_location(loc_name),
                                         lambda state: state.has(ItemName.Reveal, player))
 
 class _RestrictionRule:
@@ -1023,7 +1123,7 @@ class _RestrictionRule:
         self.player = player
         self.loc_restrictions = loc_restrictions
 
-    def __call__(self, item) -> bool:
+    def __call__(self, item: 'GSTLAItem') -> bool:
         # Really the type should be 'GSTLAItem' -> bool, but I dunno how to get around python typing
         if item.player != self.player:
             return True
