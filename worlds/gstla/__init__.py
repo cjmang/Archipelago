@@ -95,6 +95,10 @@ class GSTLASettings(settings.Group):
 
 
 class GSTLAWorld(World):
+    """Golden Sun The Lost Age puts the player into the roles of an Adept named Felix and his allies
+       as they seek to restore the power of Alchemy to the world of Weyard. Along the way, the player 
+       uses Psynergy to defeat enemies and discover new locations, help out local populations, 
+       and find elemental Djinn which augment the character's powers."""
     game = "Golden Sun The Lost Age"
     options_dataclass: ClassVar[Type[PerGameCommonOptions]] = GSTLAOptions
     options: GSTLAOptions
