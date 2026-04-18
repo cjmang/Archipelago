@@ -318,15 +318,12 @@ class GSTLAWorld(World):
                     character_map[loc.item.player][i].append(gsitem)
 
         for slot, max_sphere in max_spheres.items():
-            if max_sphere == -1:
-                logger.warning(f"Could not find max sphere for GSTLA for player {multiworld.get_player_name(slot)}; cannot scale mimics or characters")
-            else:
-                world: GSTLAWorld = cast(GSTLAWorld, multiworld.worlds[slot])
-                logger.info(f"Max sphere for slot{multiworld.get_player_name(slot)} is {max_sphere}")
-                if world.options.scale_mimics:
-                    world._scale_mimics(max_sphere, mimic_map[slot])
-                if world.options.scale_characters:
-                    world._scale_characters(max_sphere, character_map[slot])
+            world: GSTLAWorld = cast(GSTLAWorld, multiworld.worlds[slot])
+            logger.info(f"Max sphere for slot{multiworld.get_player_name(slot)} is {max_sphere}")
+            if world.options.scale_mimics:
+                world._scale_mimics(max_sphere, mimic_map[slot])
+            if world.options.scale_characters:
+                world._scale_characters(max_sphere, character_map[slot])
 
     def _scale_mimics(self, max_sphere: int, mimic_map: defaultdict[int, List[Location]]):
         mimic_lists = []
