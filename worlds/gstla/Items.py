@@ -4,10 +4,11 @@ from .gen.InternalItemData import InternalItemData
 from .gen.LocationNames import loc_names_by_id
 from .gen.ItemNames import ItemName
 from .gen.LocationNames import LocationName
-from .gen.ItemData import (ItemData, events, mimics, psyenergy_as_item_list, psyenergy_list, summon_list, other_progression,
-                           forge_only, lucky_only, shop_only, vanilla_coins, remainder, useful_consumables, stat_boosters, 
-                           useful_consumables, forge_materials, useful_remainder, class_change_items, rusty_items,
-                           TrapType, FillerType, all_items as all_gen_items, djinn_items, characters as character_items)
+from .gen.ItemData import (ItemData, events, mimics, psyenergy_as_item_list, psyenergy_list, summon_list,
+                           other_progression, forge_only, lucky_only, vanilla_coins, remainder, stat_boosters,
+                           useful_consumables, forge_materials, chest_equipment, class_change_items, rusty_items,
+                           TrapType, FillerType, all_items as all_gen_items, djinn_items, characters as character_items,
+                           shop_basic_equipment, non_vanilla, shop_artifacts)
 from .gen.LocationData import LocationType, location_type_to_data
 from .GameData import ItemType
 
@@ -230,7 +231,7 @@ def create_items(world: 'GSTLAWorld', player: int):
         world.multiworld.itempool.append(ap_item)
         sum_locations -= 1
 
-    for item in useful_remainder:
+    for item in chest_equipment:
         ap_item = create_filler(world, item)
         world.multiworld.itempool.append(ap_item)
         sum_locations -= 1
@@ -338,8 +339,17 @@ def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:
         elif filler_type == FillerType.LuckyEquipment:
             item = world.random.choice(lucky_only)
 
-        elif filler_type == FillerType.ShopEquipment:
-            item = world.random.choice(shop_only)
+        elif filler_type == FillerType.ChestEquipment:
+            item = world.random.choice(chest_equipment)
+
+        elif filler_type == FillerType.NonVanillaEquipment:
+            item = world.random.choice(non_vanilla)
+
+        elif filler_type == FillerType.ShopArtifacts:
+            item = world.random.choice(shop_artifacts)
+
+        elif filler_type == FillerType.ShopBasicEquipment:
+            item = world.random.choice(shop_basic_equipment)
 
         elif filler_type == FillerType.Coins:
             item = world.random.choice(vanilla_coins)
@@ -376,8 +386,17 @@ def create_filler_pool_weights(world: 'GSTLAWorld') -> Dict[FillerType, int]:
     if world.options.lucky_equipment_filler_weight > 0:
         filler_pool_weights[FillerType.LuckyEquipment] = world.options.lucky_equipment_filler_weight
 
-    if world.options.shop_equipment_filler_weight > 0:
-        filler_pool_weights[FillerType.ShopEquipment] = world.options.shop_equipment_filler_weight
+    if world.options.chest_equipment_filler_weight > 0:
+        filler_pool_weights[FillerType.ChestEquipment] = world.options.chest_equipment_filler_weight
+
+    if world.options.non_vanilla_equipment_filler_weight > 0:
+        filler_pool_weights[FillerType.NonVanillaEquipment] = world.options.non_vanilla_equipment_filler_weight
+
+    if world.options.shop_artifacts_filler_weight > 0:
+        filler_pool_weights[FillerType.ShopArtifacts] = world.options.shop_artifacts_filler_weight
+
+    if world.options.shop_basic_equipment_filler_weight > 0:
+        filler_pool_weights[FillerType.ShopBasicEquipment] = world.options.shop_basic_equipment_filler_weight
 
     if world.options.coins_filler_weight > 0:
         filler_pool_weights[FillerType.Coins] = world.options.coins_filler_weight

@@ -220,7 +220,8 @@ class GameData:
         self.item_names: Dict[int, ItemName] = dict()
         self.events: Dict[int, EventDatum] = dict()
         self.vanilla_item_ids: Set[int] = set()
-        self.vanilla_shop_contents: Set[int] = set()
+        self.shop_basic_equipment: Set[int] = set()
+        self.shop_artifacts: Set[int] = set()
         self.forgeable_ids: Set[int] = set()
         self.lucky_medal_ids: Set[int] = {
             # 23, # Assassin Blade
@@ -350,10 +351,10 @@ class GameData:
         for shop in shop_data:
             for id in shop['items']:
                 if id != 0:
-                    self.vanilla_shop_contents.add(id)
+                    self.shop_basic_equipment.add(id)
             for artifact in shop['artifacts']:
                 if artifact != 0:
-                    self.vanilla_shop_contents.add(artifact)
+                    self.shop_artifacts.add(artifact)
 
     def _load_forgeables(self):
         with open(os.path.join(SCRIPT_DIR, 'data', 'forgeables.json'), 'r') as forge_file:

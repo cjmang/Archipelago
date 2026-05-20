@@ -1,25 +1,22 @@
-from Options import StartInventoryPool
-from .Options import (ItemShuffle, RevealHiddenItem, OmitLocations, AddGs1Items, AddDummyItems,
-                      StartWithShip, ShipWings, AnemosAccess, CharacterShuffle, SecondStartingCharacter,
-                      CharStatShuffle, CharEleShuffle, NoLearningUtilPsy, RandomizeClassStatBoosts,
-                      ClassPsynergy, ClassPsynergyLevels, AdjustPsyPower, AdjustPsyCost, RandomizePsyAoe,
-                      AdjustEnemyPsyPower, RandomizeEnemyPsyAoe, EnemyEResShuffle, StartWithHealPsynergy,
-                      StartWithRevivePsynergy, DjinnShuffle, DjinnLogic,
-                      ShuffleDjinnStats, AdjustDjinnPower, RandomizeDjinnAoe, ScaleDjinnBattleDifficulty,
-                      RandomizeSummonCosts, AdjustSummonPower, RandomizeEqCompatibility, AdjustEqPrices,
-                      AdjustEqStats, ShuffleAttack, ShuffleWpnEffects, ShuffleDefense, ShuffleArmEffect,
-                      RandomizeEqCurses, RemoveCurses, VisibleItems, FreeAvoid, FreeRetreat, ScaleExpGained,
-                      ScaleCoinsGained, StartingLevels, SanctuaryReviveCost, AvoidPatch, EnableHardMode,
-                      HalveEncounterRate, EasierBosses, NamedPuzzles, ManualRetreatGlitch, MusicShuffle,
-                      TelportEverywhere, TrapChance, MimicTrapWeight, ForgeMaterialsFillerWeight,
-                      RustyMaterialsFillerWeight, StatBoostFillerWeight, UncommonConsumableFillerWeight,
-                      ForgedEquipmentFillerWeight, LuckyEquipmentFillerWeight, ShopEquipmentFillerWeight,
-                      CoinsFillerWeight, CommonConsumablesFillerWeight, AutoRun, ScaleMimics, ScaleCharacters,
-                      MaxScaledLevel, ForgeMaterialsAreFiller, ArtifactsAreFiller, DisableShopGameTickets,
-                      Goal, RandomGoals, DjinnHuntCount, SummonHuntCount, ShortcutMarsLighthouse, ShortcutMagmaRock)
-
 from Options import OptionGroup
-
+from .Options import (NonVanillaEquipmentFillerWeight, ShopArtifactsFillerWeight, ShopBasicEquipmentFillerWeight,
+                      ItemShuffle, RevealHiddenItem, OmitLocations, AddGs1Items, AddDummyItems, StartWithShip,
+                      ShipWings, AnemosAccess, CharacterShuffle, SecondStartingCharacter, CharStatShuffle,
+                      CharEleShuffle, NoLearningUtilPsy, RandomizeClassStatBoosts, ClassPsynergy, ClassPsynergyLevels,
+                      AdjustPsyPower, AdjustPsyCost, RandomizePsyAoe, AdjustEnemyPsyPower, RandomizeEnemyPsyAoe,
+                      EnemyEResShuffle, StartWithHealPsynergy, StartWithRevivePsynergy, DjinnShuffle, DjinnLogic,
+                      ShuffleDjinnStats, AdjustDjinnPower, RandomizeDjinnAoe, ScaleDjinnBattleDifficulty,
+                      RandomizeSummonCosts, AdjustSummonPower, RandomizeEqCompatibility, AdjustEqPrices, AdjustEqStats,
+                      ShuffleAttack, ShuffleWpnEffects, ShuffleDefense, ShuffleArmEffect, RandomizeEqCurses,
+                      RemoveCurses, VisibleItems, FreeAvoid, FreeRetreat, ScaleExpGained, ScaleCoinsGained,
+                      StartingLevels, SanctuaryReviveCost, AvoidPatch, EnableHardMode, HalveEncounterRate, EasierBosses,
+                      NamedPuzzles, ManualRetreatGlitch, MusicShuffle, TelportEverywhere, TrapChance, MimicTrapWeight,
+                      ForgeMaterialsFillerWeight, RustyMaterialsFillerWeight, StatBoostFillerWeight,
+                      UncommonConsumableFillerWeight, ForgedEquipmentFillerWeight, LuckyEquipmentFillerWeight,
+                      CoinsFillerWeight, CommonConsumablesFillerWeight, AutoRun, ScaleMimics, ScaleCharacters,
+                      MaxScaledLevel, ForgeMaterialsAreFiller, ArtifactsAreFiller, DisableShopGameTickets, Goal,
+                      RandomGoals, DjinnHuntCount, SummonHuntCount, ShortcutMarsLighthouse, ShortcutMagmaRock,
+                      ChestEquipmentFillerWeight)
 
 gstla_option_groups = [
     OptionGroup("General Pool", [
@@ -116,7 +113,10 @@ gstla_option_groups = [
         UncommonConsumableFillerWeight,
         ForgedEquipmentFillerWeight,
         LuckyEquipmentFillerWeight,
-        ShopEquipmentFillerWeight,
+        ChestEquipmentFillerWeight,
+        NonVanillaEquipmentFillerWeight,
+        ShopArtifactsFillerWeight,
+        ShopBasicEquipmentFillerWeight,
         CoinsFillerWeight,
         CommonConsumablesFillerWeight
     ])

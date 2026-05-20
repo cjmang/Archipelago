@@ -575,11 +575,41 @@ class LuckyEquipmentFillerWeight(Range):
     range_end = 100
     default = 0
 
-class ShopEquipmentFillerWeight(Range):
-    """The weight for a filler item to be equipment from the shop.
-    These include the normal things you can buy amongst a few of the artefacts. Think along the lines of Long Sword, Silver Helm, Chain Mail to a Frost Wand."""
-    internal_name = "shop_equipment_filler_weight"
-    display_name = "Shop Equipment Filler Weight"
+class ChestEquipmentFillerWeight(Range):
+    """The weight for a filler item to be equipment from a chest.
+    This is any equipment found in a chest, crate, or similar in the game.
+    Examples include Fire Brand, Sol Blade, Masamune, Turtle Boots, and Unicorn Ring."""
+    internal_name = "chest_equipment_filler_weight"
+    display_name = "Chest Equipment Filler Weight"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+class NonVanillaEquipmentFillerWeight(Range):
+    """The weight for a filler item to be equipment unavailable in vanilla GS2.
+    This is any equipment not found in a vanilla playthrough of GS2 if you collect all the limited quantity items.
+    Examples include Arctic Blade, Gaia Blade, Muramasa, Machete, and Elven Rapier"""
+    internal_name = "non_vanilla_equipment_filler_weight"
+    display_name = "Non Vanilla Equipment Filler Weight"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+class ShopArtifactsFillerWeight(Range):
+    """The weight for a filler item to be equipment originally from the artifacts menu of shops.
+    This is any of the equipment originally found in the artifacts menu of an equipment shop.
+    Examples include Shamshir, Silver Blade, Ninja Blade, Swift Sword, and Dragon Axe."""
+    internal_name = "shop_artifacts_filler_weight"
+    display_name = "Shop Artifacts Filler Weight"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+class ShopBasicEquipmentFillerWeight(Range):
+    """The weight for a filler item to be basic equipment from the shop.
+    These include the normal things you can buy infinitely. Think along the lines of Long Sword, Silver Helm, or Chain Mail."""
+    internal_name = "shop_basic_equipment_filler_weight"
+    display_name = "Shop Basic Equipment Filler Weight"
     range_start = 0
     range_end = 100
     default = 10
@@ -837,6 +867,9 @@ class GSTLAOptions(PerGameCommonOptions):
     forged_equipment_filler_weight: ForgedEquipmentFillerWeight
     lucky_equipment_filler_weight: LuckyEquipmentFillerWeight
     artifacts_are_filler: ArtifactsAreFiller
-    shop_equipment_filler_weight: ShopEquipmentFillerWeight
+    chest_equipment_filler_weight: ChestEquipmentFillerWeight
+    non_vanilla_equipment_filler_weight: NonVanillaEquipmentFillerWeight
+    shop_artifacts_filler_weight: ShopArtifactsFillerWeight
+    shop_basic_equipment_filler_weight: ShopBasicEquipmentFillerWeight
     coins_filler_weight: CoinsFillerWeight
     common_consumable_filler_weight: CommonConsumablesFillerWeight
