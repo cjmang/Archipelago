@@ -31,7 +31,8 @@ class _MemDomain(str, Enum):
     ROM = 'ROM'
 
 class _DataLocations(IntEnum):
-    IN_GAME = (0x428, 0x2, 0x0, _MemDomain.EWRAM)
+    MAP_ID = (0x428, 0x2, 0x0, _MemDomain.EWRAM)
+    ENTRANCE_ID = (0x42A, 0x2, 0x0, _MemDomain.EWRAM)
     DJINN_FLAGS = (FLAG_START + (0x30 >> 3), 0x0A, 0x30, _MemDomain.EWRAM)
     AP_ITEM_SLOT = (0xA96, 0x2, 0x0, _MemDomain.EWRAM)
     # two unused bytes in save data
@@ -293,6 +294,8 @@ class GSTLAClient(BizHawkClient):
         self.coop: int = 0
         self.remote_blacklist: Set[int] = remote_blacklist
         self.goals = GoalManager()
+        self.last_map: int = 0
+        self.last_entrance: int = 0
 
     async def validate_rom(self, ctx: 'BizHawkClientContext'):
         from worlds._bizhawk.context import TextCategory
@@ -338,10 +341,9 @@ class GSTLAClient(BizHawkClient):
             self.djinn_ram_to_rom[rom_flag] = djinn_flag
 
     def _is_in_game(self, data: List[bytes]) -> bool:
-        # What the emo tracker pack does; seems like it also verifies the player
-        # has opened a save file
-        flag = int.from_bytes(data[_DataLocations.IN_GAME], 'little')
-        return flag > 1
+        # Map ID 0x00 and 0x01 are Title Screen and Clear Data respectively, everything greater is safe
+        current_map = int.from_bytes(data[_DataLocations.MAP_ID], 'little')
+        return current_map > 1
 
     def get_goal_flags_key(self, ctx: 'BizHawkClientContext') -> str:
         return f"gstla_goal_flags_status_{ctx.slot}_{ctx.team}"
@@ -354,6 +356,12 @@ class GSTLAClient(BizHawkClient):
 
     def get_djinn_possessed_key(self, ctx: 'BizHawkClientContext') -> str:
         return f"gstla_djinn_held_{ctx.slot}_{ctx.team}"
+
+    def get_current_map_key(self, ctx: 'BizHawkClientContext') -> str:
+        return f"gstla_current_map_{ctx.slot}_{ctx.team}"
+
+    def get_current_entrance_key(self, ctx: 'BizHawkClientContext') -> str:
+        return f"gstla_current_entrance_{ctx.slot}_{ctx.team}"
 
     def check_summon_count(self, ctx: "BizHawkClientContext") -> None:
         if self.summon_item_index >= len(ctx.items_received):
@@ -605,6 +613,28 @@ class GSTLAClient(BizHawkClient):
                 self.local_events = self.temp_events
 
         await self.goals.check_goals(self, ctx)
+
+        current_map = int.from_bytes(result[_DataLocations.MAP_ID], 'little')
+        if current_map != self.last_map:
+            self.last_map = current_map
+            await ctx.send_msgs([{
+                "cmd": "Set",
+                "key": self.get_current_map_key(ctx),
+                "default": 0,
+                "want_reply": False,
+                "operations": [{"operation": "replace", "value": current_map}]
+            }])
+
+        current_entrance = int.from_bytes(result[_DataLocations.ENTRANCE_ID], 'little')
+        if current_entrance != self.last_entrance:
+            self.last_entrance = current_entrance
+            await ctx.send_msgs([{
+                "cmd": "Set",
+                "key": self.get_current_entrance_key(ctx),
+                "default": 0,
+                "want_reply": False,
+                "operations": [{"operation": "replace", "value": current_entrance}]
+            }])
 
         if not ctx.finished_game and self.goals.is_done(self, ctx):
             await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
