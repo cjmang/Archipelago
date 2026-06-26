@@ -596,12 +596,13 @@ class GSTLAClient(BizHawkClient):
             if self.temp_events:
                 await ctx.send_msgs([{
                     "cmd": "Set",
+                    "operation": "update",
                     "want_reply": True,
                     "key": self.get_event_key(ctx),
                     "default": [],
                     "operations": [
                         {
-                            "operation": "replace",
+                            "operation": "update",
                             "value": [x for x in self.temp_events],
                         }
                     ]
