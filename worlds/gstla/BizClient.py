@@ -357,11 +357,8 @@ class GSTLAClient(BizHawkClient):
     def get_djinn_possessed_key(self, ctx: 'BizHawkClientContext') -> str:
         return f"gstla_djinn_held_{ctx.slot}_{ctx.team}"
 
-    def get_current_map_key(self, ctx: 'BizHawkClientContext') -> str:
-        return f"gstla_current_map_{ctx.slot}_{ctx.team}"
-
-    def get_current_entrance_key(self, ctx: 'BizHawkClientContext') -> str:
-        return f"gstla_current_entrance_{ctx.slot}_{ctx.team}"
+    def get_map_info_key(self, ctx: 'BizHawkClientContext') -> str:
+        return f"gstla_map_info_{ctx.slot}_{ctx.team}"
 
     def check_summon_count(self, ctx: "BizHawkClientContext") -> None:
         if self.summon_item_index >= len(ctx.items_received):
@@ -599,13 +596,12 @@ class GSTLAClient(BizHawkClient):
             if self.temp_events:
                 await ctx.send_msgs([{
                     "cmd": "Set",
-                    "operation": "update",
                     "want_reply": True,
                     "key": self.get_event_key(ctx),
                     "default": [],
                     "operations": [
                         {
-                            "operation": "update",
+                            "operation": "replace",
                             "value": [x for x in self.temp_events],
                         }
                     ]
@@ -615,25 +611,22 @@ class GSTLAClient(BizHawkClient):
         await self.goals.check_goals(self, ctx)
 
         current_map = int.from_bytes(result[_DataLocations.MAP_ID], 'little')
-        if current_map != self.last_map:
-            self.last_map = current_map
-            await ctx.send_msgs([{
-                "cmd": "Set",
-                "key": self.get_current_map_key(ctx),
-                "default": 0,
-                "want_reply": False,
-                "operations": [{"operation": "replace", "value": current_map}]
-            }])
-
         current_entrance = int.from_bytes(result[_DataLocations.ENTRANCE_ID], 'little')
-        if current_entrance != self.last_entrance:
+        if current_map != self.last_map or current_entrance != self.last_entrance:
+            self.last_map = current_map
             self.last_entrance = current_entrance
             await ctx.send_msgs([{
                 "cmd": "Set",
-                "key": self.get_current_entrance_key(ctx),
-                "default": 0,
+                "key": self.get_map_info_key(ctx),
+                "default": {},
                 "want_reply": False,
-                "operations": [{"operation": "replace", "value": current_entrance}]
+                "operations": [{
+                    "operation": "update",
+                    "value": {
+                        "map": current_map,
+                        "entrance": current_entrance
+                    }
+                }]
             }])
 
         if not ctx.finished_game and self.goals.is_done(self, ctx):
