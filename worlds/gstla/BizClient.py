@@ -621,7 +621,7 @@ class GSTLAClient(BizHawkClient):
                 "default": {},
                 "want_reply": False,
                 "operations": [{
-                    "operation": "update",
+                    "operation": "replace",
                     "value": {
                         "map": current_map,
                         "entrance": current_entrance
