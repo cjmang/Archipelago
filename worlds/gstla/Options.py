@@ -617,9 +617,13 @@ class AutoRun(Toggle):
 
 class Coop(Choice):
     """Enables cooping a seed by making local items the same as remote items, enabling
-     your friends to receive items you pick up.  Also helpful if trying to play a world from multiple devices.
+     your friends to receive items you pick up. Also helpful if trying to play a world from multiple devices.
      You will still need to pickup djinn the other person picks up.
-     off - vanilla
+
+     Note: Due to current limitations, if you are enabling this to coop a seed and you want to use this game's PopTracker pack,
+     you should turn automatic tabbing off in the pack's settings to avoid constant map changes.
+
+     off - Vanilla
      progression - Only progression items are treated as remote items
      prog_useful - Progression and useful items are treated as remote items
      all - All items are treated as remote items
