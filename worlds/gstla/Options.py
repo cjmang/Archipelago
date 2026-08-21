@@ -1,5 +1,16 @@
-from Options import Choice, Toggle, Range, NamedRange, PerGameCommonOptions, StartInventoryPool, OptionSet
 from dataclasses import dataclass
+
+from Options import (
+    Choice,
+    DeathLink as CoreDeathLink,
+    NamedRange,
+    OptionSet,
+    PerGameCommonOptions,
+    Range,
+    StartInventoryPool,
+    Toggle,
+)
+
 
 class StartWithShip(Choice):
     """What needs to be done to get the ship?
@@ -497,7 +508,7 @@ class TrapChance(Range):
     range_start = 0
     range_end = 100
     default = 0
-    
+
 class MimicTrapWeight(Range):
     """The weight for a trap to be a Mimic. As not all vanilla locations can be mimics.
     Mimics will drop their vanilla contents which tend to be more useful consumables but can also be things like Game Tickets or Lucky Medals.
@@ -547,7 +558,7 @@ class StatBoostFillerWeight(Range):
     range_start = 0
     range_end = 100
     default = 20
-    
+
 class UncommonConsumableFillerWeight(Range):
     """The weight for a filler item to be an uncommon consumable.
     Examples of these are Psy Crystal, Mist Potion, Potion and Water of Life."""
@@ -556,7 +567,7 @@ class UncommonConsumableFillerWeight(Range):
     range_start = 0
     range_end = 100
     default = 25
-    
+
 class ForgedEquipmentFillerWeight(Range):
     """The weight for a filler item to be the end result of forging equipment through materials or rusty weapons.
     Examples are Excalibur, Viking Axe, Goblin's Rod, Luna Shield, Astral Circlet and Dragon Boots."""
@@ -565,7 +576,7 @@ class ForgedEquipmentFillerWeight(Range):
     range_start = 0
     range_end = 100
     default = 0
-    
+
 class LuckyEquipmentFillerWeight(Range):
     """The weight for a filler item to be a lucky item reward from the fountain in Lemuria or Lucky Wheels in Contigo.
     Examples of these are Hestia Blade, Mighty Axe, Aegis Shield, Crown of Glory, Quick Boots, Silk Shirt and War Ring."""
@@ -734,6 +745,13 @@ class ShortcutMagmaRock(Toggle):
     display_name = "Shortcut Magma Rock"
     default = 0
 
+class DeathLink(CoreDeathLink):
+    """When you die, everyone who enabled death link dies. Of course, the reverse is true too.
+    Note: can also be toggled at runtime with the "/deathlink" client command.
+    """
+    internal_name = "death_link"
+    default = 0
+
 @dataclass
 class GSTLAOptions(PerGameCommonOptions):
     #Pool and Logic settings
@@ -819,8 +837,9 @@ class GSTLAOptions(PerGameCommonOptions):
     teleport_to_dungeons_and_towns: TelportEverywhere
     auto_run: AutoRun
     coop: Coop
+    death_link: DeathLink
     disable_shop_gametickets: DisableShopGameTickets
-    
+
     start_inventory_from_pool: StartInventoryPool
 
     #traps

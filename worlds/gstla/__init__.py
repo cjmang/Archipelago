@@ -247,6 +247,7 @@ class GSTLAWorld(World):
                 "name_puzzles": self.options.name_puzzles.value,
                 "teleport_to_dungeons_and_towns": self.options.teleport_to_dungeons_and_towns.value,
                 "coop": self.options.coop.value,
+                "death_link": self.options.death_link.value,
             }
         }
         goal_dict = dict()
