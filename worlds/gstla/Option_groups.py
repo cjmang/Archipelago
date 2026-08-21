@@ -16,7 +16,8 @@ from .Options import (ItemShuffle, RevealHiddenItem, OmitLocations, AddGs1Items,
                       ForgedEquipmentFillerWeight, LuckyEquipmentFillerWeight, ShopEquipmentFillerWeight,
                       CoinsFillerWeight, CommonConsumablesFillerWeight, AutoRun, ScaleMimics, ScaleCharacters,
                       MaxScaledLevel, ForgeMaterialsAreFiller, ArtifactsAreFiller, DisableShopGameTickets,
-                      Goal, RandomGoals, DjinnHuntCount, SummonHuntCount, ShortcutMarsLighthouse, ShortcutMagmaRock)
+                      Goal, RandomGoals, DjinnHuntCount, SummonHuntCount, ShortcutMarsLighthouse, ShortcutMagmaRock,
+                      DeathLink)
 
 from Options import OptionGroup
 
@@ -103,6 +104,7 @@ gstla_option_groups = [
         MusicShuffle,
         AutoRun,
         DisableShopGameTickets,
+        DeathLink,
     ]),
     OptionGroup("Trap and Filler Distribution", [
         ForgeMaterialsAreFiller,
