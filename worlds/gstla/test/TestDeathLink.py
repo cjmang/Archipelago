@@ -4,9 +4,7 @@ from worlds.gstla.test import GSTestBase
 
 
 class TestDeathLinkEnabled(GSTestBase):
-    options = {
-        "death_link": 1
-    }
+    options = {"death_link": 1}  # noqa: RUF012
 
     def test_deathlink_enabled(self):
         world = self.get_world()
@@ -19,6 +17,7 @@ class TestDeathLinkDoesNotAffectRandoData(GSTestBase):
     change anything in the ROM itself.
     So we just make sure the actual ROM bytes stay the same.
     """
+
     auto_construct = False
 
     def test_rom_bytes_unchanged(self):
