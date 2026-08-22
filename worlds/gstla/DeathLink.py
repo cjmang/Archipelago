@@ -1,7 +1,7 @@
 from __future__ import annotations  # TODO: pretty sure we dont need this for >= 3.11?
 
 from collections.abc import Sequence
-from enum import IntEnum
+from enum import Enum, IntEnum, auto
 from typing import NamedTuple
 
 RECRUITMENT_ADDR = 0x40  # also BizClient.FLAG_START
@@ -11,14 +11,15 @@ CHARACTER_BLOCK_START = 0x520
 IN_BATTLE_ADDR = 0x60  # TODO: duplicated in BizClient.py
 IN_BATTLE_BIT = 0x08
 
-# Addresses to trigger the field death. Similar to what happens on poison death.
-# This triggers the "<character>'s strength is exhausted..." textboxes for each character
-# plus the "Felix's party has been annihilated".
-FIELD_DEATH_REQUEST_ADDR = 0x3016A
+# Writing the SYSTEM_EVENT_FIELD_DEATH to SYSTEM_EVENT_ADDR triggers a death similar
+# to a death by poison. This results in the "<character>'s strength is exhausted..."
+# textboxes for each character plus the "Felix's party has been annihilated".
+SYSTEM_EVENT_ADDR = 0x3016A
+SYSTEM_EVENT_FIELD_DEATH = 0xFFFF
+
 FIELD_DEATH_NARRATION_COUNT_ADDR = 0x3016C
 FIELD_DEATH_SURVIVOR_COUNT_ADDR = 0x3016E
 FIELD_DEATH_NARRATION_LIST_ADDR = 0x30170
-FIELD_DEATH_REQUEST_VALUE = 0xFFFF
 
 HP_RATIO_OFFSET = 0x14
 MAX_HP_OFFSET = 0x34
@@ -69,7 +70,7 @@ def get_current_hp_ratio_address(character: CharacterIndex) -> int:
 GAME_STATE_READS: tuple[tuple[int, int], ...] = (
     (RECRUITMENT_ADDR, 1),
     (IN_BATTLE_ADDR, 1),
-    (FIELD_DEATH_REQUEST_ADDR, 2),
+    (SYSTEM_EVENT_ADDR, 2),
     (FIELD_DEATH_SURVIVOR_COUNT_ADDR, 2),
     *tuple((get_current_hp_address(character), 2) for character in CharacterIndex),
 )
@@ -78,7 +79,7 @@ GAME_STATE_READS: tuple[tuple[int, int], ...] = (
 class GameState(NamedTuple):
     recruitment: int
     in_battle: int
-    field_death_request: int
+    system_event: int
     survivor_count: int
     hp: tuple[int, ...]
 
@@ -91,7 +92,7 @@ class GameState(NamedTuple):
         return cls(
             recruitment=values[RECRUITMENT_ADDR],
             in_battle=values[IN_BATTLE_ADDR],
-            field_death_request=values[FIELD_DEATH_REQUEST_ADDR],
+            system_event=values[SYSTEM_EVENT_ADDR],
             survivor_count=values[FIELD_DEATH_SURVIVOR_COUNT_ADDR],
             hp=tuple(values[get_current_hp_address(character)] for character in CharacterIndex),
         )
@@ -115,6 +116,7 @@ class GameState(NamedTuple):
     @property
     def is_field_death_armed(self) -> bool:
         return self.field_death_request == FIELD_DEATH_REQUEST_VALUE
+        return self.system_event == SYSTEM_EVENT_FIELD_DEATH
 
     @property
     def is_party_wiped(self) -> bool:
@@ -136,9 +138,9 @@ class GameState(NamedTuple):
         """
         True when a field death is running and the game counts nobody as still standing.
 
-        We trigger a field death by writing FIELD_DEATH_REQUEST_VALUE into field_death_request,
+        We trigger a field death by writing SYSTEM_EVENT_FIELD_DEATH into the system event slot,
         but just doing that alone does not automatically mean that we triggered a death.
-        The game also writes that same FIELD_DEATH_REQUEST_VALUE every time a character goes down
+        The game also writes that same SYSTEM_EVENT_FIELD_DEATH every time a character goes down
         on the field, like when they're poisoned and take their last step.
         But as long as the survivor count is not 0, it just shows the
         "character is exhausted" text and the game continues normally.
@@ -227,5 +229,5 @@ def _build_field_death_request_writes(recruited: Sequence[CharacterIndex]) -> li
         MemoryWrite.u16(FIELD_DEATH_NARRATION_COUNT_ADDR, len(recruited)),
         *narration_list,
         MemoryWrite.u16(FIELD_DEATH_SURVIVOR_COUNT_ADDR, 0),
-        MemoryWrite.u16(FIELD_DEATH_REQUEST_ADDR, FIELD_DEATH_REQUEST_VALUE),
+        MemoryWrite.u16(SYSTEM_EVENT_ADDR, SYSTEM_EVENT_FIELD_DEATH),
     ]
