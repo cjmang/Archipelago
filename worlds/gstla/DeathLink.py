@@ -1,11 +1,13 @@
 from __future__ import annotations  # TODO: pretty sure we dont need this for >= 3.11?
 
-
-from typing import NamedTuple, Sequence
+from collections.abc import Sequence
+from enum import Enum, auto
+from typing import NamedTuple
 
 MAX_CHARACTER_COUNT: int = 8
 RECRUITMENT_ADDR = 0x40  # also BizClient.FLAG_START
 CHARACTER_BLOCK_SIZE = 0x14C
+CHARACTER_BLOCK_START = 0x520
 
 IN_BATTLE_ADDR = 0x60  # TODO: duplicated in BizClient.py
 IN_BATTLE_BIT = 0x08
@@ -20,15 +22,26 @@ FIELD_DEATH_SURVIVOR_COUNT_ADDR = 0x3016E
 FIELD_DEATH_NARRATION_LIST_ADDR = 0x30170
 FIELD_DEATH_REQUEST_VALUE = 0xFFFF
 
-HP_BASE_ADDRESS = 0x558
-HP_RATIO_BASE_ADDRESS = 0x534
+HP_RATIO_OFFSET = 0x14
+MAX_HP_OFFSET = 0x34
+CURRENT_HP_OFFSET = 0x38
+
+# TODO: Obsolete for deathlink, but maybe useful to store somewhere?
+MAX_PP_RATIO_OFFSET = 0x16
+MAX_PP_OFFSET = 0x36
+CURRENT_PP_OFFSET = 0x3A
+CHARACTER_STATUS_BYTE_OFFSET = 0x131  # 0 = none, 1 = poison, 2 = venom, ...
 
 
-def get_hp_address_for_char(index: int) -> int:
-    return HP_BASE_ADDRESS + index * CHARACTER_BLOCK_SIZE
+def get_character_block_address(index: int) -> int:
+    return CHARACTER_BLOCK_START + index * CHARACTER_BLOCK_SIZE
 
 
-def get_hp_ratio_address_for_char(index: int) -> int:
+def get_current_hp_address(index: int) -> int:
+    return get_character_block_address(index) + CURRENT_HP_OFFSET
+
+
+def get_current_hp_ratio_address(index: int) -> int:
     """
     The "HP ratio" here is very likely just the way the game draws the HP bar.
     For some reason, the devs decided that bar should also double as a check
@@ -41,7 +54,7 @@ def get_hp_ratio_address_for_char(index: int) -> int:
     in one single operation. Having them even just a few frames apart while someone spams
     their way through the battle actions can introduce a sudden full-heal.
     """
-    return HP_RATIO_BASE_ADDRESS + index * CHARACTER_BLOCK_SIZE
+    return get_character_block_address(index) + HP_RATIO_OFFSET
 
 
 GAME_STATE_READS: tuple[tuple[int, int], ...] = (
@@ -49,7 +62,8 @@ GAME_STATE_READS: tuple[tuple[int, int], ...] = (
     (IN_BATTLE_ADDR, 1),
     (FIELD_DEATH_REQUEST_ADDR, 2),
     (FIELD_DEATH_SURVIVOR_COUNT_ADDR, 2),
-) + tuple((get_hp_address_for_char(index), 2) for index in range(MAX_CHARACTER_COUNT))
+    *tuple((get_current_hp_address(index), 2) for index in range(MAX_CHARACTER_COUNT)),
+)
 
 
 class GameState(NamedTuple):
@@ -70,7 +84,7 @@ class GameState(NamedTuple):
             in_battle=values[IN_BATTLE_ADDR],
             field_death_request=values[FIELD_DEATH_REQUEST_ADDR],
             survivor_count=values[FIELD_DEATH_SURVIVOR_COUNT_ADDR],
-            hp=tuple(values[get_hp_address_for_char(index)] for index in range(MAX_CHARACTER_COUNT)),
+            hp=tuple(values[get_current_hp_address(index)] for index in range(MAX_CHARACTER_COUNT)),
         )
 
     @property
