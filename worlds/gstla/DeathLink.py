@@ -1,10 +1,9 @@
 from __future__ import annotations  # TODO: pretty sure we dont need this for >= 3.11?
 
 from collections.abc import Sequence
-from enum import Enum, auto
+from enum import IntEnum
 from typing import NamedTuple
 
-MAX_CHARACTER_COUNT: int = 8
 RECRUITMENT_ADDR = 0x40  # also BizClient.FLAG_START
 CHARACTER_BLOCK_SIZE = 0x14C
 CHARACTER_BLOCK_START = 0x520
@@ -15,7 +14,6 @@ IN_BATTLE_BIT = 0x08
 # Addresses to trigger the field death. Similar to what happens on poison death.
 # This triggers the "<character>'s strength is exhausted..." textboxes for each character
 # plus the "Felix's party has been annihilated".
-# TODO: Can we somehow skip the individual narrations? Having to spam through 8 text boxes is a bit annoying
 FIELD_DEATH_REQUEST_ADDR = 0x3016A
 FIELD_DEATH_NARRATION_COUNT_ADDR = 0x3016C
 FIELD_DEATH_SURVIVOR_COUNT_ADDR = 0x3016E
@@ -33,15 +31,26 @@ CURRENT_PP_OFFSET = 0x3A
 CHARACTER_STATUS_BYTE_OFFSET = 0x131  # 0 = none, 1 = poison, 2 = venom, ...
 
 
-def get_character_block_address(index: int) -> int:
-    return CHARACTER_BLOCK_START + index * CHARACTER_BLOCK_SIZE
+class CharacterIndex(IntEnum):
+    ISAAC = 0
+    GARET = 1
+    IVAN = 2
+    MIA = 3
+    FELIX = 4
+    JENNA = 5
+    SHEBA = 6
+    PIERS = 7
 
 
-def get_current_hp_address(index: int) -> int:
-    return get_character_block_address(index) + CURRENT_HP_OFFSET
+def get_character_block_address(character: CharacterIndex) -> int:
+    return CHARACTER_BLOCK_START + character * CHARACTER_BLOCK_SIZE
 
 
-def get_current_hp_ratio_address(index: int) -> int:
+def get_current_hp_address(character: CharacterIndex) -> int:
+    return get_character_block_address(character) + CURRENT_HP_OFFSET
+
+
+def get_current_hp_ratio_address(character: CharacterIndex) -> int:
     """
     The "HP ratio" here is very likely just the way the game draws the HP bar.
     For some reason, the devs decided that bar should also double as a check
@@ -54,7 +63,7 @@ def get_current_hp_ratio_address(index: int) -> int:
     in one single operation. Having them even just a few frames apart while someone spams
     their way through the battle actions can introduce a sudden full-heal.
     """
-    return get_character_block_address(index) + HP_RATIO_OFFSET
+    return get_character_block_address(character) + HP_RATIO_OFFSET
 
 
 GAME_STATE_READS: tuple[tuple[int, int], ...] = (
@@ -62,7 +71,7 @@ GAME_STATE_READS: tuple[tuple[int, int], ...] = (
     (IN_BATTLE_ADDR, 1),
     (FIELD_DEATH_REQUEST_ADDR, 2),
     (FIELD_DEATH_SURVIVOR_COUNT_ADDR, 2),
-    *tuple((get_current_hp_address(index), 2) for index in range(MAX_CHARACTER_COUNT)),
+    *tuple((get_current_hp_address(character), 2) for character in CharacterIndex),
 )
 
 
@@ -84,11 +93,11 @@ class GameState(NamedTuple):
             in_battle=values[IN_BATTLE_ADDR],
             field_death_request=values[FIELD_DEATH_REQUEST_ADDR],
             survivor_count=values[FIELD_DEATH_SURVIVOR_COUNT_ADDR],
-            hp=tuple(values[get_current_hp_address(index)] for index in range(MAX_CHARACTER_COUNT)),
+            hp=tuple(values[get_current_hp_address(character)] for character in CharacterIndex),
         )
 
     @property
-    def recruited_characters(self) -> tuple[int, ...]:
+    def recruited_characters(self) -> tuple[CharacterIndex, ...]:
         """
         The indexes of all currently recruited characters.
 
@@ -97,7 +106,7 @@ class GameState(NamedTuple):
         fully healed character.
         So every HP read has to first go through this function.
         """
-        return tuple(i for i in range(MAX_CHARACTER_COUNT) if self.recruitment & (1 << i))
+        return tuple(character for character in CharacterIndex if self.recruitment & (1 << character))
 
     @property
     def is_in_battle(self) -> bool:
@@ -120,7 +129,7 @@ class GameState(NamedTuple):
         a caller also has to check that a save is actually loaded.
         """
         recruited = self.recruited_characters
-        return bool(recruited) and all(self.hp[i] == 0 for i in recruited)
+        return bool(recruited) and all(self.hp[character] == 0 for character in recruited)
 
     @property
     def is_field_death_in_progress(self) -> bool:
@@ -150,7 +159,7 @@ class GameState(NamedTuple):
         This is an important distinction because "everyone at 0 HP" can occur in other places
         like booting up the game or when we write 0 HP ourselves to trigger the deathlink.
 
-        So how does the proper confirmation actually look like?
+        How the proper confirmation looks like:
         - In battle:
           Relatively straight-forward. Since the game checks on every action/input,
           it'll just play the defeat dialogue after we've set the HP to 0.
@@ -166,3 +175,57 @@ class GameState(NamedTuple):
         return self.is_party_wiped and (self.is_in_battle or self.is_field_death_in_progress)
 
 
+class MemoryWrite(NamedTuple):
+    address: int
+    data: bytes
+
+    @classmethod
+    def u16(cls, address: int, value: int) -> MemoryWrite:
+        return cls(address, value.to_bytes(2, "little"))
+
+
+def _build_zero_hp_writes(character: CharacterIndex) -> tuple[MemoryWrite, MemoryWrite]:
+    """
+    HP writes should *always* only happen together. If the game sees a mismatch
+    between HP and HP ratio, it will try to correct it when it runs some kind of
+    loop on that character. Just setting HP *can* theoretically work but
+    it's extremely inconsistant.
+
+    Example:
+        1. Start a fight, click through enemy textboxes
+        2. Write HP to 0 without the ratio
+        3. Select the first option  # TODO: what's the name again? I don't mean the "Attack" but the one next to flee
+        4. In *most* cases, this is when the loop runs and a characters HP (+PP) get corrected to max.
+    """
+
+    return (
+        MemoryWrite.u16(get_current_hp_address(character), 0),
+        MemoryWrite.u16(get_current_hp_ratio_address(character), 0),
+    )
+
+
+def _build_multi_zero_hp_writes(characters: Sequence[CharacterIndex]) -> list[MemoryWrite]:
+    return [write for character in characters for write in _build_zero_hp_writes(character)]
+
+
+def _build_field_death_request_writes(recruited: Sequence[CharacterIndex]) -> list[MemoryWrite]:
+    """
+    These writes just use the default ingame way of handling something like poison deaths
+
+    (FIELD_DEATH_NARRATION_LIST_ADDR + slot * 2) here is just the individual slot
+    of their own "XYZ is exhausted" textbox
+
+    TODO:
+     Can we somehow skip the individual narrations?
+     Having to spam through 8 text boxes is a bit annoying
+    """
+    narration_list = [
+        MemoryWrite.u16(FIELD_DEATH_NARRATION_LIST_ADDR + slot * 2, character)
+        for slot, character in enumerate(recruited)
+    ]
+    return [
+        MemoryWrite.u16(FIELD_DEATH_NARRATION_COUNT_ADDR, len(recruited)),
+        *narration_list,
+        MemoryWrite.u16(FIELD_DEATH_SURVIVOR_COUNT_ADDR, 0),
+        MemoryWrite.u16(FIELD_DEATH_REQUEST_ADDR, FIELD_DEATH_REQUEST_VALUE),
+    ]
