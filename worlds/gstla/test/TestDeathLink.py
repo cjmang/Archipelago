@@ -6,11 +6,13 @@ from collections.abc import Sequence
 from worlds.gstla.DeathLink import (
     FIELD_DEATH_NARRATION_COUNT_ADDR,
     FIELD_DEATH_NARRATION_LIST_ADDR,
-    FIELD_DEATH_REQUEST_ADDR,
-    FIELD_DEATH_REQUEST_VALUE,
     FIELD_DEATH_SURVIVOR_COUNT_ADDR,
     GAME_STATE_READS,
     IN_BATTLE_BIT,
+    SYSTEM_EVENT_ADDR,
+    SYSTEM_EVENT_FIELD_DEATH,
+    DeathDelivery,
+    DeliveryState,
     GameState,
     MemoryWrite,
     _build_field_death_request_writes,
@@ -41,7 +43,7 @@ def _hp_reads(*dead: Character) -> list[bytes]:
 
 _LIVE_HP = (11, 22, 33, 44, 55, 66, 77, 88)  # just arbitry HP values corresponding to each char
 _ZERO_BYTES = _little_endian_u16(0)
-_ARMED_REQUEST_BYTES = _little_endian_u16(FIELD_DEATH_REQUEST_VALUE)
+_ARMED_REQUEST_BYTES = _little_endian_u16(SYSTEM_EVENT_FIELD_DEATH)
 
 _DEFAULT_PARTY = _recruited(Character.FELIX, Character.SHEBA)
 _EVERYONE = tuple(Character)
@@ -51,14 +53,14 @@ _NOBODY = _recruited()
 def _game_state(
     recruitment: int,
     in_battle: int = 0x00,
-    field_death_request: int = 0x00,
+    system_event: int = 0x00,
     survivor_count: int = 0,
     dead: Sequence[Character] = (),
 ) -> GameState:
     return GameState(
         recruitment=recruitment,
         in_battle=in_battle,
-        field_death_request=field_death_request,
+        system_event=system_event,
         survivor_count=survivor_count,
         hp=_hp_values(*dead),
     )
@@ -154,7 +156,7 @@ class TestIsDeathObserved(unittest.TestCase):
         self.assertTrue(
             self._observe(
                 [Character.FELIX, Character.SHEBA],
-                field_death_request=FIELD_DEATH_REQUEST_VALUE,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=0,
             )
         )
@@ -163,7 +165,7 @@ class TestIsDeathObserved(unittest.TestCase):
         self.assertFalse(
             self._observe(
                 [Character.FELIX],
-                field_death_request=FIELD_DEATH_REQUEST_VALUE,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=1,
             )
         )
@@ -173,7 +175,7 @@ class TestIsDeathObserved(unittest.TestCase):
         self.assertFalse(
             self._observe(
                 [Character.FELIX, Character.SHEBA],
-                field_death_request=FIELD_DEATH_REQUEST_VALUE,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=1,
             )
         )
@@ -182,7 +184,7 @@ class TestIsDeathObserved(unittest.TestCase):
         self.assertFalse(
             self._observe(
                 [],
-                field_death_request=FIELD_DEATH_REQUEST_VALUE,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=0,
             )
         )
@@ -195,7 +197,7 @@ class TestIsDeathObserved(unittest.TestCase):
     def test_another_system_event_is_not_death(self):
         map_and_menu_event = 0xFC83  # just some other valid value the request slot can have
         self.assertFalse(
-            self._observe([Character.FELIX, Character.SHEBA], field_death_request=map_and_menu_event, survivor_count=0)
+            self._observe([Character.FELIX, Character.SHEBA], system_event=map_and_menu_event, survivor_count=0)
         )
 
     def test_nobody_recruited_is_not_death(self):
@@ -203,7 +205,7 @@ class TestIsDeathObserved(unittest.TestCase):
         self.assertFalse(
             _game_state(
                 recruitment=_NOBODY,
-                field_death_request=FIELD_DEATH_REQUEST_VALUE,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=0,
                 dead=_EVERYONE,
             ).is_death_observed
@@ -250,7 +252,7 @@ class TestGameStateFromReadResult(unittest.TestCase):
             GameState(
                 recruitment=_DEFAULT_PARTY,
                 in_battle=self.BATTLE_BIT_CLEAR_BYTE,
-                field_death_request=FIELD_DEATH_REQUEST_VALUE,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=0,
                 hp=_hp_values(Character.FELIX, Character.SHEBA),
             ),
@@ -284,7 +286,7 @@ class TestFieldDeathRequestWrites(unittest.TestCase):
         self.by_address = {write.address: write.data for write in self.writes}
 
     def test_death_request_last_write(self):
-        self.assertEqual(MemoryWrite(FIELD_DEATH_REQUEST_ADDR, _ARMED_REQUEST_BYTES), self.writes[-1])
+        self.assertEqual(MemoryWrite(SYSTEM_EVENT_ADDR, _ARMED_REQUEST_BYTES), self.writes[-1])
 
     def test_the_narration_list_covers_every_recruited_character(self):
         # TODO: might be a feature? see TODO in DeathLink.py
