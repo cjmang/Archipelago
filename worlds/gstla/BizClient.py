@@ -252,7 +252,7 @@ def cmd_print_progress(self: 'BizHawkClientCommandProcessor') -> None:
 
 
 def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
-    # using the command overrides the YAML setting, similar to what KH2 does
+    """Toggle deathlink on/off. Defaults to the deathlink setting in your YAML"""
     client = _handle_common_cmd(self)
     if client is None:
         return
