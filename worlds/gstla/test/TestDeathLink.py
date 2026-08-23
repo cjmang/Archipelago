@@ -561,3 +561,40 @@ class TestFullDeliverySequences(unittest.TestCase):
         requests = [write for write in all_writes if write.address == SYSTEM_EVENT_ADDR]
         self.assertEqual(1, len(requests))
         self.assertEqual(DeathDeliveryState.IDLE, dd.state)
+
+
+class TestOutgoingDeathReporting(unittest.TestCase):
+    def test_wipe_in_battle_reported_only_once(self):
+        dd = DeathDeliverer()
+        wiped = _game_state(recruitment=_DEFAULT_PARTY, in_battle=IN_BATTLE_BIT, dead=_DEFAULT_PARTY_CHARS)
+        self.assertTrue(dd.tick(wiped).send_death)
+        self.assertFalse(dd.tick(wiped).send_death)
+
+    def test_second_later_wipe_is_reported_again(self):
+        dd = DeathDeliverer()
+        wiped = _game_state(recruitment=_DEFAULT_PARTY, in_battle=IN_BATTLE_BIT, dead=_DEFAULT_PARTY_CHARS)
+        respawned = _game_state(recruitment=_DEFAULT_PARTY, dead=(Character.SHEBA,))
+        self.assertTrue(dd.tick(wiped).send_death)
+        self.assertFalse(dd.tick(respawned).send_death)
+        self.assertTrue(dd.tick(wiped).send_death)
+
+    def test_death_by_deathlink_does_not_trigger_outgoing_death(self):
+        dd = DeathDeliverer()
+        dd.queue_death()
+
+        outcome = dd.tick(_game_state(recruitment=_DEFAULT_PARTY))
+        self.assertEqual(_build_full_field_death_writes(*_DEFAULT_PARTY_CHARS), outcome.writes)
+        self.assertFalse(outcome.send_death)
+
+        narrating = dd.tick(
+            _game_state(
+                recruitment=_DEFAULT_PARTY,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
+                dead=_DEFAULT_PARTY_CHARS,
+            )
+        )
+        self.assertFalse(narrating.send_death)
+
+        respawned = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=(Character.SHEBA,)))
+        self.assertFalse(respawned.send_death)
+        self.assertEqual(DeathDeliveryState.IDLE, dd.state)
