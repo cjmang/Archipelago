@@ -540,6 +540,27 @@ class TestFullDeliverySequences(unittest.TestCase):
         self.assertEqual([], writes)
         self.assertEqual(DeathDeliveryState.IDLE, dd.state)
 
+    def test_deathlink_is_ignored_when_party_wiped_themselves(self):
+        # We have to make sure we don't kill the party if they're already dead
+        # through normal circumstances. Getting killed, respawned and
+        # then killed again would be pretty annoying.
+        dd = DeathDeliverer()
+        dd.queue_death()
+
+        narrating = dd.tick(
+            _game_state(
+                recruitment=_DEFAULT_PARTY,
+                system_event=SYSTEM_EVENT_FIELD_DEATH,
+                dead=_DEFAULT_PARTY_CHARS,
+            )
+        )
+        self.assertFalse(narrating.send_death)
+        self.assertEqual([], narrating.writes)
+
+        respawned = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=(Character.SHEBA,)))
+        self.assertEqual([], respawned.writes)
+        self.assertEqual(DeathDeliveryState.IDLE, dd.state)
+
     def test_several_requests_collapse_into_one_death(self):
         # could happen if a player has some menu open and multiple
         # deaths come in via deathlink
