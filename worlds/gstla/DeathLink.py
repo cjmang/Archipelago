@@ -115,8 +115,21 @@ class GameState(NamedTuple):
 
     @property
     def is_field_death_armed(self) -> bool:
-        return self.field_death_request == FIELD_DEATH_REQUEST_VALUE
         return self.system_event == SYSTEM_EVENT_FIELD_DEATH
+
+    @property
+    def is_system_event_queued(self) -> bool:
+        """
+        True while the address holds an event the game has not yet executed.
+
+        These events are checked every frame (few frames?) when on the field and when we're
+        not "busy" with something like conversations, so they'll trigger immediately after
+        we close out of a conversation/shop/menu/etc.
+
+        Before we write to SYSTEM_EVENT_ADDR, we check if the game has already
+        queued *something*. We should only ever write to SYSTEM_EVENT_ADDR if it is empty.
+        """
+        return self.system_event != 0
 
     @property
     def is_party_wiped(self) -> bool:
@@ -231,3 +244,86 @@ def _build_field_death_request_writes(recruited: Sequence[CharacterIndex]) -> li
         MemoryWrite.u16(FIELD_DEATH_SURVIVOR_COUNT_ADDR, 0),
         MemoryWrite.u16(SYSTEM_EVENT_ADDR, SYSTEM_EVENT_FIELD_DEATH),
     ]
+
+
+class DeathDeliveryState(Enum):
+    IDLE = auto()  # default, no death has been sent by anyone (or we haven't received one yet)
+    PENDING = auto()  # a death came in and was accepted, but the game has not been told about it yet
+    IN_FLIGHT = auto()  # the death is written but the game has not yet finished respawning the party
+
+
+class DeathDeliverer:
+    """
+    The DeathDeliverer™ handles incoming deathlinks.
+    It differentiates between a normal death and a death-by-deathlink.
+    It will also wait until the game is able to accept the death and only then
+    trigger the actual death sequence.
+    """
+
+    def __init__(self) -> None:
+        self.state = DeathDeliveryState.IDLE
+
+    @property
+    def is_delivering(self) -> bool:
+        return self.state is not DeathDeliveryState.IDLE
+
+    def queue_death(self) -> None:
+        if self.state is DeathDeliveryState.IDLE:
+            self.state = DeathDeliveryState.PENDING
+
+    def reset(self) -> None:
+        # Once we've written the system event for a death,
+        # there's no going back here. Trying to reset the event by
+        # writing something else to SYSTEM_EVENT_ADDR would very likely
+        # land too late anyway
+        self.state = DeathDeliveryState.IDLE
+
+    def advance(self, game_state: GameState) -> list[MemoryWrite]:
+        if self.state is DeathDeliveryState.PENDING:
+            return self._deliver(game_state)
+
+        if self.state is DeathDeliveryState.IN_FLIGHT:
+            self._check_for_arrival(game_state)
+
+        return []
+
+    def _deliver(self, game_state: GameState) -> list[MemoryWrite]:
+        """See `GameState.is_death_observed()` for an explanation of how this works"""
+        recruited = game_state.recruited_characters
+        if not recruited:
+            # should only happen when there's no savefile loaded yet
+            return []
+
+        writes = _build_multi_zero_hp_writes(recruited)
+        if not game_state.is_in_battle:
+            if game_state.is_system_event_queued:
+                # we don't want to overwrite anything the game itself wrote there
+                return []
+            writes += _build_field_death_request_writes(recruited)
+
+        self.state = DeathDeliveryState.IN_FLIGHT
+        return writes
+
+    def _check_for_arrival(self, game_state: GameState) -> None:
+        """
+        This handles the following outcomes:
+
+        Death-by-DeathLink was successfull:
+         -> Felix (or the leader) is back at 1 HP (respawned in a sanctum)
+
+        Death was dodged somehow:
+         -> Should only happen if a player confirms "Flee" before we write the death in battle.
+            Escaping does not trigger any HP check in the game, so the party's just at 0 HP on the
+            field/overworld. We then have to re-apply the death through the field path.
+            Note: There *might* be a better way to handle this (maybe through some hook directly
+            in the ROM), but for now this works, too.
+            TODO: Check again if we could *also* write the field death in battle?
+
+        A battle was started while the state was IN_FLIGHT:
+         -> This just produces the normal death sequence directly at the start of the fight
+            because we've already written the party-wide 0 HP.
+        """
+        if game_state.is_in_battle or game_state.is_system_event_queued:
+            return
+
+        self.state = DeathDeliveryState.PENDING if game_state.is_party_wiped else DeathDeliveryState.IDLE
