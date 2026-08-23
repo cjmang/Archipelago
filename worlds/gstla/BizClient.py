@@ -264,12 +264,37 @@ def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
     logger.info("DeathLink is now %s", "enabled" if state_after_toggle else "disabled")
 
 
+def cmd_test_death_link(self: BizHawkClientCommandProcessor) -> None:
+    """Simulates somone else dying, just locally. Exactly like an incoming death link would"""
+    # TODO: Should we gate this somehow so it doesn't land on an APWorld release?
+    #       Maybe just via os.getenv()? Probably should ask for feedback on this first
+    client = _handle_common_cmd(self)
+    if client is None:
+        return
+
+    if not client.death_link_enabled:
+        logger.warning("DeathLink is disabled. Turn it on with /deathlink first")
+        return
+
+    if not client.was_in_game:
+        logger.warning("Not in game. Load a savefile first")
+        return
+
+    if client.death_deliverer.is_delivering:
+        logger.warning("A death is already in progress")
+        return
+
+    client.death_deliverer.queue_death()
+    logger.info("Local death has been queued")
+
+
 commands = [
     ("unchecked_djinn", cmd_unchecked_djinn),
     ("djinn", cmd_checked_djinn),
     ("goals", cmd_print_goals),
     ("goals_completed", cmd_print_progress),
     ("deathlink", cmd_toggle_death_link),
+    ("deathlink_test", cmd_test_death_link),
 ]
 
 class GSTLAClient(BizHawkClient):
