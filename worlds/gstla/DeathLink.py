@@ -252,6 +252,11 @@ class DeathDeliveryState(Enum):
     IN_FLIGHT = auto()  # the death is written but the game has not yet finished respawning the party
 
 
+class DeathLinkInstruction(NamedTuple):
+    writes: list[MemoryWrite]
+    send_death: bool
+
+
 class DeathDeliverer:
     """
     The DeathDeliverer™ handles incoming deathlinks.
@@ -261,7 +266,12 @@ class DeathDeliverer:
     """
 
     def __init__(self) -> None:
+        self._death_reported = False
         self.state = DeathDeliveryState.IDLE
+
+    def tick(self, game_state: GameState) -> DeathLinkInstruction:
+        send_death = self._report_death(game_state)
+        return DeathLinkInstruction(writes=self._advance(game_state), send_death=send_death)
 
     @property
     def is_delivering(self) -> bool:
@@ -272,13 +282,20 @@ class DeathDeliverer:
             self.state = DeathDeliveryState.PENDING
 
     def reset(self) -> None:
-        # Once we've written the system event for a death,
-        # there's no going back here. Trying to reset the event by
-        # writing something else to SYSTEM_EVENT_ADDR would very likely
-        # land too late anyway
+        """
+        Resets every state and instruction inbound & outbound.
+
+        We don't write anything to the game here.
+        Once we've written the system event for a death,
+        there's no going back on it. Trying to reset the event by
+        writing something else to SYSTEM_EVENT_ADDR would very likely
+        land too late anyway.
+        """
+        self._death_reported = False
         self.state = DeathDeliveryState.IDLE
 
-    def advance(self, game_state: GameState) -> list[MemoryWrite]:
+    def _advance(self, game_state: GameState) -> list[MemoryWrite]:
+        """The inbound part of tick()"""
         if self.state is DeathDeliveryState.PENDING:
             return self._deliver(game_state)
 
@@ -286,6 +303,13 @@ class DeathDeliverer:
             self._check_for_arrival(game_state)
 
         return []
+
+    def _report_death(self, game_state: GameState) -> bool:
+        """The outbound part of tick()"""
+        death_observed = game_state.is_death_observed
+        send_death = death_observed and not self._death_reported and not self.is_delivering
+        self._death_reported = death_observed
+        return send_death
 
     def _deliver(self, game_state: GameState) -> list[MemoryWrite]:
         """See `GameState.is_death_observed()` for an explanation of how this works"""
