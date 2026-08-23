@@ -249,7 +249,7 @@ def _build_field_death_request_writes(recruited: Sequence[CharacterIndex]) -> li
 class DeathDeliveryState(Enum):
     IDLE = auto()  # default, no death has been sent by anyone (or we haven't received one yet)
     PENDING = auto()  # a death came in and was accepted, but the game has not been told about it yet
-    IN_FLIGHT = auto()  # the death is written but the game has not yet finished respawning the party
+    IN_FLIGHT = auto()  # any kind of death is running but the game has not yet finished respawning the party
 
 
 class DeathLinkInstruction(NamedTuple):
@@ -297,6 +297,11 @@ class DeathDeliverer:
     def _advance(self, game_state: GameState) -> list[MemoryWrite]:
         """The inbound part of tick()"""
         if self.state is DeathDeliveryState.PENDING:
+            if game_state.is_death_observed:
+                # party already wiped on their own, so we just ignore any incoming
+                # deathlink here as dying after respawning is not a fun mechanic
+                self.state = DeathDeliveryState.IN_FLIGHT
+                return []
             return self._deliver(game_state)
 
         if self.state is DeathDeliveryState.IN_FLIGHT:
@@ -346,6 +351,11 @@ class DeathDeliverer:
         A battle was started while the state was IN_FLIGHT:
          -> This just produces the normal death sequence directly at the start of the fight
             because we've already written the party-wide 0 HP.
+
+        The party died through natural causes:
+         -> Looks the same as killing them via deathlink. That also means that we should
+            just drop/ignore the request, similar to what happens when multiple deathlinks come in.
+            It'd be annoying to wipe, revive in sanctum and then get killed again.
         """
         if game_state.is_in_battle or game_state.is_system_event_queued:
             return
