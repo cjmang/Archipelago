@@ -11,8 +11,8 @@ from worlds.gstla.DeathLink import (
     IN_BATTLE_BIT,
     SYSTEM_EVENT_ADDR,
     SYSTEM_EVENT_FIELD_DEATH,
-    DeathDelivery,
-    DeliveryState,
+    DeathDeliverer,
+    DeathDeliveryState,
     GameState,
     MemoryWrite,
     _build_field_death_request_writes,
@@ -39,6 +39,11 @@ def _hp_values(*dead: Character) -> tuple[int, ...]:
 
 def _hp_reads(*dead: Character) -> list[bytes]:
     return [_little_endian_u16(hp) for hp in _hp_values(*dead)]
+
+
+    dd = DeathDeliverer()
+    dd.state = state
+    return dd
 
 
 _LIVE_HP = (11, 22, 33, 44, 55, 66, 77, 88)  # just arbitry HP values corresponding to each char
@@ -298,3 +303,27 @@ class TestFieldDeathRequestWrites(unittest.TestCase):
     def test_survivor_count_is_zero_and_game_continues(self):
         # TODO: still gotta confirm this
         self.assertEqual(_ZERO_BYTES, self.by_address[FIELD_DEATH_SURVIVOR_COUNT_ADDR])
+
+
+class TestIdle(unittest.TestCase):
+    def test_idle_does_not_write(self):
+        dd = DeathDeliverer()
+        writes = dd.advance(_game_state(recruitment=_DEFAULT_PARTY, in_battle=IN_BATTLE_BIT))
+        self.assertEqual([], writes)
+        self.assertEqual(DeathDeliveryState.IDLE, dd.state)
+
+    def test_only_accept_when_idle(self):
+        for state in DeathDeliveryState:
+            with self.subTest(state=state):
+                dd = _build_deliverer(state)
+                dd.queue_death()
+                expected = DeathDeliveryState.PENDING if state is DeathDeliveryState.IDLE else state
+                self.assertEqual(expected, dd.state)
+
+
+class TestReset(unittest.TestCase):
+    def test_reset_does_not_write(self):
+        dd = DeathDeliverer()
+        dd.queue_death()
+        dd.reset()
+        self.assertEqual([], dd.advance(_game_state(recruitment=_DEFAULT_PARTY)))
