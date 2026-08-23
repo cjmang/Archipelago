@@ -139,7 +139,7 @@ class GameState(NamedTuple):
 
         Note:
         This also returns True when the game has just booted up.
-        In that case the recruitment byte is already 0x10 while character HP is 0.
+        In that case the recruitment byte is already 0x10 (Felix) while character HP is 0.
         So just relying on this to detect a wipe is not enough and
         a caller also has to check that a save is actually loaded.
         """
