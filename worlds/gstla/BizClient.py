@@ -11,6 +11,7 @@ from NetUtils import ClientStatus, NetworkItem
 from worlds._bizhawk.client import BizHawkClient
 from worlds._bizhawk import read, write, guarded_write, display_message
 from . import items_by_id, ItemType, remote_blacklist
+from .DeathLink import GAME_STATE_READS, DeathDeliverer, GameState
 from .gen.LocationNames import loc_names_by_id, LocationName, option_name_to_goal_name
 from .gen.ItemData import djinn_items, mimics, ItemData, events
 from .gen.LocationData import all_locations, LocationType, djinn_locations, LocationData, location_name_to_data, \
@@ -24,7 +25,6 @@ logger = logging.getLogger("Client")
 FLAG_START = 0x40
 FORCE_ENCOUNTER_ADDR = 0x30164
 PREVENT_FLEEING_ADDR = 0x48B
-IN_BATTLE_ADDR = 0x60
 
 class _MemDomain(str, Enum):
     EWRAM = 'EWRAM'
@@ -293,6 +293,9 @@ class GSTLAClient(BizHawkClient):
         self.coop: int = 0
         self.remote_blacklist: Set[int] = remote_blacklist
         self.goals = GoalManager()
+        self.death_deliverer = DeathDeliverer()
+        self.death_link_enabled: bool = False
+        self.death_link_initialized: bool = False
 
     async def validate_rom(self, ctx: 'BizHawkClientContext'):
         from worlds._bizhawk.context import TextCategory
@@ -323,8 +326,25 @@ class GSTLAClient(BizHawkClient):
         return True
 
     async def set_auth(self, ctx: 'BizHawkClientContext') -> None:
+        self.death_link_initialized = False
         if self.slot_name:
             ctx.auth = self.slot_name
+
+    async def set_death_link(self, ctx: BizHawkClientContext, enabled: bool) -> None:
+        if not enabled:
+            self.death_deliverer.reset()
+        self.death_link_enabled = enabled
+        await ctx.update_death_link(enabled)
+
+    def on_package(self, ctx: BizHawkClientContext, cmd: str, args: dict) -> None:
+        if cmd != "Bounced" or "DeathLink" not in args.get("tags", []):
+            return
+        if not self.death_link_enabled or ctx.slot is None:
+            return
+        if args["data"].get("source") == ctx.player_names[ctx.slot]:
+            # ignore our own deathlink
+            return
+        self.death_deliverer.queue_death()
 
     async def _load_djinn(self, ctx: 'BizHawkClientContext') -> None:
         if len(self.djinn_ram_to_rom) > 0:
@@ -515,14 +535,41 @@ class GSTLAClient(BizHawkClient):
         if messages:
             await ctx.send_msgs(messages)
 
+    async def _handle_death_link(self, ctx: BizHawkClientContext) -> None:
+        if not self.death_link_enabled or ctx.slot is None:
+            return
+
+        read_result = await read(
+            ctx.bizhawk_ctx,
+            [(address, width, _MemDomain.EWRAM) for address, width in GAME_STATE_READS],
+        )
+        instruction = self.death_deliverer.tick(GameState.from_read_result(read_result))
+        if instruction.writes:
+            await write(
+                ctx.bizhawk_ctx,
+                [(mem_write.address, mem_write.data, _MemDomain.EWRAM) for mem_write in instruction.writes],
+            )
+        if instruction.send_death:
+            await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party has been defeated.")
+
+
     async def game_watcher(self, ctx: 'BizHawkClientContext') -> None:
 
         if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
             logger.debug("Not connected to server...")
             return
 
+        if not self.death_link_initialized and ctx.slot_data is not None and ctx.slot is not None:
+            # initializing here already before in-game check because we *could* do a "/deathlink"
+            # on the title screen, which would then be overwritten once the stuff below initializes
+            # with the YAML options
+            await self.set_death_link(ctx, bool(ctx.slot_data.get("options", {}).get("death_link", False)))
+            self.death_link_initialized = True
+
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
         if not self._is_in_game(result):
+            self.death_deliverer.reset()  # makes sure title menu/game reset does not send outgoing deaths
+
             # TODO: if the player goes back into the save file should we reset some things?
             self.local_locations = set()
             self.was_in_game = False
@@ -560,6 +607,9 @@ class GSTLAClient(BizHawkClient):
 
 
         await self._receive_items(ctx, result)
+
+        await self._handle_death_link(ctx)
+
         self.check_summon_count(ctx)
 
         if self.temp_locs != self.local_locations:
