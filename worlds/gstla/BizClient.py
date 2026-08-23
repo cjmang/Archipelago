@@ -4,10 +4,11 @@ import base64
 from collections import defaultdict
 import logging
 from enum import IntEnum, Enum
-from typing import Dict, List, TYPE_CHECKING, Set, Tuple, Mapping, Optional, Any
+from typing import Dict, List, TYPE_CHECKING, Set, Tuple, Mapping, Optional, Any, cast
 
 from BaseClasses import ItemClassification
 from NetUtils import ClientStatus, NetworkItem
+from Utils import async_start
 from worlds._bizhawk.client import BizHawkClient
 from worlds._bizhawk import read, write, guarded_write, display_message
 from . import items_by_id, ItemType, remote_blacklist
@@ -250,11 +251,25 @@ def cmd_print_progress(self: 'BizHawkClientCommandProcessor') -> None:
         logger.info(f"Summon count: {len(client.summons)}")
 
 
+def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
+    # using the command overrides the YAML setting, similar to what KH2 does
+    client = _handle_common_cmd(self)
+    if client is None:
+        return
+
+    client.death_link_initialized = True
+    state_after_toggle = not client.death_link_enabled
+    ctx = cast(BizHawkClientContext, self.ctx)  # should preferably changed somewhere up the tree
+    async_start(client.set_death_link(ctx, state_after_toggle), name="GSTLA death link toggle")
+    logger.info("DeathLink is now %s", "enabled" if state_after_toggle else "disabled")
+
+
 commands = [
     ("unchecked_djinn", cmd_unchecked_djinn),
     ("djinn", cmd_checked_djinn),
     ("goals", cmd_print_goals),
-    ("goals_completed", cmd_print_progress)
+    ("goals_completed", cmd_print_progress),
+    ("deathlink", cmd_toggle_death_link),
 ]
 
 class GSTLAClient(BizHawkClient):
