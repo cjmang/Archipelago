@@ -1,4 +1,4 @@
-from __future__ import annotations  # TODO: pretty sure we dont need this for >= 3.11?
+from __future__ import annotations
 
 from collections.abc import Sequence
 from enum import Enum, IntEnum, auto
@@ -11,9 +11,6 @@ CHARACTER_BLOCK_START = 0x520
 IN_BATTLE_ADDR = 0x60
 IN_BATTLE_BIT = 0x08
 
-# Writing the SYSTEM_EVENT_FIELD_DEATH to SYSTEM_EVENT_ADDR triggers a death similar
-# to a death by poison. This results in the "<character>'s strength is exhausted..."
-# textboxes for each character plus the "Felix's party has been annihilated".
 SYSTEM_EVENT_ADDR = 0x3016A
 SYSTEM_EVENT_FIELD_DEATH = 0xFFFF
 
@@ -209,7 +206,7 @@ def _build_zero_hp_writes(character: CharacterIndex) -> tuple[MemoryWrite, Memor
     Example:
         1. Start a fight, click through enemy textboxes
         2. Write HP to 0 without the ratio
-        3. Select the first option  # TODO: what's the name again? I don't mean the "Attack" but the one next to flee
+        3. Select the "Fight" option
         4. In *most* cases, this is when the loop runs and a characters HP (+PP) get corrected to max.
     """
 
@@ -223,24 +220,18 @@ def _build_multi_zero_hp_writes(characters: Sequence[CharacterIndex]) -> list[Me
     return [write for character in characters for write in _build_zero_hp_writes(character)]
 
 
-def _build_field_death_request_writes(recruited: Sequence[CharacterIndex]) -> list[MemoryWrite]:
+def _build_field_death_request_writes() -> list[MemoryWrite]:
     """
-    These writes just use the default ingame way of handling something like poison deaths
+    These writes just use the same ingame way of handling something like poison deaths.
+    (Setting Survivors to 0 and SYSTEM_EVENT_ADDR to the field death event.)
 
-    (FIELD_DEATH_NARRATION_LIST_ADDR + slot * 2) here is just the individual slot
-    of their own "XYZ is exhausted" textbox
-
-    TODO:
-     Can we somehow skip the individual narrations?
-     Having to spam through 8 text boxes is a bit annoying
+    *But* setting the NARRATION_COUNT to 0 means that instead of having 8
+    "XYZ is exhausted..." textboxes to click through we just get one saying
+    "<leader>'s party has been annihilated...".
+    This makes the wipe much faster. Yippie
     """
-    narration_list = [
-        MemoryWrite.u16(FIELD_DEATH_NARRATION_LIST_ADDR + slot * 2, character)
-        for slot, character in enumerate(recruited)
-    ]
     return [
-        MemoryWrite.u16(FIELD_DEATH_NARRATION_COUNT_ADDR, len(recruited)),
-        *narration_list,
+        MemoryWrite.u16(FIELD_DEATH_NARRATION_COUNT_ADDR, 0),
         MemoryWrite.u16(FIELD_DEATH_SURVIVOR_COUNT_ADDR, 0),
         MemoryWrite.u16(SYSTEM_EVENT_ADDR, SYSTEM_EVENT_FIELD_DEATH),
     ]
@@ -328,7 +319,7 @@ class DeathDeliverer:
             if game_state.is_system_event_queued:
                 # we don't want to overwrite anything the game itself wrote there
                 return []
-            writes += _build_field_death_request_writes(recruited)
+            writes += _build_field_death_request_writes()
 
         self.state = DeathDeliveryState.IN_FLIGHT
         return writes
