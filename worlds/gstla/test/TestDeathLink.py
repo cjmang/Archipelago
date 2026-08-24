@@ -127,8 +127,8 @@ class TestIsPartyWiped(unittest.TestCase):
     def test_benched_survivor(self):
         self.assertFalse(
             _game_state(
-                recruitment=_recruited(Character.FELIX, Character.SHEBA, Character.PIERS),
-                dead=[Character.FELIX, Character.SHEBA],
+                recruitment=_recruited(*_DEFAULT_PARTY_CHARS, Character.PIERS),
+                dead=_DEFAULT_PARTY_CHARS,
             ).is_party_wiped
         )
 
@@ -258,7 +258,7 @@ class TestGameStateFromReadResult(unittest.TestCase):
                 bytes([self.BATTLE_BIT_CLEAR_BYTE]),
                 _ARMED_REQUEST_BYTES,
                 _ZERO_BYTES,
-                *_hp_reads(Character.FELIX, Character.SHEBA),
+                *_hp_reads(*_DEFAULT_PARTY_CHARS),
             ]
         )
         self.assertEqual(
@@ -267,7 +267,7 @@ class TestGameStateFromReadResult(unittest.TestCase):
                 in_battle=self.BATTLE_BIT_CLEAR_BYTE,
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
                 survivor_count=0,
-                hp=_hp_values(Character.FELIX, Character.SHEBA),
+                hp=_hp_values(*_DEFAULT_PARTY_CHARS),
             ),
             state,
         )
@@ -275,7 +275,7 @@ class TestGameStateFromReadResult(unittest.TestCase):
 
 
 class TestPartyWipeWrites(unittest.TestCase):
-    def test_every_hp_zero_is_accompanied_by_its_ratio(self):
+    def test_every_hp_zero_is_written_together_with_their_ratio(self):
         writes = _build_multi_zero_hp_writes((Character.FELIX, Character.SHEBA))
         self.assertEqual(
             {
@@ -366,7 +366,7 @@ class TestPendingOnField(unittest.TestCase):
                 self.assertEqual(DeathDeliveryState.PENDING, dd.state)
 
         writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY)).writes
-        self.assertEqual(_build_full_field_death_writes(Character.FELIX, Character.SHEBA), writes)
+        self.assertEqual(_build_full_field_death_writes(*_DEFAULT_PARTY_CHARS), writes)
 
 
 class TestPendingInBattle(unittest.TestCase):
@@ -379,7 +379,7 @@ class TestPendingInBattle(unittest.TestCase):
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
             )
         ).writes
-        self.assertEqual(_build_multi_zero_hp_writes([Character.FELIX, Character.SHEBA]), writes)
+        self.assertEqual(_build_multi_zero_hp_writes(_DEFAULT_PARTY_CHARS), writes)
         self.assertEqual(DeathDeliveryState.IN_FLIGHT, dd.state)
 
 
@@ -402,7 +402,7 @@ class TestInFlight(unittest.TestCase):
     def test_dodged_via_flee_retriggers_death(self):
         # only happens if "flee" is clicked before death is queued while still "in battle"
         dd = _build_deliverer(DeathDeliveryState.IN_FLIGHT)
-        writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=(Character.FELIX, Character.SHEBA))).writes
+        writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=_DEFAULT_PARTY_CHARS)).writes
         self.assertEqual([], writes)
         self.assertEqual(DeathDeliveryState.PENDING, dd.state)
 
@@ -414,7 +414,7 @@ class TestInFlight(unittest.TestCase):
         writes = dd.tick(
             _game_state(
                 recruitment=_DEFAULT_PARTY,
-                dead=(Character.FELIX, Character.SHEBA),
+                dead=_DEFAULT_PARTY_CHARS,
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
             )
         ).writes
@@ -428,7 +428,7 @@ class TestInFlight(unittest.TestCase):
             _game_state(
                 recruitment=_DEFAULT_PARTY,
                 in_battle=IN_BATTLE_BIT,
-                dead=(Character.FELIX, Character.SHEBA),
+                dead=_DEFAULT_PARTY_CHARS,
             )
         ).writes
         self.assertEqual([], writes)
@@ -455,7 +455,7 @@ class TestInFlight(unittest.TestCase):
                 recruitment=_DEFAULT_PARTY,
                 in_battle=IN_BATTLE_BIT,
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
-                dead=(Character.FELIX, Character.SHEBA),
+                dead=_DEFAULT_PARTY_CHARS,
             )
         )
         self.assertFalse(battle_started.send_death)
@@ -473,7 +473,7 @@ class TestFullDeliverySequences(unittest.TestCase):
         self.assertEqual(DeathDeliveryState.PENDING, dd.state)
 
         writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY)).writes
-        self.assertEqual(_build_full_field_death_writes(Character.FELIX, Character.SHEBA), writes)
+        self.assertEqual(_build_full_field_death_writes(*_DEFAULT_PARTY_CHARS), writes)
         self.assertEqual(DeathDeliveryState.IN_FLIGHT, dd.state)
 
         writes = dd.tick(
@@ -481,7 +481,7 @@ class TestFullDeliverySequences(unittest.TestCase):
                 # this is when the narration/textboxes would be on screen
                 recruitment=_DEFAULT_PARTY,
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
-                dead=(Character.FELIX, Character.SHEBA),
+                dead=_DEFAULT_PARTY_CHARS,
             )
         ).writes
         self.assertEqual([], writes)
@@ -497,14 +497,14 @@ class TestFullDeliverySequences(unittest.TestCase):
         dd.queue_death()
 
         writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, in_battle=IN_BATTLE_BIT)).writes
-        self.assertEqual(_build_multi_zero_hp_writes([Character.FELIX, Character.SHEBA]), writes)
+        self.assertEqual(_build_multi_zero_hp_writes(_DEFAULT_PARTY_CHARS), writes)
         self.assertEqual(DeathDeliveryState.IN_FLIGHT, dd.state)
 
         writes = dd.tick(
             _game_state(
                 recruitment=_DEFAULT_PARTY,
                 in_battle=IN_BATTLE_BIT,
-                dead=(Character.FELIX, Character.SHEBA),
+                dead=_DEFAULT_PARTY_CHARS,
             )
         ).writes
         self.assertEqual([], writes)
@@ -520,17 +520,17 @@ class TestFullDeliverySequences(unittest.TestCase):
         dd.queue_death()
 
         writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, in_battle=IN_BATTLE_BIT)).writes
-        self.assertEqual(_build_multi_zero_hp_writes([Character.FELIX, Character.SHEBA]), writes)
+        self.assertEqual(_build_multi_zero_hp_writes(_DEFAULT_PARTY_CHARS), writes)
 
         # escaped, full party at 0 HP on field
-        escaped = _game_state(recruitment=_DEFAULT_PARTY, dead=(Character.FELIX, Character.SHEBA))
+        escaped = _game_state(recruitment=_DEFAULT_PARTY, dead=_DEFAULT_PARTY_CHARS)
         writes = dd.tick(escaped).writes
         self.assertEqual([], writes)
         self.assertTrue(dd.is_delivering)
 
         # re-trigger deaths
         writes = dd.tick(escaped).writes
-        self.assertEqual(_build_full_field_death_writes(Character.FELIX, Character.SHEBA), writes)
+        self.assertEqual(_build_full_field_death_writes(*_DEFAULT_PARTY_CHARS), writes)
 
         writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=(Character.SHEBA,))).writes
         self.assertEqual([], writes)
@@ -558,8 +558,8 @@ class TestFullDeliverySequences(unittest.TestCase):
         self.assertEqual(DeathDeliveryState.IDLE, dd.state)
 
     def test_several_requests_collapse_into_one_death(self):
-        # could happen if a player has some menu open and multiple
-        # deaths come in via deathlink
+        # could happen if a player has some menu open for a longer period of time
+        # and multiple deaths come in via deathlink in the meantime
         dd = DeathDeliverer()
         for _ in range(3):
             dd.queue_death()
@@ -570,7 +570,7 @@ class TestFullDeliverySequences(unittest.TestCase):
             _game_state(
                 recruitment=_DEFAULT_PARTY,
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
-                dead=(Character.FELIX, Character.SHEBA),
+                dead=_DEFAULT_PARTY_CHARS,
             )
         ).writes
         all_writes += dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=(Character.SHEBA,))).writes
