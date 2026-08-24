@@ -257,11 +257,10 @@ def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
     if client is None:
         return
 
-    client.death_link_initialized = True
-    state_after_toggle = not client.death_link_enabled
     ctx = cast("BizHawkClientContext", self.ctx)  # should preferably changed somewhere up the tree
+    client.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
+    state_after_toggle = not client.death_link_enabled
     async_start(client.set_death_link(ctx, state_after_toggle), name="GSTLA death link toggle")
-    logger.info("DeathLink is now %s", "enabled" if state_after_toggle else "disabled")
 
 
 def cmd_test_death_link(self: BizHawkClientCommandProcessor) -> None:
@@ -335,7 +334,7 @@ class GSTLAClient(BizHawkClient):
         self.goals = GoalManager()
         self.death_deliverer = DeathDeliverer()
         self.death_link_enabled: bool = False
-        self.death_link_initialized: bool = False
+        self.death_link_initialized_for: tuple[str | None, int | None] | None = None  # (seed, slot)
 
     async def validate_rom(self, ctx: 'BizHawkClientContext'):
         from worlds._bizhawk.context import TextCategory
@@ -366,7 +365,6 @@ class GSTLAClient(BizHawkClient):
         return True
 
     async def set_auth(self, ctx: 'BizHawkClientContext') -> None:
-        self.death_link_initialized = False
         if self.slot_name:
             ctx.auth = self.slot_name
 
@@ -377,6 +375,11 @@ class GSTLAClient(BizHawkClient):
         await ctx.update_death_link(enabled)
 
     def on_package(self, ctx: BizHawkClientContext, cmd: str, args: dict) -> None:
+        if cmd == "Connected" and self.death_link_initialized_for != (ctx.server_seed_name, args.get("slot")):
+            # reset deathlink when either the server or slot changes.
+            # TODO: Feedback? If someone uses /deathlink, should it stay enabled when changing anything?
+            self.death_link_initialized_for = None
+
         if cmd != "Bounced" or "DeathLink" not in args.get("tags", []):
             return
         if not self.death_link_enabled or ctx.slot is None:
@@ -599,12 +602,13 @@ class GSTLAClient(BizHawkClient):
             logger.debug("Not connected to server...")
             return
 
-        if not self.death_link_initialized and ctx.slot_data is not None and ctx.slot is not None:
+        if self.death_link_initialized_for is None and ctx.slot_data is not None and ctx.slot is not None:
             # initializing here already before in-game check because we *could* do a "/deathlink"
             # on the title screen, which would then be overwritten once the stuff below initializes
             # with the YAML options
             await self.set_death_link(ctx, bool(ctx.slot_data.get("options", {}).get("death_link", False)))
-            self.death_link_initialized = True
+            self.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
+            logger.debug(f"DeathLink enabled: {bool(self.death_link_enabled)} with {ctx.server_seed_name=}, {ctx.slot=}")
 
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
         if not self._is_in_game(result):
