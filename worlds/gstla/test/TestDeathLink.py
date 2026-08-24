@@ -42,7 +42,7 @@ def _hp_reads(*dead: Character) -> list[bytes]:
 
 
 def _build_full_field_death_writes(*recruited: Character) -> list[MemoryWrite]:
-    return _build_multi_zero_hp_writes(recruited) + _build_field_death_request_writes(recruited)
+    return _build_multi_zero_hp_writes(recruited) + _build_field_death_request_writes()
 
 
 def _build_deliverer(state: DeathDeliveryState) -> DeathDeliverer:
@@ -240,7 +240,7 @@ class TestGameStateReads(unittest.TestCase):
     def test_reads_and_writes_width(self):
         writes = [
             *_build_multi_zero_hp_writes(_EVERYONE),
-            *_build_field_death_request_writes(_EVERYONE),
+            *_build_field_death_request_writes(),
         ]
         overlapping = [write for write in writes if write.address in self.width_by_address]
         for write in overlapping:
@@ -290,27 +290,23 @@ class TestPartyWipeWrites(unittest.TestCase):
 
 
 class TestFieldDeathRequestWrites(unittest.TestCase):
-    _RECRUITED = (Character.FELIX, Character.JENNA, Character.SHEBA)
-    _EXPECTED_COUNT = _little_endian_u16(len(_RECRUITED))
-    _EXPECTED_SLOTS = tuple(_little_endian_u16(character) for character in _RECRUITED)
-
     def setUp(self):
-        self.writes = _build_field_death_request_writes(self._RECRUITED)
+        self.writes = _build_field_death_request_writes()
         self.by_address = {write.address: write.data for write in self.writes}
 
     def test_death_request_last_write(self):
         self.assertEqual(MemoryWrite(SYSTEM_EVENT_ADDR, _ARMED_REQUEST_BYTES), self.writes[-1])
 
-    def test_the_narration_list_covers_every_recruited_character(self):
-        # TODO: might be a feature? see TODO in DeathLink.py
-        self.assertEqual(self._EXPECTED_COUNT, self.by_address[FIELD_DEATH_NARRATION_COUNT_ADDR])
-        for slot, expected in enumerate(self._EXPECTED_SLOTS):
-            self.assertEqual(expected, self.by_address[FIELD_DEATH_NARRATION_LIST_ADDR + 2 * slot])
-        self.assertNotIn(FIELD_DEATH_NARRATION_LIST_ADDR + 2 * len(self._EXPECTED_SLOTS), self.by_address)
+    def test_narration_count_is_zero(self):
+        self.assertEqual(_ZERO_BYTES, self.by_address[FIELD_DEATH_NARRATION_COUNT_ADDR])
 
-    def test_survivor_count_is_zero_and_game_continues(self):
-        # TODO: still gotta confirm this
+    def test_survivor_count_is_zero(self):
         self.assertEqual(_ZERO_BYTES, self.by_address[FIELD_DEATH_SURVIVOR_COUNT_ADDR])
+
+    def test_no_narration_is_written(self):
+        for slot in range(len(Character)):
+            with self.subTest(slot=slot):
+                self.assertNotIn(FIELD_DEATH_NARRATION_LIST_ADDR + 2 * slot, self.by_address)
 
 
 class TestIdle(unittest.TestCase):
