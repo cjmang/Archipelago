@@ -181,7 +181,6 @@ class GameState(NamedTuple):
           we could just stay on the field forever. Only when we'd get into a battle,
           it would then check for HP and play the defeat dialogue.
           However, it does have a loop that is checking for registered events like a poison tick.
-          TODO: Add reference to poison handler
           Also see `is_field_death_in_progress`.
         """
         return self.is_party_wiped and (self.is_in_battle or self.is_field_death_in_progress)
@@ -337,7 +336,6 @@ class DeathDeliverer:
             field/overworld. We then have to re-apply the death through the field path.
             Note: There *might* be a better way to handle this (maybe through some hook directly
             in the ROM), but for now this works, too.
-            TODO: Check again if we could *also* write the field death in battle?
 
         A battle was started while the state was IN_FLIGHT:
          -> This just produces the normal death sequence directly at the start of the fight
