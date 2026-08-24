@@ -259,7 +259,7 @@ def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
 
     client.death_link_initialized = True
     state_after_toggle = not client.death_link_enabled
-    ctx = cast(BizHawkClientContext, self.ctx)  # should preferably changed somewhere up the tree
+    ctx = cast("BizHawkClientContext", self.ctx)  # should preferably changed somewhere up the tree
     async_start(client.set_death_link(ctx, state_after_toggle), name="GSTLA death link toggle")
     logger.info("DeathLink is now %s", "enabled" if state_after_toggle else "disabled")
 
