@@ -17,7 +17,7 @@ from .Options import (ItemShuffle, RevealHiddenItem, OmitLocations, AddGs1Items,
                       ForgedEquipmentFillerWeight, LuckyEquipmentFillerWeight, ShopEquipmentFillerWeight,
                       CoinsFillerWeight, CommonConsumablesFillerWeight, AutoRun, ScaleMimics, ScaleCharacters,
                       MaxScaledLevel, ForgeMaterialsAreFiller, ArtifactsAreFiller, DisableShopGameTickets,
-                      Goal, RandomGoals, DjinnHuntCount, SummonHuntCount)
+                      Goal, RandomGoals, DjinnHuntCount, SummonHuntCount, DeathLink)
 
 easy = {
     ItemShuffle.internal_name: ItemShuffle.option_all_chests_and_tablets,
@@ -75,7 +75,8 @@ easy = {
     NamedPuzzles.internal_name: NamedPuzzles.option_vanilla,
     ManualRetreatGlitch.internal_name: ManualRetreatGlitch.option_false,
     MusicShuffle.internal_name: MusicShuffle.option_false,
-    TelportEverywhere.internal_name: TelportEverywhere.option_true
+    TelportEverywhere.internal_name: TelportEverywhere.option_true,
+    DeathLink.internal_name: DeathLink.option_false
 }
 
 open_mode= {
@@ -134,7 +135,8 @@ open_mode= {
     NamedPuzzles.internal_name: NamedPuzzles.option_vanilla,
     ManualRetreatGlitch.internal_name: ManualRetreatGlitch.option_false,
     MusicShuffle.internal_name: MusicShuffle.option_false,
-    TelportEverywhere.internal_name: TelportEverywhere.option_true
+    TelportEverywhere.internal_name: TelportEverywhere.option_true,
+    DeathLink.internal_name: DeathLink.option_false
 }
 
 gstla_options_presets: Dict[str, Dict[str, Any]] = {
