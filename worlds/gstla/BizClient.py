@@ -470,6 +470,10 @@ class GSTLAClient(BizHawkClient):
             return False
         if ctx.slot != item.player:
             return True
+        elif item.location < 0:
+            # -1 can be the "!getitem" and "/send" command
+            # -2 is the starting inventory, also allowed by "ctx.slot != item.player"
+            return True
         elif self.coop == 0:
             return False
         elif item.location in self.remote_blacklist:
