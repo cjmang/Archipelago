@@ -592,13 +592,18 @@ class GSTLAClient(BizHawkClient):
             ctx.bizhawk_ctx,
             [(address, width, _MemDomain.EWRAM) for address, width in GAME_STATE_READS],
         )
-        instruction = self.death_deliverer.tick(GameState.from_read_result(read_result))
+        game_state = GameState.from_read_result(read_result)
+        instruction = self.death_deliverer.tick(game_state)
         if instruction.writes:
-            await write(
+            delivered = await guarded_write(
                 ctx.bizhawk_ctx,
                 [(mem_write.address, mem_write.data, _MemDomain.EWRAM) for mem_write in instruction.writes],
+                [(address, data, _MemDomain.EWRAM) for address, data in game_state.write_guards],
             )
-        if instruction.send_death:
+            if not delivered:
+                self.death_deliverer.retry_delivery()
+                logger.debug("DeathLink writes rejected by a guard. Retrying on next tick.")
+        elif instruction.send_death:
             await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party has been defeated.")
 
 
