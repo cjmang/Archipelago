@@ -750,7 +750,9 @@ class ShortcutMagmaRock(Toggle):
     default = 0
 
 class DeathLink(CoreDeathLink):
-    """When you die, everyone who enabled death link dies. Of course, the reverse is true too.
+    """
+    When all of the characters in your party are downed, everyone who enabled death link dies in their game.
+    Of course, the reverse is true too.
     Note: can also be toggled at runtime with the "/deathlink" client command.
     """
     internal_name = "death_link"
