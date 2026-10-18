@@ -263,11 +263,11 @@ class DeathDeliverer:
     """
 
     def __init__(self) -> None:
-        self._death_reported = False
+        self._death_observed_last_tick = False
         self.state = DeathDeliveryState.IDLE
 
     def tick(self, game_state: GameState) -> DeathLinkInstruction:
-        send_death = self._report_death(game_state)
+        send_death = self._detect_new_death(game_state)
         return DeathLinkInstruction(writes=self._advance(game_state), send_death=send_death)
 
     def retry_delivery(self) -> None:
@@ -292,7 +292,7 @@ class DeathDeliverer:
         writing something else to SYSTEM_EVENT_ADDR would very likely
         land too late anyway.
         """
-        self._death_reported = False
+        self._death_observed_last_tick = False
         self.state = DeathDeliveryState.IDLE
 
     def _advance(self, game_state: GameState) -> list[MemoryWrite]:
@@ -310,11 +310,11 @@ class DeathDeliverer:
 
         return []
 
-    def _report_death(self, game_state: GameState) -> bool:
+    def _detect_new_death(self, game_state: GameState) -> bool:
         """The outbound part of tick()"""
         death_observed = game_state.is_death_observed
-        send_death = death_observed and not self._death_reported and not self.is_delivering
-        self._death_reported = death_observed
+        send_death = death_observed and not self._death_observed_last_tick and not self.is_delivering
+        self._death_observed_last_tick = death_observed
         return send_death
 
     def _deliver(self, game_state: GameState) -> list[MemoryWrite]:
