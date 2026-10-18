@@ -392,8 +392,7 @@ class TestInFlight(unittest.TestCase):
                 self.assertEqual([], writes)
                 self.assertEqual(DeathDeliveryState.IN_FLIGHT, dd.state)
 
-    def test_revived_leader_after_respawn_sets_idle(self):
-        # TODO: Check again what happens when the leader is not Felix
+    def test_respawn_resets_to_idle(self):
         dd = _build_deliverer(DeathDeliveryState.IN_FLIGHT)
         writes = dd.tick(_game_state(recruitment=_DEFAULT_PARTY, dead=(Character.SHEBA,))).writes
         self.assertEqual([], writes)
