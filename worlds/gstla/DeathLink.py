@@ -185,6 +185,13 @@ class GameState(NamedTuple):
         """
         return self.is_party_wiped and (self.is_in_battle or self.is_field_death_in_progress)
 
+    @property
+    def write_guards(self) -> list[tuple[int, bytes]]:
+        return [
+            (SYSTEM_EVENT_ADDR, self.system_event.to_bytes(2, "little")),
+            (IN_BATTLE_ADDR, self.in_battle.to_bytes(1, "little")),
+        ]
+
 
 class MemoryWrite(NamedTuple):
     address: int
@@ -262,6 +269,10 @@ class DeathDeliverer:
     def tick(self, game_state: GameState) -> DeathLinkInstruction:
         send_death = self._report_death(game_state)
         return DeathLinkInstruction(writes=self._advance(game_state), send_death=send_death)
+
+    def retry_delivery(self) -> None:
+        if self.state is DeathDeliveryState.IN_FLIGHT:
+            self.state = DeathDeliveryState.PENDING
 
     @property
     def is_delivering(self) -> bool:
