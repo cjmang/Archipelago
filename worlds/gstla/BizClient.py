@@ -336,6 +336,7 @@ class GSTLAClient(BizHawkClient):
         self.death_deliverer = DeathDeliverer()
         self.death_link_enabled: bool = False
         self.death_link_initialized_for: tuple[str | None, int | None] | None = None  # (seed, slot)
+        self.previous_death_link: float = 0.0
 
     async def validate_rom(self, ctx: 'BizHawkClientContext'):
         from worlds._bizhawk.context import TextCategory
@@ -373,21 +374,13 @@ class GSTLAClient(BizHawkClient):
         if not enabled:
             self.death_deliverer.reset()
         self.death_link_enabled = enabled
+        self.previous_death_link = ctx.last_death_link
         await ctx.update_death_link(enabled)
 
     def on_package(self, ctx: BizHawkClientContext, cmd: str, args: dict) -> None:
         if cmd == "Connected" and self.death_link_initialized_for != (ctx.server_seed_name, args.get("slot")):
             # reset deathlink when either the server or slot changes.
             self.death_link_initialized_for = None
-
-        if cmd != "Bounced" or "DeathLink" not in args.get("tags", []):
-            return
-        if not self.death_link_enabled or ctx.slot is None:
-            return
-        if args["data"].get("source") == ctx.player_names[ctx.slot]:
-            # ignore our own deathlink
-            return
-        self.death_deliverer.queue_death()
 
     async def _load_djinn(self, ctx: 'BizHawkClientContext') -> None:
         if len(self.djinn_ram_to_rom) > 0:
@@ -588,6 +581,10 @@ class GSTLAClient(BizHawkClient):
         if not self.death_link_enabled or ctx.slot is None:
             return
 
+        if ctx.last_death_link != self.previous_death_link:
+            self.previous_death_link = ctx.last_death_link
+            self.death_deliverer.queue_death()
+
         read_result = await read(
             ctx.bizhawk_ctx,
             [(address, width, _MemDomain.EWRAM) for address, width in GAME_STATE_READS],
@@ -605,6 +602,7 @@ class GSTLAClient(BizHawkClient):
                 logger.debug("DeathLink writes rejected by a guard. Retrying on next tick.")
         elif instruction.send_death:
             await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party has been defeated.")
+            self.previous_death_link = ctx.last_death_link
 
 
     async def game_watcher(self, ctx: 'BizHawkClientContext') -> None:
@@ -624,6 +622,7 @@ class GSTLAClient(BizHawkClient):
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
         if not self._is_in_game(result):
             self.death_deliverer.reset()  # makes sure title menu/game reset does not send outgoing deaths
+            self.previous_death_link = ctx.last_death_link
 
             # TODO: if the player goes back into the save file should we reset some things?
             self.local_locations = set()
