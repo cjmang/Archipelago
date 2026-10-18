@@ -58,4 +58,4 @@ The following commands are only available when using the BizHawkClient with Gold
 - `/goals` print the goals for this seed.
 - `/goals_completed` prints the current progress towards the goal.
 - `/deathlink` toggles deathlink between On and Off.
-- `/deathlink_test` simulates an incoming deathlink. (TODO: Ship this with a real APWorld?)
+- `/deathlink_test` simulates an incoming deathlink. Will wipe your party and only your party.

@@ -266,8 +266,6 @@ def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
 
 def cmd_test_death_link(self: BizHawkClientCommandProcessor) -> None:
     """Simulates somone else dying, just locally. Exactly like an incoming death link would"""
-    # TODO: Should we gate this somehow so it doesn't land on an APWorld release?
-    #       Maybe just via os.getenv()? Probably should ask for feedback on this first
     client = _handle_common_cmd(self)
     if client is None:
         return
@@ -380,7 +378,6 @@ class GSTLAClient(BizHawkClient):
     def on_package(self, ctx: BizHawkClientContext, cmd: str, args: dict) -> None:
         if cmd == "Connected" and self.death_link_initialized_for != (ctx.server_seed_name, args.get("slot")):
             # reset deathlink when either the server or slot changes.
-            # TODO: Feedback? If someone uses /deathlink, should it stay enabled when changing anything?
             self.death_link_initialized_for = None
 
         if cmd != "Bounced" or "DeathLink" not in args.get("tags", []):
