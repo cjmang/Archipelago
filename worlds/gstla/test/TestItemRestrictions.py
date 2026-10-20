@@ -1,13 +1,11 @@
 from . import GSTestBase
+from ..gen.ItemNames import ItemName
 from ..gen.LocationData import LocationRestriction
 from ..gen.LocationNames import LocationName
-from ..gen.ItemNames import ItemName
 
 
 class TestItemRestrictions(GSTestBase):
-    options = {
-        "item_shuffle": 3
-    }
+    options = {'item_shuffle': 3}
 
     def test_ensure_empty_restricts(self):
         world = self.get_world()

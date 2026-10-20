@@ -4,17 +4,17 @@ import json
 import os
 import typing
 from collections import defaultdict
-from typing import List, Dict, Any, TYPE_CHECKING, Set
+from typing import TYPE_CHECKING, Any
 
 from BaseClasses import CollectionState, Item
 from . import GSTestBase
-from .. import ItemName, all_locations, loc_names_by_id, LocationType
-from ..gen.ItemData import events, ItemData, djinn_items
+from .. import ItemName, LocationType, all_locations, loc_names_by_id
+from ..gen.ItemData import ItemData, events
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
 if TYPE_CHECKING:
-    from .. import GSTLALocation, GSTLAWorld
+    from .. import GSTLALocation
 
 requirement_map = {
     # "Ship": ItemName.Ship,
@@ -26,7 +26,7 @@ requirement_map = {
     # "FlagPiers": ItemName.Piers,
     # "Boss_Serpent": ItemName.Serpent_defeated,
     # "GabombaCleared": ItemName.Gabomba_Statue_Completed,
-    "ShipWings": ItemName.Wings_of_Anemos,
+    'ShipWings': ItemName.Wings_of_Anemos,
     # "Boss_Poseidon": ItemName.Poseidon_defeated,
     # "Boss_Moapa": ItemName.Moapa_defeated,
     # "Boss_AquaHydra": ItemName.Aqua_Hydra_defeated,
@@ -36,18 +36,18 @@ requirement_map = {
 }
 
 omitted_items = {
-    "Boss_Dullahan",
-    "Skips_BasicRG",
-    "Skips_Missable",
-    "Skips_OOBRG",
-    "Skips_Maze",
-    "SkipOobEasy",
-    "SkipOobHard",
-    "Skips_DeathStorage",
-    "Skips_SanctumWarp",
-    "Skips_WiggleClip",
-    "Skips_SandGlitch",
-    "Skips_SaveQuitRG",
+    'Boss_Dullahan',
+    'Skips_BasicRG',
+    'Skips_Missable',
+    'Skips_OOBRG',
+    'Skips_Maze',
+    'SkipOobEasy',
+    'SkipOobHard',
+    'Skips_DeathStorage',
+    'Skips_SanctumWarp',
+    'Skips_WiggleClip',
+    'Skips_SandGlitch',
+    'Skips_SaveQuitRG',
     # "GabombaCleared",
     # "Piers",
     # "Boss_Avimander",
@@ -61,33 +61,32 @@ omitted_items = {
 }
 
 skips = {
-    "Skips_BasicRG",
-    "Skips_Missable",
-    "Skips_SandGlitch",
-    "Skips_Maze",
-    "Skips_OOBRG",
-    "SkipOobHard",
-    "SkipOobEasy",
-    "Skips_DeathStorage",
-    "Skips_SanctumWarp",
-    "Skips_WiggleClip",
-    "Skips_SaveQuitRG",
+    'Skips_BasicRG',
+    'Skips_Missable',
+    'Skips_SandGlitch',
+    'Skips_Maze',
+    'Skips_OOBRG',
+    'SkipOobHard',
+    'SkipOobEasy',
+    'Skips_DeathStorage',
+    'Skips_SanctumWarp',
+    'Skips_WiggleClip',
+    'Skips_SaveQuitRG',
 }
 
 
 class AccessRequirements:
-
     def __init__(self, requirements: typing.Iterable[str]):
         self.requirements = set(requirements)
         self.has_skips = len([x for x in self.requirements if x in skips]) > 0
 
     def __repr__(self):
-        return f"reqs: {self.requirements} has_skip: {self.has_skips}"
+        return f'reqs: {self.requirements} has_skip: {self.has_skips}'
 
 
-def filter_set_dupes(a: typing.Union[typing.Sized, typing.Iterable[AccessRequirements]]):
+def filter_set_dupes(a: typing.Sized | typing.Iterable[AccessRequirements]):
     result = []
-    remove_list: List[bool] = [False for _ in range(len(a))]
+    remove_list: list[bool] = [False for _ in range(len(a))]
     for i, first in enumerate(a):
         for j, second in enumerate(a):
             if i == j:
@@ -100,27 +99,25 @@ def filter_set_dupes(a: typing.Union[typing.Sized, typing.Iterable[AccessRequire
 
 
 class LocationRequirements:
-
-    def __init__(self, flag: int, access_reqs: typing.Optional[AccessRequirements], requirements: typing.Iterable[str]):
+    def __init__(self, flag: int, access_reqs: AccessRequirements | None, requirements: typing.Iterable[str]):
         self.flag = flag
-        self.requirements: Set[str] = set(requirements)
+        self.requirements: set[str] = set(requirements)
         if access_reqs is not None:
             self.requirements |= access_reqs.requirements
         self.has_skips = len([x for x in self.requirements if x in skips]) > 0
 
     def __repr__(self):
-        return f"flag: {hex(self.flag)} reqs: {self.requirements} skips: {self.has_skips}"
+        return f'flag: {hex(self.flag)} reqs: {self.requirements} skips: {self.has_skips}'
 
 
 class FlagData:
-
-    def __init__(self, name: str, flag_type: str, reqs: List[AccessRequirements]):
+    def __init__(self, name: str, flag_type: str, reqs: list[AccessRequirements]):
         self.name = name
         self.flag_type = flag_type
         self.reqs = reqs
 
     def __repr__(self):
-        return f"name: {self.name} type: {self.flag_type} reqs: {self.reqs}"
+        return f'name: {self.name} type: {self.flag_type} reqs: {self.reqs}'
 
 
 class LocationLogic:
@@ -148,8 +145,8 @@ class LocationLogic:
         # 3919,  # North-West House - Jar
         # 3920,  # Inn - Upstairs Barrel flag
         # Character Starting Inventories:
-        261, # Douse Drop
-        262, # Frost Jewel
+        261,  # Douse Drop
+        262,  # Frost Jewel
         257,  # Carry
         258,  # Lift
         259,  # Force
@@ -157,14 +154,14 @@ class LocationLogic:
     }
 
     other_exclusions = {
-        "VanillaCharacters",
-        "ShipOpen",
+        'VanillaCharacters',
+        'ShipOpen',
         # "FlagPiers"
     }
 
     def __init__(self):
-        self.location_reqs: List[LocationRequirements] = []
-        self.flag_data: Dict[str, FlagData] = {}
+        self.location_reqs: list[LocationRequirements] = []
+        self.flag_data: dict[str, FlagData] = {}
         # piers = [
         #     [
         #         "Lash Pebble",
@@ -184,7 +181,7 @@ class LocationLogic:
         # ]
         # self.flag_data["FlagPiers"] = FlagData("FlagPiers","Flag", [AccessRequirements(x) for x in piers])
 
-    def load(self, data: Dict[str, Any]):
+    def load(self, data: dict[str, Any]):
 
         access_data = [AccessRequirements(x) for x in data['Access']]
 
@@ -210,7 +207,7 @@ class LocationLogic:
                         result.append(AccessRequirements(req.requirements | access_datum.requirements))
                 else:
                     result.append(AccessRequirements(req.requirements))
-            self.flag_data[name] = FlagData(name, datum["Type"], filter_set_dupes(result))
+            self.flag_data[name] = FlagData(name, datum['Type'], filter_set_dupes(result))
 
     def expand_flags(self) -> None:
 
@@ -222,7 +219,7 @@ class LocationLogic:
             # count += 1
             for datum in self.flag_data.values():
                 flags_expanded = False
-                new_reqs: defaultdict[int, List[LocationRequirements]] = defaultdict(lambda: [])
+                new_reqs: defaultdict[int, list[LocationRequirements]] = defaultdict(lambda: [])
                 for loc_reqs in self.location_reqs:
                     result = self.expand_flag(loc_reqs, datum)
                     if result is not None:
@@ -244,7 +241,7 @@ class LocationLogic:
 
         for name in self.flag_data.keys():
             for loc in self.location_reqs:
-                assert name not in loc.requirements, f"Flag {name} is in req list of {loc}"
+                assert name not in loc.requirements, f'Flag {name} is in req list of {loc}'
 
     def filter_skips(self):
         self.location_reqs = [x for x in self.location_reqs if not x.has_skips]
@@ -252,14 +249,14 @@ class LocationLogic:
             data.reqs = [x for x in data.reqs if not x.has_skips]
 
     def filter_dupes(self):
-        flag_map: defaultdict[int, List[LocationRequirements]] = defaultdict(lambda: [])
+        flag_map: defaultdict[int, list[LocationRequirements]] = defaultdict(lambda: [])
         for loc in self.location_reqs:
             flag_map[loc.flag].append(loc)
 
-        result: List[LocationRequirements] = []
+        result: list[LocationRequirements] = []
 
         for loc_reqs in flag_map.values():
-            remove_list: List[bool] = [False for _ in range(len(loc_reqs))]
+            remove_list: list[bool] = [False for _ in range(len(loc_reqs))]
             for i, first in enumerate(loc_reqs):
                 for j, second in enumerate(loc_reqs):
                     if i == j:
@@ -271,18 +268,19 @@ class LocationLogic:
 
     def filter_djinn_reqs(self):
         for loc in self.location_reqs:
-            loc.requirements = {x for x in loc.requirements if not x.startswith("AnyDjinn")}
+            loc.requirements = {x for x in loc.requirements if not x.startswith('AnyDjinn')}
         for data in self.flag_data.values():
             for access_req in data.reqs:
-                access_req.requirements = {x for x in access_req.requirements if not x.startswith("AnyDjinn")}
+                access_req.requirements = {x for x in access_req.requirements if not x.startswith('AnyDjinn')}
 
     def filter_excluded_flags(self):
         self.location_reqs = [loc for loc in self.location_reqs if loc.flag not in LocationLogic.exclude_flags]
         # self.location_reqs = [loc for loc in self.location_reqs if loc.flag == 0xf54]
 
     def filter_other(self):
-        self.location_reqs = {x for x in self.location_reqs if
-                              not x.requirements.intersection(LocationLogic.other_exclusions)}
+        self.location_reqs = {
+            x for x in self.location_reqs if not x.requirements.intersection(LocationLogic.other_exclusions)
+        }
         for data in self.flag_data.values():
             data.reqs = [x for x in data.reqs if not x.requirements.intersection(LocationLogic.other_exclusions)]
             # for access_req in data.reqs:
@@ -292,8 +290,8 @@ class LocationLogic:
         for loc in self.location_reqs:
             loc.requirements = {requirement_map.get(x, x) for x in loc.requirements}
 
-    def expand_flag(self, reqs: LocationRequirements, data: FlagData) -> typing.Optional[List[LocationRequirements]]:
-        result: List[LocationRequirements] = []
+    def expand_flag(self, reqs: LocationRequirements, data: FlagData) -> list[LocationRequirements] | None:
+        result: list[LocationRequirements] = []
         if data.name in reqs.requirements:
             new_reqs = set(reqs.requirements)
             # for req in reqs.requirements:
@@ -309,7 +307,7 @@ class LocationLogic:
         return None if len(result) == 0 else result
 
     def __repr__(self):
-        return f"locations: {self.location_reqs} flags: {self.flag_data}"
+        return f'locations: {self.location_reqs} flags: {self.flag_data}'
 
 
 class TestTreasureLogic(GSTestBase):
@@ -319,20 +317,21 @@ class TestTreasureLogic(GSTestBase):
         'reveal_hidden_item': 0,
         'djinn_logic': 1,
         'character_shuffle': 2,
-        'lemurian_ship': 0
+        'lemurian_ship': 0,
     }
 
-    skip_missing_reqs: defaultdict[int, Set[str]] = defaultdict(lambda: set())
+    skip_missing_reqs: defaultdict[int, set[str]] = defaultdict(lambda: set())
 
     def setUp(self) -> None:
         super().setUp()
         world = self.get_world()
-        self.locations_by_flag: Dict[int, 'GSTLALocation'] = {
+        self.locations_by_flag: dict[int, GSTLALocation] = {
             x.rando_flag: world.get_location(loc_names_by_id[x.ap_id])
-            for x in all_locations if x.loc_type != LocationType.Event and x.loc_type != LocationType.Djinn
+            for x in all_locations
+            if x.loc_type != LocationType.Event and x.loc_type != LocationType.Djinn
         }
         self.test_state = CollectionState(self.multiworld)
-        self.event_items: Dict[str, ItemData] = {}
+        self.event_items: dict[str, ItemData] = {}
         for event in events:
             self.event_items[event.name] = event
         for _ in range(72):
@@ -344,7 +343,12 @@ class TestTreasureLogic(GSTestBase):
         TestTreasureLogic.skip_missing_reqs[3923] = {ItemName.Douse_Drop, ItemName.Black_Crystal, ItemName.Piers}
         TestTreasureLogic.skip_missing_reqs[3987] = {ItemName.Douse_Drop, ItemName.Black_Crystal, ItemName.Piers}
         TestTreasureLogic.skip_missing_reqs[2303] = {ItemName.Douse_Drop, ItemName.Black_Crystal, ItemName.Piers}
-        TestTreasureLogic.skip_missing_reqs[3922] = {ItemName.Douse_Drop, ItemName.Black_Crystal, ItemName.Piers, ItemName.Pound_Cube}
+        TestTreasureLogic.skip_missing_reqs[3922] = {
+            ItemName.Douse_Drop,
+            ItemName.Black_Crystal,
+            ItemName.Piers,
+            ItemName.Pound_Cube,
+        }
         TestTreasureLogic.skip_missing_reqs[3919] = {ItemName.Douse_Drop, ItemName.Black_Crystal, ItemName.Piers}
         TestTreasureLogic.skip_missing_reqs[3920] = {ItemName.Douse_Drop, ItemName.Black_Crystal, ItemName.Piers}
         # self.test_state.collect(world.create_item(ItemName.Black_Crystal), True)
@@ -371,7 +375,7 @@ class TestTreasureLogic(GSTestBase):
         # with open(os.path.join(dir_name, 'MarsLighthouse.json')) as infile:
         #         json_data = json.load(infile)
         for file_name in os.listdir(dir_name):
-            if not file_name.endswith(".json"):
+            if not file_name.endswith('.json'):
                 continue
             # if file_name == "Kibombo.json" or file_name == "Contigo.json":
             #     # Character shuffle messes with these
@@ -404,17 +408,10 @@ class TestTreasureLogic(GSTestBase):
             #     continue
             with open(os.path.join(dir_name, file_name)) as logic_file:
                 json_data = json.load(logic_file)
-                if file_name == "LemurianShip.json":
+                if file_name == 'LemurianShip.json':
                     # json_data['Access'] = [x for x in json_data['Access'] if "FlagPiers" not in x]
                     json_data['Access'] = [
-
-                        [
-                            "Black Crystal",
-                            "Scoop Gem",
-                            "Lash Pebble",
-                            "Pound Cube",
-                            "Piers"
-                        ],
+                        ['Black Crystal', 'Scoop Gem', 'Lash Pebble', 'Pound Cube', 'Piers'],
                         # [
                         #     "Black Crystal",
                         #     "GabombaCleared",
@@ -424,19 +421,9 @@ class TestTreasureLogic(GSTestBase):
                         # [
                         #     "ShipOpen"
                         # ],
-                        [
-                            "Ship",
-                            "Grindstone"
-                        ],
-                        [
-                            "Ship",
-                            "ShipWings",
-                            "Hover Jade"
-                        ],
-                        [
-                            "Ship",
-                            "Boss_Poseidon"
-                        ]
+                        ['Ship', 'Grindstone'],
+                        ['Ship', 'ShipWings', 'Hover Jade'],
+                        ['Ship', 'Boss_Poseidon'],
                     ]
                 # elif file_name == 'GabombaStatue.json':
                 #     json_data['Access'] = [[y for y in x if y != 'FlagPiers'] for x in json_data['Access']]
@@ -505,7 +492,7 @@ class TestTreasureLogic(GSTestBase):
         for loc in logic.location_reqs:
             self.sub_test_location(loc)
 
-    def get_items_and_events(self, item_names: typing.Union[str, typing.Iterable[str]]) -> typing.List[Item]:
+    def get_items_and_events(self, item_names: str | typing.Iterable[str]) -> list[Item]:
         items = self.get_items_by_name(item_names)
         for item_name in item_names:
             if item_name in self.event_items:
@@ -519,22 +506,23 @@ class TestTreasureLogic(GSTestBase):
             return
 
         if len(ap_items) > len(rando_items):
-            raise AssertionError(f"Impossible code flow found {ap_items} vs {rando_items}")
+            raise AssertionError(f'Impossible code flow found {ap_items} vs {rando_items}')
         count = 0
         for item in rando_items:
             if item in omitted_items:
                 count += 1
 
         if len(ap_items) + count != len(rando_items):
-            raise AssertionError(f"Item lengths do not match {ap_items} vs {rando_items}")
+            raise AssertionError(f'Item lengths do not match {ap_items} vs {rando_items}')
 
     def sub_test_location(self, loc: LocationRequirements):
         reqs = loc.requirements
         flag = loc.flag
         location = self.locations_by_flag[flag]
         if not reqs:
-            with self.subTest(f"Can access {location.name} with flag {flag} with no items", flag=loc.flag,
-                              reqs=loc.requirements):
+            with self.subTest(
+                f'Can access {location.name} with flag {flag} with no items', flag=loc.flag, reqs=loc.requirements
+            ):
                 state = self.test_state.copy()
                 self.assertTrue(location.can_reach(state))
         else:
@@ -543,7 +531,7 @@ class TestTreasureLogic(GSTestBase):
                 without_req.remove(req)
                 if req in TestTreasureLogic.skip_missing_reqs[loc.flag]:
                     continue
-                with self.subTest(f"Cannot access {location.name} flag {flag} without {req}", req=req, reqs=reqs):
+                with self.subTest(f'Cannot access {location.name} flag {flag} without {req}', req=req, reqs=reqs):
                     state = self.test_state.copy()
                     items = self.get_items_and_events(without_req)
                     self.verify_item_length(items, without_req)
@@ -553,17 +541,19 @@ class TestTreasureLogic(GSTestBase):
                     # if req in state.prog_items[self.player]:
                     #     # TODO: not a valid test in this case
                     #     continue
-                    self.assertFalse(location.can_reach(state),
-                                     f"Could reach {location.name} with flag {hex(flag)} without {req} but with {without_req} with state {state.prog_items}")
+                    self.assertFalse(
+                        location.can_reach(state),
+                        f'Could reach {location.name} with flag {hex(flag)} without {req} but with {without_req} with state {state.prog_items}',
+                    )
 
-            with self.subTest(f"Can access {location.name} flag {flag} with all reqs", reqs=reqs):
+            with self.subTest(f'Can access {location.name} flag {flag} with all reqs', reqs=reqs):
                 # state = world.multiworld.state.copy()
                 state = self.test_state.copy()
                 items = self.get_items_and_events(reqs)
                 self.verify_item_length(items, reqs)
                 for item in items:
                     self.assertTrue(state.collect(item, False))
-                self.assertTrue(location.can_reach(state),
-                                f"Location {location} with flag {hex(flag)} cannot be reached with items {items} state {state.prog_items}")
-
-
+                self.assertTrue(
+                    location.can_reach(state),
+                    f'Location {location} with flag {hex(flag)} cannot be reached with items {items} state {state.prog_items}',
+                )
