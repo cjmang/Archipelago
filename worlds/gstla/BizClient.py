@@ -10,7 +10,7 @@ from BaseClasses import ItemClassification
 from NetUtils import ClientStatus, NetworkItem
 from worlds._bizhawk import display_message, read, write
 from worlds._bizhawk.client import BizHawkClient
-from . import ItemType, items_by_id, remote_blacklist
+from .GameData import ItemType
 from .gen.ItemData import mimics
 from .gen.LocationData import (
     LocationType,
@@ -20,6 +20,8 @@ from .gen.LocationData import (
     event_name_to_data,
 )
 from .gen.LocationNames import LocationName, loc_names_by_id, option_name_to_goal_name
+from .Items import items_by_id
+from .Locations import remote_blacklist
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientCommandProcessor, BizHawkClientContext
