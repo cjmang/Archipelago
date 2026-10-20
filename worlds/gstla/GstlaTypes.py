@@ -1,11 +1,9 @@
-from typing import List, Dict, Optional, TYPE_CHECKING
-
 class RegionData:
     name: str
-    locations: List[str]
-    exits: List[str]
+    locations: list[str]
+    exits: list[str]
 
-    def __init__(self, _name: str, _locations: List[str] = None, _exits: List[str] = None):
+    def __init__(self, _name: str, _locations: list[str] = None, _exits: list[str] = None):
         if _locations is None:
             _locations = []
 
