@@ -1,23 +1,63 @@
-from typing import Any, Dict
-from Options import StartInventoryPool
-from .Options import (ItemShuffle, RevealHiddenItem, OmitLocations, AddGs1Items, AddDummyItems,
-                      StartWithShip, ShipWings, AnemosAccess, CharacterShuffle, SecondStartingCharacter,
-                      CharStatShuffle, CharEleShuffle, NoLearningUtilPsy, RandomizeClassStatBoosts,
-                      ClassPsynergy, ClassPsynergyLevels, AdjustPsyPower, AdjustPsyCost, RandomizePsyAoe,
-                      AdjustEnemyPsyPower, RandomizeEnemyPsyAoe, EnemyEResShuffle, StartWithHealPsynergy,
-                      StartWithRevivePsynergy, DjinnShuffle, DjinnLogic,
-                      ShuffleDjinnStats, AdjustDjinnPower, RandomizeDjinnAoe, ScaleDjinnBattleDifficulty,
-                      RandomizeSummonCosts, AdjustSummonPower, RandomizeEqCompatibility, AdjustEqPrices,
-                      AdjustEqStats, ShuffleAttack, ShuffleWpnEffects, ShuffleDefense, ShuffleArmEffect,
-                      RandomizeEqCurses, RemoveCurses, VisibleItems, FreeAvoid, FreeRetreat, ScaleExpGained,
-                      ScaleCoinsGained, StartingLevels, SanctuaryReviveCost, AvoidPatch, EnableHardMode,
-                      HalveEncounterRate, EasierBosses, NamedPuzzles, ManualRetreatGlitch, MusicShuffle,
-                      TelportEverywhere, TrapChance, MimicTrapWeight, ForgeMaterialsFillerWeight,
-                      RustyMaterialsFillerWeight, StatBoostFillerWeight, UncommonConsumableFillerWeight,
-                      ForgedEquipmentFillerWeight, LuckyEquipmentFillerWeight, ShopEquipmentFillerWeight,
-                      CoinsFillerWeight, CommonConsumablesFillerWeight, AutoRun, ScaleMimics, ScaleCharacters,
-                      MaxScaledLevel, ForgeMaterialsAreFiller, ArtifactsAreFiller, DisableShopGameTickets,
-                      Goal, RandomGoals, DjinnHuntCount, SummonHuntCount)
+from typing import Any
+
+from .Options import (
+    AddDummyItems,
+    AddGs1Items,
+    AdjustDjinnPower,
+    AdjustEnemyPsyPower,
+    AdjustEqPrices,
+    AdjustEqStats,
+    AdjustPsyCost,
+    AdjustPsyPower,
+    AdjustSummonPower,
+    AnemosAccess,
+    AvoidPatch,
+    CharacterShuffle,
+    CharEleShuffle,
+    CharStatShuffle,
+    ClassPsynergy,
+    ClassPsynergyLevels,
+    DjinnLogic,
+    DjinnShuffle,
+    EasierBosses,
+    EnableHardMode,
+    EnemyEResShuffle,
+    FreeAvoid,
+    FreeRetreat,
+    HalveEncounterRate,
+    ItemShuffle,
+    ManualRetreatGlitch,
+    MusicShuffle,
+    NamedPuzzles,
+    NoLearningUtilPsy,
+    OmitLocations,
+    RandomizeClassStatBoosts,
+    RandomizeDjinnAoe,
+    RandomizeEnemyPsyAoe,
+    RandomizeEqCompatibility,
+    RandomizeEqCurses,
+    RandomizePsyAoe,
+    RandomizeSummonCosts,
+    RemoveCurses,
+    RevealHiddenItem,
+    SanctuaryReviveCost,
+    ScaleCoinsGained,
+    ScaleDjinnBattleDifficulty,
+    ScaleExpGained,
+    SecondStartingCharacter,
+    ShipWings,
+    ShuffleArmEffect,
+    ShuffleAttack,
+    ShuffleDefense,
+    ShuffleDjinnStats,
+    ShuffleWpnEffects,
+    StartingLevels,
+    StartWithHealPsynergy,
+    StartWithRevivePsynergy,
+    StartWithShip,
+    TelportEverywhere,
+    VisibleItems,
+)
 
 easy = {
     ItemShuffle.internal_name: ItemShuffle.option_all_chests_and_tablets,
@@ -75,10 +115,10 @@ easy = {
     NamedPuzzles.internal_name: NamedPuzzles.option_vanilla,
     ManualRetreatGlitch.internal_name: ManualRetreatGlitch.option_false,
     MusicShuffle.internal_name: MusicShuffle.option_false,
-    TelportEverywhere.internal_name: TelportEverywhere.option_true
+    TelportEverywhere.internal_name: TelportEverywhere.option_true,
 }
 
-open_mode= {
+open_mode = {
     ItemShuffle.internal_name: ItemShuffle.option_all_chests_and_tablets,
     RevealHiddenItem.internal_name: RevealHiddenItem.option_true,
     OmitLocations.internal_name: OmitLocations.option_omit_anemos_inner_sanctum,
@@ -134,10 +174,7 @@ open_mode= {
     NamedPuzzles.internal_name: NamedPuzzles.option_vanilla,
     ManualRetreatGlitch.internal_name: ManualRetreatGlitch.option_false,
     MusicShuffle.internal_name: MusicShuffle.option_false,
-    TelportEverywhere.internal_name: TelportEverywhere.option_true
+    TelportEverywhere.internal_name: TelportEverywhere.option_true,
 }
 
-gstla_options_presets: Dict[str, Dict[str, Any]] = {
-    "Easy": easy,
-    "Open Mode": open_mode
-}
+gstla_options_presets: dict[str, dict[str, Any]] = {'Easy': easy, 'Open Mode': open_mode}

@@ -1,11 +1,9 @@
-from typing import List
 from BaseClasses import MultiWorld
-from .Names.RegionName import RegionName
-from .Names.EntranceName import EntranceName
 from .GstlaTypes import EntranceData
+from .Names.EntranceName import EntranceName
+from .Names.RegionName import RegionName
 
-vanilla_connections: List[EntranceData] = \
-[
+vanilla_connections: list[EntranceData] = [
     EntranceData(EntranceName.Menu_StartGame, RegionName.Idejima),
     EntranceData(EntranceName.IdejimaToDaila, RegionName.Daila),
     EntranceData(EntranceName.AnywhereToJoinedPartyMembers, RegionName.PartyMembers),
@@ -56,7 +54,9 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.EasternSeaToWesternSea, RegionName.WesternSea),
     EntranceData(EntranceName.SeaOfTimeIsletToIsletCave, RegionName.IsletCave),
     EntranceData(EntranceName.TreasureIslandToTreasureIsland_Grindstone, RegionName.TreasureIsland_Grindstone),
-    EntranceData(EntranceName.TreasureIsland_GrindstoneToTreasureIsland_PostReunion, RegionName.TreasureIsland_PostReunion),
+    EntranceData(
+        EntranceName.TreasureIsland_GrindstoneToTreasureIsland_PostReunion, RegionName.TreasureIsland_PostReunion
+    ),
     EntranceData(EntranceName.TundariaTowerToTundariaTower_Parched, RegionName.TundariaTower_Parched),
     EntranceData(EntranceName.AnkohlRuinsToAnkohlRuins_Sand, RegionName.AnkohlRuins_Sand),
     EntranceData(EntranceName.YallamToTaopoSwamp, RegionName.TaopoSwamp),
@@ -81,7 +81,7 @@ vanilla_connections: List[EntranceData] = \
     EntranceData(EntranceName.ContigoToReunion, RegionName.Reunion),
     EntranceData(EntranceName.MagmaRockToMagmaRockInterior, RegionName.MagmaRockInterior),
     EntranceData(EntranceName.ProxToMarsLighthouse, RegionName.MarsLighthouse),
-    EntranceData(EntranceName.MarsLighthouseToMarsLighthouse_Activated, RegionName.MarsLighthouse_Activated)
+    EntranceData(EntranceName.MarsLighthouseToMarsLighthouse_Activated, RegionName.MarsLighthouse_Activated),
 ]
 
 

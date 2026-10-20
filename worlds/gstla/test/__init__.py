@@ -9,4 +9,4 @@ class GSTestBase(WorldTestBase):
 
     def get_world(self) -> GSTLAWorld:
         # Can't just retype world in this class
-        return cast(GSTLAWorld, self.world)
+        return cast('GSTLAWorld', self.world)
