@@ -10,7 +10,7 @@ from .Names.EntranceName import EntranceName
 from .Names.RegionName import RegionName
 
 if TYPE_CHECKING:
-    from . import GSTLAWorld
+    from .world import GSTLAWorld
 
 
 def create_region(world: 'GSTLAWorld', region_data: RegionData):
