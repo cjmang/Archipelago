@@ -132,6 +132,7 @@ class GSTLAWorld(World):
     and find elemental Djinn which augment the character's powers."""
 
     game = 'Golden Sun The Lost Age'
+    settings_key = 'gstla_options'
     options_dataclass: ClassVar[type[PerGameCommonOptions]] = GSTLAOptions
     options: GSTLAOptions
     data_version = 1

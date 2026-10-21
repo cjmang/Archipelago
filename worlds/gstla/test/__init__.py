@@ -1,7 +1,7 @@
 from typing import cast
 
 from test.bases import WorldTestBase
-from worlds.gstla import GSTLAWorld
+from worlds.gstla.world import GSTLAWorld
 
 
 class GSTestBase(WorldTestBase):
