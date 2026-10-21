@@ -315,7 +315,7 @@ stat_boosters = [
 
 
 
-useful_remainder = [
+chest_equipment = [
     
         InternalItemData(384, name_by_item_id[384], ItemClassification.useful, 746852, ItemType.Helm, False, True),
         InternalItemData(259, name_by_item_id[259], ItemClassification.useful, 741352, ItemType.Boots, False, True),
@@ -354,31 +354,15 @@ useful_remainder = [
         InternalItemData(383, name_by_item_id[383], ItemClassification.useful, 746808, ItemType.Helm, False, True),
 ]
 
-other_useful: List[InternalItemData] = useful_remainder  + useful_consumables  + forge_materials  + class_change_items 
+other_useful: List[InternalItemData] = chest_equipment  + useful_consumables  + forge_materials  + class_change_items 
 
-shop_only: List[InternalItemData] = [
-InternalItemData(1, name_by_item_id[1], ItemClassification.filler, 730000, ItemType.Weapon, False, False),
-InternalItemData(2, name_by_item_id[2], ItemClassification.filler, 730044, ItemType.Weapon, False, False),
-InternalItemData(3, name_by_item_id[3], ItemClassification.filler, 730088, ItemType.Weapon, False, False),
-InternalItemData(4, name_by_item_id[4], ItemClassification.filler, 730132, ItemType.Weapon, False, False),
+shop_artifacts: List[InternalItemData] = [
 InternalItemData(5, name_by_item_id[5], ItemClassification.useful, 730176, ItemType.Weapon, False, True),
 InternalItemData(6, name_by_item_id[6], ItemClassification.useful, 730220, ItemType.Weapon, False, True),
-InternalItemData(16, name_by_item_id[16], ItemClassification.filler, 730660, ItemType.Weapon, False, False),
-InternalItemData(17, name_by_item_id[17], ItemClassification.filler, 730704, ItemType.Weapon, False, False),
-InternalItemData(18, name_by_item_id[18], ItemClassification.filler, 730748, ItemType.Weapon, False, False),
-InternalItemData(19, name_by_item_id[19], ItemClassification.filler, 730792, ItemType.Weapon, False, False),
 InternalItemData(20, name_by_item_id[20], ItemClassification.useful, 730836, ItemType.Weapon, False, True),
 InternalItemData(21, name_by_item_id[21], ItemClassification.useful, 730880, ItemType.Weapon, False, True),
-InternalItemData(31, name_by_item_id[31], ItemClassification.filler, 731320, ItemType.Weapon, False, False),
-InternalItemData(32, name_by_item_id[32], ItemClassification.filler, 731364, ItemType.Weapon, False, False),
-InternalItemData(33, name_by_item_id[33], ItemClassification.filler, 731408, ItemType.Weapon, False, False),
 InternalItemData(34, name_by_item_id[34], ItemClassification.useful, 731452, ItemType.Weapon, False, True),
-InternalItemData(43, name_by_item_id[43], ItemClassification.filler, 731848, ItemType.Weapon, False, False),
-InternalItemData(44, name_by_item_id[44], ItemClassification.filler, 731892, ItemType.Weapon, False, False),
-InternalItemData(45, name_by_item_id[45], ItemClassification.filler, 731936, ItemType.Weapon, False, False),
-InternalItemData(46, name_by_item_id[46], ItemClassification.filler, 731980, ItemType.Weapon, False, False),
 InternalItemData(47, name_by_item_id[47], ItemClassification.useful, 732024, ItemType.Weapon, False, True),
-InternalItemData(55, name_by_item_id[55], ItemClassification.filler, 732376, ItemType.Weapon, False, False),
 InternalItemData(56, name_by_item_id[56], ItemClassification.useful, 732420, ItemType.Weapon, False, True),
 InternalItemData(57, name_by_item_id[57], ItemClassification.useful, 732464, ItemType.Weapon, False, True),
 InternalItemData(58, name_by_item_id[58], ItemClassification.useful, 732508, ItemType.Weapon, False, True),
@@ -387,6 +371,34 @@ InternalItemData(60, name_by_item_id[60], ItemClassification.useful, 732596, Ite
 InternalItemData(61, name_by_item_id[61], ItemClassification.useful, 732640, ItemType.Weapon, False, True),
 InternalItemData(62, name_by_item_id[62], ItemClassification.useful, 732684, ItemType.Weapon, False, True),
 InternalItemData(63, name_by_item_id[63], ItemClassification.useful, 732728, ItemType.Weapon, False, True),
+InternalItemData(109, name_by_item_id[109], ItemClassification.useful, 734752, ItemType.Armor, False, True),
+InternalItemData(110, name_by_item_id[110], ItemClassification.useful, 734796, ItemType.Armor, False, True),
+InternalItemData(111, name_by_item_id[111], ItemClassification.useful, 734840, ItemType.Armor, False, True),
+InternalItemData(122, name_by_item_id[122], ItemClassification.useful, 735324, ItemType.Shield, False, True),
+InternalItemData(131, name_by_item_id[131], ItemClassification.useful, 735720, ItemType.Shield, False, True),
+InternalItemData(140, name_by_item_id[140], ItemClassification.useful, 736116, ItemType.Shield, False, True),
+InternalItemData(159, name_by_item_id[159], ItemClassification.useful, 736952, ItemType.Helm, False, True),
+InternalItemData(404, name_by_item_id[404], ItemClassification.useful, 747732, ItemType.Boots, False, True),
+
+]
+
+shop_basic_equipment: List[InternalItemData] = [
+InternalItemData(1, name_by_item_id[1], ItemClassification.filler, 730000, ItemType.Weapon, False, False),
+InternalItemData(2, name_by_item_id[2], ItemClassification.filler, 730044, ItemType.Weapon, False, False),
+InternalItemData(3, name_by_item_id[3], ItemClassification.filler, 730088, ItemType.Weapon, False, False),
+InternalItemData(4, name_by_item_id[4], ItemClassification.filler, 730132, ItemType.Weapon, False, False),
+InternalItemData(16, name_by_item_id[16], ItemClassification.filler, 730660, ItemType.Weapon, False, False),
+InternalItemData(17, name_by_item_id[17], ItemClassification.filler, 730704, ItemType.Weapon, False, False),
+InternalItemData(18, name_by_item_id[18], ItemClassification.filler, 730748, ItemType.Weapon, False, False),
+InternalItemData(19, name_by_item_id[19], ItemClassification.filler, 730792, ItemType.Weapon, False, False),
+InternalItemData(31, name_by_item_id[31], ItemClassification.filler, 731320, ItemType.Weapon, False, False),
+InternalItemData(32, name_by_item_id[32], ItemClassification.filler, 731364, ItemType.Weapon, False, False),
+InternalItemData(33, name_by_item_id[33], ItemClassification.filler, 731408, ItemType.Weapon, False, False),
+InternalItemData(43, name_by_item_id[43], ItemClassification.filler, 731848, ItemType.Weapon, False, False),
+InternalItemData(44, name_by_item_id[44], ItemClassification.filler, 731892, ItemType.Weapon, False, False),
+InternalItemData(45, name_by_item_id[45], ItemClassification.filler, 731936, ItemType.Weapon, False, False),
+InternalItemData(46, name_by_item_id[46], ItemClassification.filler, 731980, ItemType.Weapon, False, False),
+InternalItemData(55, name_by_item_id[55], ItemClassification.filler, 732376, ItemType.Weapon, False, False),
 InternalItemData(75, name_by_item_id[75], ItemClassification.filler, 733256, ItemType.Armor, False, False),
 InternalItemData(76, name_by_item_id[76], ItemClassification.filler, 733300, ItemType.Armor, False, False),
 InternalItemData(77, name_by_item_id[77], ItemClassification.filler, 733344, ItemType.Armor, False, False),
@@ -401,23 +413,17 @@ InternalItemData(103, name_by_item_id[103], ItemClassification.filler, 734488, I
 InternalItemData(104, name_by_item_id[104], ItemClassification.filler, 734532, ItemType.Armor, False, False),
 InternalItemData(105, name_by_item_id[105], ItemClassification.filler, 734576, ItemType.Armor, False, False),
 InternalItemData(107, name_by_item_id[107], ItemClassification.filler, 734664, ItemType.Armor, False, False),
-InternalItemData(109, name_by_item_id[109], ItemClassification.useful, 734752, ItemType.Armor, False, True),
-InternalItemData(110, name_by_item_id[110], ItemClassification.useful, 734796, ItemType.Armor, False, True),
-InternalItemData(111, name_by_item_id[111], ItemClassification.useful, 734840, ItemType.Armor, False, True),
 InternalItemData(118, name_by_item_id[118], ItemClassification.filler, 735148, ItemType.Shield, False, False),
 InternalItemData(119, name_by_item_id[119], ItemClassification.filler, 735192, ItemType.Shield, False, False),
 InternalItemData(120, name_by_item_id[120], ItemClassification.filler, 735236, ItemType.Shield, False, False),
 InternalItemData(121, name_by_item_id[121], ItemClassification.filler, 735280, ItemType.Shield, False, False),
-InternalItemData(122, name_by_item_id[122], ItemClassification.useful, 735324, ItemType.Shield, False, True),
 InternalItemData(127, name_by_item_id[127], ItemClassification.filler, 735544, ItemType.Shield, False, False),
 InternalItemData(128, name_by_item_id[128], ItemClassification.filler, 735588, ItemType.Shield, False, False),
 InternalItemData(129, name_by_item_id[129], ItemClassification.filler, 735632, ItemType.Shield, False, False),
-InternalItemData(131, name_by_item_id[131], ItemClassification.useful, 735720, ItemType.Shield, False, True),
 InternalItemData(136, name_by_item_id[136], ItemClassification.filler, 735940, ItemType.Shield, False, False),
 InternalItemData(137, name_by_item_id[137], ItemClassification.filler, 735984, ItemType.Shield, False, False),
 InternalItemData(138, name_by_item_id[138], ItemClassification.filler, 736028, ItemType.Shield, False, False),
 InternalItemData(139, name_by_item_id[139], ItemClassification.filler, 736072, ItemType.Shield, False, False),
-InternalItemData(140, name_by_item_id[140], ItemClassification.useful, 736116, ItemType.Shield, False, True),
 InternalItemData(145, name_by_item_id[145], ItemClassification.filler, 736336, ItemType.Helm, False, False),
 InternalItemData(146, name_by_item_id[146], ItemClassification.filler, 736380, ItemType.Helm, False, False),
 InternalItemData(147, name_by_item_id[147], ItemClassification.filler, 736424, ItemType.Helm, False, False),
@@ -427,13 +433,11 @@ InternalItemData(150, name_by_item_id[150], ItemClassification.filler, 736556, I
 InternalItemData(156, name_by_item_id[156], ItemClassification.filler, 736820, ItemType.Helm, False, False),
 InternalItemData(157, name_by_item_id[157], ItemClassification.filler, 736864, ItemType.Helm, False, False),
 InternalItemData(158, name_by_item_id[158], ItemClassification.filler, 736908, ItemType.Helm, False, False),
-InternalItemData(159, name_by_item_id[159], ItemClassification.useful, 736952, ItemType.Helm, False, True),
 InternalItemData(166, name_by_item_id[166], ItemClassification.filler, 737260, ItemType.Helm, False, False),
 InternalItemData(167, name_by_item_id[167], ItemClassification.filler, 737304, ItemType.Helm, False, False),
 InternalItemData(168, name_by_item_id[168], ItemClassification.filler, 737348, ItemType.Helm, False, False),
 InternalItemData(169, name_by_item_id[169], ItemClassification.filler, 737392, ItemType.Helm, False, False),
 InternalItemData(402, name_by_item_id[402], ItemClassification.useful, 747644, ItemType.Boots, False, False),
-InternalItemData(404, name_by_item_id[404], ItemClassification.useful, 747732, ItemType.Boots, False, True),
 
 ]
 
@@ -654,6 +658,8 @@ remainder: List[InternalItemData] = [
     InternalItemData(241, name_by_item_id[241], ItemClassification.filler, 740560, ItemType.Consumable, False, False),
     
 ]
+
+shop_only: List[InternalItemData] = shop_basic_equipment + shop_artifacts
 
 all_items: List[InternalItemData] = djinn_items + psyenergy_as_item_list + psyenergy_list + summon_list + events + characters + \
     mimics + other_progression + other_useful + shop_only + forge_only + lucky_only + non_vanilla + vanilla_coins + \

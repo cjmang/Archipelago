@@ -107,16 +107,22 @@ other_progression: List[InternalItemData] = [
 
 {% endfor %}
 
-useful_remainder = [
-    {% for id in useful_remainder -%}{% set item = other_useful[id] %}
+chest_equipment = [
+    {% for id in chest_equipment -%}{% set item = other_useful[id] %}
         InternalItemData({{item.item.id}}, name_by_item_id[{{item.name.id}}], ItemClassification.{{progression[item.item.id]}}, {{item.item.addr}}, {{item.item.item_type}}, {{item.item.is_mimic}}, {{item.item.flags | bitwise_and(4)}}),
 {%- endfor %}
 ]
 
-other_useful: List[InternalItemData] = useful_remainder {% for name in useful_groups.keys() %} + {{name}} {% endfor %}
+other_useful: List[InternalItemData] = chest_equipment {% for name in useful_groups.keys() %} + {{name}} {% endfor %}
 
-shop_only: List[InternalItemData] = [
-{% for item in shop_only -%}
+shop_artifacts: List[InternalItemData] = [
+{% for item in shop_artifacts -%}
+    InternalItemData({{item.item.id}}, name_by_item_id[{{item.name.id}}], ItemClassification.{{progression[item.item.id]}}, {{item.item.addr}}, {{item.item.item_type}}, {{item.item.is_mimic}}, {{item.item.flags | bitwise_and(4)}}),
+{% endfor %}
+]
+
+shop_basic_equipment: List[InternalItemData] = [
+{% for item in shop_basic_equipment -%}
     InternalItemData({{item.item.id}}, name_by_item_id[{{item.name.id}}], ItemClassification.{{progression[item.item.id]}}, {{item.item.addr}}, {{item.item.item_type}}, {{item.item.is_mimic}}, {{item.item.flags | bitwise_and(4)}}),
 {% endfor %}
 ]
@@ -156,6 +162,8 @@ remainder: List[InternalItemData] = [
     InternalItemData({{item.item.id}}, name_by_item_id[{{item.name.id}}], ItemClassification.{{progression[item.item.id]}}, {{item.item.addr}}, {{item.item.item_type}}, {{item.item.is_mimic}}, {{item.item.flags | bitwise_and(4)}}),
     {% endfor %}
 ]
+
+shop_only: List[InternalItemData] = shop_basic_equipment + shop_artifacts
 
 all_items: List[InternalItemData] = djinn_items + psyenergy_as_item_list + psyenergy_list + summon_list + events + characters + \
     mimics + other_progression + other_useful + shop_only + forge_only + lucky_only + non_vanilla + vanilla_coins + \

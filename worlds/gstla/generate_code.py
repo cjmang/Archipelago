@@ -265,7 +265,8 @@ def generate_item_data(env: Environment, data: GameData):
         other_prog = []
         other_useful = dict()
         other_items = dict()
-        shop_only = []
+        shop_basic_equipment = []
+        shop_artifacts = []
         forge_only = []
         lucky_only = []
         non_vanilla = []
@@ -279,12 +280,17 @@ def generate_item_data(env: Environment, data: GameData):
             231, # Bone
             449, # Laughing Fungus
         }
-        shop_only_ids = set()
+        shop_non_artifact_ids = set()
+        shop_artifact_ids = set()
         forge_only_ids = set()
         lucky_only_ids = set()
-        for id in data.vanilla_shop_contents:
+        for id in data.shop_basic_equipment:
             if id not in vanilla_item_ids:
-                shop_only_ids.add(id)
+                shop_non_artifact_ids.add(id)
+            vanilla_item_ids.add(id)
+        for id in data.shop_artifacts:
+            if id not in vanilla_item_ids:
+                shop_artifact_ids.add(id)
             vanilla_item_ids.add(id)
         for id in data.forgeable_ids:
             if id not in vanilla_item_ids:
@@ -320,8 +326,10 @@ def generate_item_data(env: Environment, data: GameData):
                 other_items[item.id] = datum
             elif CLASSIFICATION_OVERRIDES[item.id] == 'useful':
                 other_useful[item.id] = datum
-            elif item.id in shop_only_ids:
-                shop_only.append(datum)
+            elif item.id in shop_artifact_ids:
+                shop_artifacts.append(datum)
+            elif item.id in shop_non_artifact_ids:
+                shop_basic_equipment.append(datum)
             elif item.id in forge_only_ids:
                 forge_only.append(datum)
             elif item.id in lucky_only_ids:
@@ -336,10 +344,10 @@ def generate_item_data(env: Environment, data: GameData):
                 other_useful[item.id] = datum
             else:
                 remainder.append(datum)
-        useful_remainder_ids = set()
+        chest_equipment_ids = set()
         for usefuls in USEFUL_ITEM_GROUPS.values():
-            useful_remainder_ids |= usefuls
-        useful_remainder_ids = {x['item'].id for x in other_useful.values()} - useful_remainder_ids
+            chest_equipment_ids |= usefuls
+        chest_equipment_ids = {x['item'].id for x in other_useful.values()} - chest_equipment_ids
         outfile.write(template.render(
             summons=summons,
             psyenergies=psyenergies,
@@ -351,11 +359,12 @@ def generate_item_data(env: Environment, data: GameData):
             misc=misc,
             other_useful=other_useful,
             useful_groups=USEFUL_ITEM_GROUPS,
-            useful_remainder=useful_remainder_ids,
+            chest_equipment=chest_equipment_ids,
             other_items=other_items,
             other_groups=OTHER_ITEM_GROUPS,
             non_vanilla=non_vanilla,
-            shop_only=shop_only,
+            shop_artifacts=shop_artifacts,
+            shop_basic_equipment=shop_basic_equipment,
             forge_only=forge_only,
             lucky_only=lucky_only,
             vanilla_coins=vanilla_coins,

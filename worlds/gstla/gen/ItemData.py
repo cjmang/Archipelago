@@ -29,7 +29,10 @@ class FillerType(str, Enum):
     UsefulConsumables = "Useful Consumables"
     ForgedEquipment = "Forged Equipment"
     LuckyEquipment = "Lucky Equipment"
-    ShopEquipment = "Shop Equipment"
+    ChestEquipment = "Chest Equipment"
+    NonVanillaEquipment = "Non Vanilla Equipment"
+    ShopArtifacts = "Shop Artifacts"
+    ShopBasicEquipment = "Shop Basic Equipment"
     Coins = "Coins"
     CommonConsumables = "Common Consumables"
 
@@ -131,11 +134,13 @@ forge_materials: List[ItemData] = _convert_data(ItemLists.forge_materials)
 class_change_items: List[ItemData] = _convert_data(ItemLists.class_change_items)
 rusty_items: List[ItemData] = _convert_data(ItemLists.rusty_items)
 stat_boosters: List[ItemData] = _convert_data(ItemLists.stat_boosters)
-useful_remainder = _convert_data(ItemLists.useful_remainder)
+chest_equipment = _convert_data(ItemLists.chest_equipment)
 
-other_useful: List[ItemData] = useful_remainder + useful_consumables + forge_materials + class_change_items
+other_useful: List[ItemData] = chest_equipment + useful_consumables + forge_materials + class_change_items
 
 shop_only: List[ItemData] = _convert_data(ItemLists.shop_only)
+shop_artifacts: List[ItemData] = _convert_data(ItemLists.shop_artifacts)
+shop_basic_equipment: List[ItemData] = _convert_data(ItemLists.shop_basic_equipment)
 forge_only: List[ItemData] = _convert_data(ItemLists.forge_only)
 lucky_only: List[ItemData] = _convert_data(ItemLists.lucky_only)
 
@@ -145,9 +150,9 @@ vanilla_coins: List[ItemData] = _convert_data(ItemLists.vanilla_coins)
 misc: List[ItemData] = _convert_data(ItemLists.misc)
 remainder: List[ItemData] = _convert_data(ItemLists.remainder)
 
-all_items: List[ItemData] = djinn_items + psyenergy_as_item_list + psyenergy_list + summon_list + events + characters + \
-                            mimics + other_progression + other_useful + shop_only + forge_only + lucky_only + non_vanilla + vanilla_coins + \
-                            misc + rusty_items + stat_boosters + remainder
+all_items: List[ItemData] = djinn_items + psyenergy_as_item_list + psyenergy_list + summon_list + events + \
+                            characters + mimics + other_progression + other_useful + shop_only + forge_only + \
+                            lucky_only + non_vanilla + vanilla_coins + misc + rusty_items + stat_boosters + remainder
 assert len(all_items) == len({x.id for x in all_items})
 item_table: Dict[str, ItemData] = {item.name: item for item in all_items}
 items_by_id: Dict[int, ItemData] = {item.id: item for item in all_items}
