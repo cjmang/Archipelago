@@ -12,9 +12,9 @@ from .Locations import location_type_to_data
 from .Names.EntranceName import EntranceName
 
 if TYPE_CHECKING:
-    from . import GSTLAWorld
     from .Items import GSTLAItem
     from .Locations import GSTLALocation
+    from .world import GSTLAWorld
 
 
 def set_entrance_rules(world: 'GSTLAWorld'):

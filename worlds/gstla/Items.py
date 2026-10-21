@@ -33,7 +33,7 @@ from .gen.LocationData import LocationType, location_type_to_data
 from .gen.LocationNames import LocationName, loc_names_by_id
 
 if TYPE_CHECKING:
-    from . import GSTLAWorld
+    from .world import GSTLAWorld
 
 
 class GSTLAItem(Item):
