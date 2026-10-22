@@ -31,7 +31,7 @@ select = [
     "PERF", # perflint
     "PLE", # pylint errors
     "PLR0", # pylint refactor errors
-    "PTH", # flake8-use-pathlib
+    # "PTH", # flake8-use-pathlib - disabled for now, should enable once more stuff is fixed
     "RET", # flake8-return
     "RUF100", # ruff / unused-noqa
     "SIM", # flake8-simplify
