@@ -44,6 +44,7 @@ ignore = [
 ]
 
 [lint.per-file-ignores]
+"options.py" = ["E501"]  # not sure if docstrings are passed 1:1 someone, so line breaks might be bad
 "test/*" = ["RUF012"]  # AP convention is the `options` dict to be defined directly in the WorldTestBase
 
 [lint.flake8-type-checking]
