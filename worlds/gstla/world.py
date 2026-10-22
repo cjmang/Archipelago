@@ -5,7 +5,6 @@ import hashlib
 import os
 from bisect import bisect
 from collections import defaultdict
-from collections.abc import Mapping, Sequence
 from io import BytesIO, StringIO
 from math import floor
 from typing import (
@@ -52,6 +51,8 @@ from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
 from .rules import set_access_rules, set_entrance_rules, set_item_rules
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
     from BaseClasses import MultiWorld
 
 import logging

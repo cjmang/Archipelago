@@ -1,5 +1,4 @@
 import math
-from collections.abc import Iterable
 from typing import TYPE_CHECKING, cast
 
 from worlds.generic.Rules import add_item_rule, add_rule
@@ -12,6 +11,8 @@ from .locations import location_type_to_data
 from .names.entrance_name import EntranceName
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from .items import GSTLAItem
     from .locations import GSTLALocation
     from .world import GSTLAWorld
