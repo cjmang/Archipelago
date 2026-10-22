@@ -17,7 +17,7 @@ from worlds.gstla.test import GSTestBase
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
 if TYPE_CHECKING:
-    from ..locations import GSTLALocation
+    from worlds.gstla.locations import GSTLALocation
 
 requirement_map = {
     # "Ship": ItemName.Ship,
