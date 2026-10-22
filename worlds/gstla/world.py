@@ -111,8 +111,8 @@ class GSTLASettings(settings.Group):
                             'Supplied Base Rom does not match UE GBA Golden Sun TLA Version.'
                             'Please provide the correct ROM version'
                         )
-                except ValueError:
-                    raise ValueError(f'File hash does not match for {path}')
+                except ValueError as e:
+                    raise ValueError(f'File hash does not match for {path}') from e
 
     rom_file: RomFile = RomFile(RomFile.copy_to)
 
@@ -179,17 +179,15 @@ class GSTLAWorld(World):
             for goal in self.random.sample(list(self.options.goal.value), k=self.options.random_goals.value):
                 self.goal_conditions.add(goal)
 
-        if 'Dullahan' in self.goal_conditions:
-            if self.options.omit_locations.value > 0:
-                self.options.omit_locations.value = 0
+        if 'Dullahan' in self.goal_conditions and self.options.omit_locations.value > 0:
+            self.options.omit_locations.value = 0
 
         if (
             'Valukar' in self.goal_conditions
             or 'Sentinel' in self.goal_conditions
             or 'Star Magician' in self.goal_conditions
-        ):
-            if self.options.omit_locations.value == 2:
-                self.options.omit_locations.value = 1
+        ) and self.options.omit_locations.value == 2:
+            self.options.omit_locations.value = 1
 
         if self.options.shuffle_characters < 2:
             self.options.non_local_items.value -= self.item_name_groups[ItemType.Character.name]
@@ -206,7 +204,8 @@ class GSTLAWorld(World):
         if self.options.max_scaled_level < self.options.starting_levels:
             self.options.max_scaled_level = self.options.starting_levels
 
-        # ensure that if all are set to 0 we force them all to 1, otherwise we can not create filler and clearly they wanted all to be the same weight.
+        # ensure that if all are set to 0 we force them all to 1,
+        # otherwise we can not create filler and clearly they wanted all to be the same weight.
         combined_weight = (
             self.options.forge_material_filler_weight
             + self.options.rusty_material_filler_weight
@@ -255,8 +254,7 @@ class GSTLAWorld(World):
         pre_fill = []
         for key, val in GSTLAWorld.item_name_groups.items():
             if key in [ItemType.Djinn.name, ItemType.Character.name, ItemType.Mimic.name]:
-                for item in val:
-                    pre_fill.append(create_item(item, self.player))
+                pre_fill.extend([create_item(item, self.player) for item in val])
         return pre_fill
 
     def generate_basic(self):
@@ -424,7 +422,7 @@ class GSTLAWorld(World):
             return True
         if ap_item.advancement or ap_item.trap:
             return True
-        if ap_item.useful and coop_opt >= 2:
+        if ap_item.useful and coop_opt >= 2:  # noqa: SIM103
             # prog_useful
             return True
         # shouldn't make it this far, but just in case
@@ -477,7 +475,11 @@ class GSTLAWorld(World):
                     rando_file.write(location_data.rando_flag.to_bytes(length=2, byteorder='little'))
                     rando_file.write(item_id.to_bytes(length=2, byteorder='little'))
                     debug_file.write(
-                        f'{index} \n\tLocation: {location.name} \n\tLocation Flag: {hex(location_data.rando_flag)} \n\tItem: {location.item.name} \n\tItem ID: {item_id}\n\n'
+                        f'{index}\n'
+                        f'\tLocation: {location.name}\n'
+                        f'\tLocation Flag: {hex(location_data.rando_flag)}\n'
+                        f'\tItem: {ap_item.name}\n'
+                        f'\tItem ID: {item_id}\n\n'
                     )
                 index += 1
                 # debug_file.write()
@@ -497,7 +499,10 @@ class GSTLAWorld(World):
             rando_file.write(item_data.get_rando_flag().to_bytes(length=1, byteorder='little'))
             loc_name = loc_names_by_id[location_data.ap_id]
             debug_file.write(
-                f'Djinn(Location): {loc_name}\nDjinn(Location) Flag: {hex(location_data.rando_flag)}\nDjinn(Item): {item_data.name}\nDjinn(Item) Flag: {hex(item_data.get_rando_flag())}\n\n'
+                f'Djinn(Location): {loc_name}\n'
+                f'Djinn(Location) Flag: {hex(location_data.rando_flag)}\n'
+                f'Djinn(Item): {item_data.name}\n'
+                f'Djinn(Item) Flag: {hex(item_data.get_rando_flag())}\n\n'
             )
 
         rando_file.write(0xFFFF.to_bytes(length=2, byteorder='little'))
@@ -819,9 +824,11 @@ class GSTLAWorld(World):
             + self.options.teleport_to_dungeons_and_towns.name_lookup[self.options.teleport_to_dungeons_and_towns]
             + '\n'
         )
-        # write_me += self.options.force_boss_required_checks_to_nonjunk << 5 #force-boss-drops, this can be done in just AP as is already
+        # write_me += self.options.force_boss_required_checks_to_nonjunk << 5 #force-boss-drops,
+        # this can be done in just AP as is already
         debug_file.write('Force boss drops: false\n')
-        # write_me += self.options.prevent_superboss_locked_check_to_progression << 4 #force-superboss-minors, this can be done in just AP as is already
+        # write_me += self.options.prevent_superboss_locked_check_to_progression << 4 #force-superboss-minors,
+        # this can be done in just AP as is already
         debug_file.write('Force superboss minor: false\n')
         write_me += self.options.anemos_inner_sanctum_access << 2  # anemos-access, require logic changes
         debug_file.write(
@@ -829,9 +836,10 @@ class GSTLAWorld(World):
             + self.options.anemos_inner_sanctum_access.name_lookup[self.options.anemos_inner_sanctum_access]
             + '\n'
         )
-        write_me += (
-            1 << 1
-        )  # char shuffle always on to ensure game understands character items in case of players creating duplicates / plando in weird places
+
+        # char shuffle always on to ensure game understands character items in case of
+        # players creating duplicates / plando in weird places
+        write_me += 1 << 1
         debug_file.write('Character Shuffle: true\n')
         write_me += 0  # skips-oob
         debug_file.write('Skips Oob: false\n')
