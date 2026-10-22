@@ -215,8 +215,9 @@ def create_items(world: 'GSTLAWorld', player: int):
         char_locs.pop(LocationName.Idejima_Jenna)
         sum_locations -= 1
 
-        # if we are not starting with the ship and it is a vanilla shuffled character shuffle we have to enforce piers in initial 3 chars to avoid soft lock.
-        # when vanilla piers is locked in kibombo on his vanilla location and when in the item pool the shuffler will take care of things for us
+        # if we are not starting with the ship and it is a vanilla shuffled character shuffle we have to enforce
+        # piers in initial 3 chars to avoid soft lock. when vanilla piers is locked in kibombo on his vanilla
+        # location and when in the item pool the shuffler will take care of things for us
         if ItemName.Piers in char_items and world.options.lemurian_ship < 2 and world.options.shuffle_characters == 1:
             character = char_items.pop(ItemName.Piers)
             starting_char_locs = [LocationName.Idejima_Sheba, LocationName.Kibombo_Piers]
@@ -347,8 +348,9 @@ def create_items(world: 'GSTLAWorld', player: int):
     world.multiworld.itempool.append(ap_item)
     sum_locations -= 1
 
-    # We guarentee a number of filler items when item shuffle all is on, it adds a hefty amount of hidden locations that do not support having a mimic and fail generation.
-    # On repeated generations it results into 65-70 mimics failing to be placed, otherwise it works fine.
+    # We guarentee a number of filler items when item shuffle all is on, it adds a hefty amount of hidden locations
+    # that do not support having a mimic and fail generation. On repeated generations it results into 65-70 mimics
+    # failing to be placed, otherwise it works fine.
     if world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
         for i in range(40):
             item = get_filler_item(world, False)

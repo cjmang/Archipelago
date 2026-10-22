@@ -546,7 +546,8 @@ class TestTreasureLogic(GSTestBase):
                     #     continue
                     self.assertFalse(
                         location.can_reach(state),
-                        f'Could reach {location.name} with flag {hex(flag)} without {req} but with {without_req} with state {state.prog_items}',
+                        f'Could reach {location.name} with flag {hex(flag)} without {req} '
+                        f'but with {without_req} with state {state.prog_items}',
                     )
 
             with self.subTest(f'Can access {location.name} flag {flag} with all reqs', reqs=reqs):
@@ -558,5 +559,6 @@ class TestTreasureLogic(GSTestBase):
                     self.assertTrue(state.collect(item, False))
                 self.assertTrue(
                     location.can_reach(state),
-                    f'Location {location} with flag {hex(flag)} cannot be reached with items {items} state {state.prog_items}',
+                    f'Location {location} with flag {hex(flag)} cannot '
+                    f'be reached with items {items} state {state.prog_items}',
                 )
