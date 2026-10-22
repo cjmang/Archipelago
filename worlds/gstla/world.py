@@ -428,7 +428,7 @@ class GSTLAWorld(World):
         # shouldn't make it this far, but just in case
         return False
 
-    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):
+    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
         debug_file.write('Version: 1\n')
 
@@ -517,7 +517,7 @@ class GSTLAWorld(World):
                 rando_file.write(level.to_bytes(length=1, byteorder='little'))
                 debug_file.write(f'{name_by_item_id[char + 0xD00]} has starting level {level}\n')
 
-    def _write_options_for_rando(self, rando_file: BinaryIO, debug_file: TextIO):
+    def _write_options_for_rando(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0915
         write_me = 0
         write_me += self.options.item_shuffle << 6  # item-shuffle
         debug_file.write('Item Shuffle: ' + self.options.item_shuffle.name_lookup[self.options.item_shuffle] + '\n')

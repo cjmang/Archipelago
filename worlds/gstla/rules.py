@@ -208,7 +208,7 @@ def set_entrance_rules(world: 'GSTLAWorld'):
     #          lambda state: state.has(ItemName.Gabomba_Statue_Completed, player) and state.has(ItemName.Piers, player))
 
 
-def set_access_rules(world: 'GSTLAWorld'):
+def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
     player = world.player
     # Goal
     goal_conditions = world.goal_conditions

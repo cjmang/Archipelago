@@ -562,8 +562,7 @@ class GSTLAClient(BizHawkClient):
         if messages:
             await ctx.send_msgs(messages)
 
-    async def game_watcher(self, ctx: BizHawkClientContext) -> None:
-
+    async def game_watcher(self, ctx: BizHawkClientContext) -> None:  # noqa: PLR0912
         if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
             logger.debug('Not connected to server...')
             return
