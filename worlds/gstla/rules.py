@@ -3,17 +3,17 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING, cast
 
 from worlds.generic.Rules import add_item_rule, add_rule
-from .gen.ItemData import summon_list
-from .gen.ItemNames import ItemName
-from .gen.LocationData import LocationRestriction, LocationType
-from .gen.LocationNames import LocationName, loc_names_by_id
-from .Items import ItemType, all_items
-from .Locations import location_type_to_data
-from .Names.EntranceName import EntranceName
+from .gen.item_data import summon_list
+from .gen.item_names import ItemName
+from .gen.location_data import LocationRestriction, LocationType
+from .gen.location_names import LocationName, loc_names_by_id
+from .items import ItemType, all_items
+from .locations import location_type_to_data
+from .names.entrance_name import EntranceName
 
 if TYPE_CHECKING:
-    from .Items import GSTLAItem
-    from .Locations import GSTLALocation
+    from .items import GSTLAItem
+    from .locations import GSTLALocation
     from .world import GSTLAWorld
 
 

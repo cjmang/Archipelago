@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
 
 from BaseClasses import Item, ItemClassification
-from .GameData import ItemType
-from .gen.InternalItemData import InternalItemData
-from .gen.ItemData import (
+from .game_data import ItemType
+from .gen.internal_item_data import InternalItemData
+from .gen.item_data import (
     FillerType,
     ItemData,
     TrapType,
@@ -28,9 +28,9 @@ from .gen.ItemData import (
     useful_remainder,
     vanilla_coins,
 )
-from .gen.ItemNames import ItemName
-from .gen.LocationData import LocationType, location_type_to_data
-from .gen.LocationNames import LocationName, loc_names_by_id
+from .gen.item_names import ItemName
+from .gen.location_data import LocationType, location_type_to_data
+from .gen.location_names import LocationName, loc_names_by_id
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld

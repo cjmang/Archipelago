@@ -1,5 +1,5 @@
 from Options import OptionGroup
-from .Options import (
+from .options import (
     AddDummyItems,
     AddGs1Items,
     AdjustDjinnPower,

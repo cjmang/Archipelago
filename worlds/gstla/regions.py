@@ -2,12 +2,12 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from BaseClasses import Region
-from worlds.gstla.Locations import GSTLALocation, location_name_to_id
-from .gen.LocationData import LocationType
-from .gen.LocationNames import LocationName
-from .GstlaTypes import RegionData
-from .Names.EntranceName import EntranceName
-from .Names.RegionName import RegionName
+from .gen.location_data import LocationType
+from .gen.location_names import LocationName
+from .gstla_types import RegionData
+from .locations import GSTLALocation, location_name_to_id
+from .names.entrance_name import EntranceName
+from .names.region_name import RegionName
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld

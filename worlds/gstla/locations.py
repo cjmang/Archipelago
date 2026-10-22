@@ -3,12 +3,12 @@ from typing import TYPE_CHECKING
 from BaseClasses import Location, Region
 
 # TODO: revert
-from worlds.gstla.gen.LocationData import LocationData, LocationType, all_locations as all_gen_locations
-from worlds.gstla.gen.LocationNames import LocationName, loc_names_by_id
-from .GameData import ItemType
+from worlds.gstla.gen.location_data import LocationData, LocationType, all_locations as all_gen_locations
+from worlds.gstla.gen.location_names import LocationName, loc_names_by_id
+from .game_data import ItemType
 
 if TYPE_CHECKING:
-    from .Items import GSTLAItem
+    from .items import GSTLAItem
 
 
 def allow_djinn(_, item: 'GSTLAItem') -> bool:
