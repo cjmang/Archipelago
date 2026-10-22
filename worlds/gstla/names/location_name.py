@@ -1,3 +1,5 @@
+# TODO: Is this obsolete? It's never used anywhere. Only .gen.location_names is.
+
 class LocationName:
     ##hiddenItems
     Daila_Herb = 'Daila - Herb'

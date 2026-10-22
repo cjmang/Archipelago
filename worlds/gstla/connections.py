@@ -1,7 +1,7 @@
 from BaseClasses import MultiWorld
-from .GstlaTypes import EntranceData
-from .Names.EntranceName import EntranceName
-from .Names.RegionName import RegionName
+from .gstla_types import EntranceData
+from .names.entrance_name import EntranceName
+from .names.region_name import RegionName
 
 vanilla_connections: list[EntranceData] = [
     EntranceData(EntranceName.Menu_StartGame, RegionName.Idejima),

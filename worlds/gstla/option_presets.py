@@ -1,6 +1,6 @@
 from typing import Any
 
-from .Options import (
+from .options import (
     AddDummyItems,
     AddGs1Items,
     AdjustDjinnPower,

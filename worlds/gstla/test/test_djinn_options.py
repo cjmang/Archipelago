@@ -1,5 +1,8 @@
-from . import GSTestBase
-from .. import ItemType, LocationType, loc_names_by_id, location_type_to_data
+from worlds.gstla.gen.internal_location_data import LocationType
+from worlds.gstla.gen.location_names import loc_names_by_id
+from worlds.gstla.items import ItemType
+from worlds.gstla.locations import location_type_to_data
+from worlds.gstla.test import GSTestBase
 
 
 class TestDjinnOptions(GSTestBase):

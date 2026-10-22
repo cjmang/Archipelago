@@ -4,8 +4,9 @@ import os
 from collections import defaultdict
 from typing import TextIO
 
-from GameData import ElementType, GameData, ItemFlags, ItemType
 from jinja2 import Environment, PackageLoader, select_autoescape
+
+from .game_data import ElementType, GameData, ItemFlags, ItemType
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
@@ -14,6 +15,7 @@ CLASSIFICATION_OVERRIDES: defaultdict[int, str] = defaultdict(
     lambda: 'filler',
     {
         # NOTE: using strings here, because importing ItemClassification from BaseClasses will cause a circular import
+        # TODO: re-evaluate if we could fix this now
         65: 'progression',  #    ItemName.Shamans_Rod
         458: 'progression',  #    ItemName.Sea_Gods_Tear
         439: 'progression',  #    ItemName.Right_Prong
@@ -170,7 +172,7 @@ def main():
 
 
 def generate_location_names(env: Environment, data: GameData):
-    template = env.get_template('LocationNames.py.jinja')
+    template = env.get_template('location_names.py.jinja')
     hidden_items = []
     key_items = []
     summon_tablets = []
@@ -211,7 +213,7 @@ def generate_location_names(env: Environment, data: GameData):
         else:
             remainder.append(loc_name)
 
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalLocationNames.py'), 'w') as outfile:
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'internal_location_names.py'), 'w') as outfile:
         write_warning(outfile)
         outfile.write(
             template.render(
@@ -231,9 +233,9 @@ def generate_location_names(env: Environment, data: GameData):
 
 
 def generate_item_names(env: Environment, data: GameData):
-    template = env.get_template('ItemNames.py.jinja')
+    template = env.get_template('item_names.py.jinja')
 
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalItemNames.py'), 'w') as outfile:
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'internal_item_names.py'), 'w') as outfile:
         write_warning(outfile)
         name_dict = {
             item.id: {'item': item, 'name': data.item_names[item.id]}
@@ -268,8 +270,8 @@ def generate_item_names(env: Environment, data: GameData):
 
 def generate_item_data(env: Environment, data: GameData):
 
-    template = env.get_template('ItemData.py.jinja')
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalItemData.py'), 'w') as outfile:
+    template = env.get_template('item_data.py.jinja')
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'internal_item_data.py'), 'w') as outfile:
         write_warning(outfile)
         names = data.item_names
 
@@ -390,8 +392,8 @@ def generate_item_data(env: Environment, data: GameData):
 
 
 def generate_location_data(env: Environment, data: GameData):
-    template = env.get_template('LocationData.py.jinja')
-    with open(os.path.join(SCRIPT_DIR, 'gen', 'InternalLocationData.py'), 'w') as outfile:
+    template = env.get_template('location_data.py.jinja')
+    with open(os.path.join(SCRIPT_DIR, 'gen', 'internal_location_data.py'), 'w') as outfile:
         write_warning(outfile)
         loc_data = data.raw_location_data
         psy_ids = {psy.id for psy in data.raw_psy_data}

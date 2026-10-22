@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from typing_extensions import Unpack
 
-import worlds.gstla.gen.InternalLocationData as LocationLists
+import worlds.gstla.gen.internal_location_data as LocationLists  # noqa: N812
 from BaseClasses import MultiWorld
-from .InternalLocationData import InternalLocationData, LocationRestriction, LocationType
-from .LocationNames import loc_names_by_id
+from .internal_location_data import InternalLocationData, LocationRestriction, LocationType
+from .location_names import loc_names_by_id
 
 if TYPE_CHECKING:
     base = InternalLocationData
