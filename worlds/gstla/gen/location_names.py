@@ -1,4 +1,4 @@
-from .InternalLocationNames import InternalLocationName, ids_by_py_name
+from .internal_location_names import InternalLocationName, ids_by_py_name
 
 
 class LocationName(InternalLocationName):

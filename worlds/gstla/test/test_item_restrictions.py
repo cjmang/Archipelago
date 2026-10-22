@@ -1,7 +1,7 @@
-from . import GSTestBase
-from ..gen.ItemNames import ItemName
-from ..gen.LocationData import LocationRestriction
-from ..gen.LocationNames import LocationName
+from worlds.gstla.gen.item_names import ItemName
+from worlds.gstla.gen.location_data import LocationRestriction
+from worlds.gstla.gen.location_names import LocationName
+from worlds.gstla.test import GSTestBase
 
 
 class TestItemRestrictions(GSTestBase):

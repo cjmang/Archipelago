@@ -2,7 +2,7 @@ import json
 import os
 from collections import defaultdict
 from enum import Enum, IntEnum, IntFlag, auto
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
@@ -480,7 +480,7 @@ class GameData:
             self.location_names[enemy.ap_id] = LocationName(enemy.ap_id, enemy.flag, name.py_name, name.str_name)
 
     def _recurse_tracker_data(
-        self, tracker_name_data: dict[int, str], tracker_names: dict[str, int], node: dict[str, any]
+        self, tracker_name_data: dict[int, str], tracker_names: dict[str, int], node: dict[str, Any]
     ) -> None:
         if 'sections' not in node:
             if 'children' in node:

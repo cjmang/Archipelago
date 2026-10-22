@@ -3,7 +3,6 @@
 from typing import Callable, List, Dict, NamedTuple, Optional
 from enum import Enum, IntFlag, auto
 from BaseClasses import MultiWorld
-from .LocationNames import loc_names_by_id
 
 class LocationType(str, Enum):
    Item = "Item"

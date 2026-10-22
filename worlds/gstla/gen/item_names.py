@@ -1,4 +1,4 @@
-from .InternalItemNames import InternalItemName, item_id_by_py_name
+from .internal_item_names import InternalItemName, item_id_by_py_name
 
 
 class ItemName(InternalItemName):

@@ -13,13 +13,7 @@ from typing import (
     Any,
     BinaryIO,
     ClassVar,
-    Dict,
-    List,
-    Optional,
-    Set,
     TextIO,
-    Tuple,
-    Type,
     cast,
 )
 
@@ -27,13 +21,12 @@ import settings
 from BaseClasses import Item, ItemClassification, Location, Tutorial
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import WebWorld, World
-from .BizClient import GSTLAClient
-from .Connections import create_vanilla_connections
-from .gen.ItemData import characters, mimics
-from .gen.ItemNames import ItemName, item_id_by_name, name_by_item_id
-from .gen.LocationData import LocationType, location_name_to_data
-from .gen.LocationNames import LocationName, ids_by_loc_name, loc_names_by_id
-from .Items import (
+from .connections import create_vanilla_connections
+from .gen.item_data import characters, mimics
+from .gen.item_names import ItemName, item_id_by_name, name_by_item_id
+from .gen.location_data import LocationType
+from .gen.location_names import ids_by_loc_name, loc_names_by_id
+from .items import (
     AP_PLACEHOLDER_ITEM,
     AP_PROG_PLACEHOLDER_ITEM,
     AP_USEFUL_PLACEHOLDER_ITEM,
@@ -48,17 +41,15 @@ from .Items import (
     create_trap_pool_weights,
     get_filler_item,
     item_table,
-    items_by_id,
 )
-from .LocationGroups import goldensuntla_location_groups
-from .Locations import GSTLALocation, all_locations, location_name_to_id, location_type_to_data, remote_blacklist
-from .Names.RegionName import RegionName
-from .Option_groups import gstla_option_groups
-from .Option_presets import gstla_options_presets
-from .Options import GSTLAOptions
-from .Regions import create_regions
-from .Rom import CHECKSUM_GSTLA, GSTLADeltaPatch, GSTLAPatchExtension
-from .Rules import set_access_rules, set_entrance_rules, set_item_rules
+from .location_groups import goldensuntla_location_groups
+from .locations import GSTLALocation, location_name_to_id, remote_blacklist
+from .option_groups import gstla_option_groups
+from .option_presets import gstla_options_presets
+from .options import GSTLAOptions
+from .regions import create_regions
+from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
+from .rules import set_access_rules, set_entrance_rules, set_item_rules
 
 if TYPE_CHECKING:
     from BaseClasses import MultiWorld

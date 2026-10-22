@@ -2,8 +2,12 @@ import base64
 from io import BytesIO, StringIO
 
 from BaseClasses import ItemClassification
-from . import GSTestBase
-from .. import ItemName, ItemType, LocationName, LocationType, create_item, loc_names_by_id, location_type_to_data
+from worlds.gstla.gen.item_names import ItemName
+from worlds.gstla.gen.location_data import LocationType
+from worlds.gstla.gen.location_names import LocationName, loc_names_by_id
+from worlds.gstla.items import ItemType, create_item
+from worlds.gstla.locations import location_type_to_data
+from worlds.gstla.test import GSTestBase
 
 OPTION_OFFSET = 17
 
