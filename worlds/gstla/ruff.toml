@@ -40,6 +40,7 @@ select = [
     "W", # pycodestyle warnings
 ]
 ignore = [
+    "G004", # logging-f-string, the logging's just for us. We also don't have to do any translations or something.
     "UP015", # explicit is better than implicit, so we'd prefer to keep "r" in open() calls
 ]
 
