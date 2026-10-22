@@ -157,7 +157,7 @@ def create_events(world: 'GSTLAWorld'):
         event_location.place_locked_item(event_item)
 
 
-def create_items(world: 'GSTLAWorld', player: int):
+def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     """Creates all the items for GSTLA that need to be shuffled into the multiworld, and
     adds them to the multiworld's item pool.
     """
@@ -371,7 +371,7 @@ def create_items(world: 'GSTLAWorld', player: int):
         world.multiworld.itempool.append(ap_item)
 
 
-def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:
+def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:  # noqa: PLR0912
     if includetraps and world.options.trap_chance > 0 and world.random.randint(1, 100) <= world.options.trap_chance:
         trap_pool_weights = create_trap_pool_weights(world)
         trap_type = world.random.choices(list(trap_pool_weights.keys()), list(trap_pool_weights.values()))[0]

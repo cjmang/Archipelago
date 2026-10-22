@@ -47,6 +47,9 @@ ignore = [
 "options.py" = ["E501"]  # not sure if docstrings are passed 1:1 someone, so line breaks might be bad
 "test/*" = ["RUF012"]  # AP convention is the `options` dict to be defined directly in the WorldTestBase
 
+[lint.pylint]
+max-returns = 8
+
 [lint.flake8-type-checking]
 # An editor might try to put stuff under `if TYPE_CHECKING:`,
 # but AP actually evaluates those at runtime and then can't find the module
