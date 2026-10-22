@@ -268,8 +268,7 @@ def generate_item_names(env: Environment, data: GameData):
         )
 
 
-def generate_item_data(env: Environment, data: GameData):
-
+def generate_item_data(env: Environment, data: GameData):  # noqa: PLR0912, PLR0915
     template = env.get_template('item_data.py.jinja')
     with open(os.path.join(SCRIPT_DIR, 'gen', 'internal_item_data.py'), 'w') as outfile:
         write_warning(outfile)
