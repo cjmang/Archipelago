@@ -272,7 +272,8 @@ def set_access_rules(world: 'GSTLAWorld'):
     add_rule(world.get_location(LocationName.Contigo_Orb_of_Force), lambda state: state.has(ItemName.Garet, player))
     add_rule(world.get_location(LocationName.Contigo_Catch_Beads), lambda state: state.has(ItemName.Isaac, player))
 
-    # Character djinn, char shuffle flag is always enabled so we gain djinn every few chars and they are not tied to specific chars
+    # Character djinn, char shuffle flag is always enabled so we gain djinn every few chars
+    # and they are not tied to specific chars
     add_rule(
         world.get_location(LocationName.Spring), lambda state: state.count_group(ItemType.Character.name, player) >= 2
     )
@@ -856,13 +857,15 @@ def set_access_rules(world: 'GSTLAWorld'):
         ),
     )
 
-    # If item shuffle everything is on a lucky medal is guaranteed in the pool, otherwise there are guarenteed lucky medals in Lemuria
+    # If item shuffle everything is on a lucky medal is guaranteed in the pool,
+    # otherwise there are guarenteed lucky medals in Lemuria
     if world.options.item_shuffle == 3:
         add_rule(
             world.get_location(LocationName.Lemuria_Eclipse), lambda state: state.has(ItemName.Lucky_Medal, player)
         )
     else:
-        # If hidden items are enabled make sure we sure Reveal is in logic as the guarenteed medals are hidden, one in the castle barrel, one dug up with scoop. We can assume for now just Reveal is enough
+        # If hidden items are enabled make sure Reveal is in logic as the guarenteed medals are hidden,
+        # one in the castle barrel, one dug up with scoop. We can assume for now just Reveal is enough
         if world.options.reveal_hidden_item == 1:
             add_rule(world.get_location(LocationName.Lemuria_Eclipse), lambda state: state.has(ItemName.Reveal, player))
 
@@ -1301,7 +1304,8 @@ def set_access_rules(world: 'GSTLAWorld'):
         )
 
     else:
-        # Force whirldwind to be able to get all 4 light orbs to make serpent as weak as possible to beat it logically without djinn
+        # Force whirldwind to be able to get all 4 light orbs to make serpent as weak as possible
+        # to beat it logically without djinn
         add_rule(
             world.get_location(LocationName.Gaia_Rock_Serpent), lambda state: state.has(ItemName.Whirlwind, player)
         )
@@ -1535,7 +1539,8 @@ def set_access_rules(world: 'GSTLAWorld'):
         if world.options.reveal_hidden_item == 1:
             for loc in location_type_to_data[LocationType.Hidden]:
                 loc_name = loc_names_by_id[loc.ap_id]
-                # for all hidden items that are not eventype 131 (these are scoopable or cyclone places), we require reveal
+                # for all hidden items that are not eventype 131 (these are scoopable or cyclone places),
+                # we require reveal
                 if (
                     loc.event_type != 131
                     or loc_name == LocationName.Daila_Psy_Crystal

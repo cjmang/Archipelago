@@ -591,7 +591,9 @@ class GSTLAClient(BizHawkClient):
             self.goals.initialized = True
 
         # logger.debug(
-        #     f"Local locations checked: {len(self.local_locations)}; server locations checked: {len(ctx.checked_locations)}")
+        #     f"Local locations checked: {len(self.local_locations)}; "
+        #     f"server locations checked: {len(ctx.checked_locations)}"
+        # )
 
         self.temp_locs = set()
         self.temp_events = set()
