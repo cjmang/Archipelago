@@ -40,7 +40,7 @@ from .names import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
-from .rules import set_access_rules, set_entrance_rules, set_item_rules
+from .rules_legacy import set_access_rules, set_entrance_rules, set_item_rules
 from .web_world import GSTLAWeb
 
 if TYPE_CHECKING:
