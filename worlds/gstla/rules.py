@@ -8,6 +8,7 @@ from worlds.gstla.options import AnemosAccess
 from worlds.gstla.world import GSTLAWorld
 from .game_data import ItemType
 from .items import ItemName
+from .options import AnemosAccess, ShortcutMagmaRock, ShortcutMarsLighthouse, StartWithShip
 from .regions import EntranceName
 
 # TODO:
@@ -76,5 +77,25 @@ ENTRANCE_RULES: dict[str, Rule] = {
         HasAll(ItemName.Lifting_Gem, ItemName.Frost_Jewel),
     ),
     EntranceName.WesternSeaToProx: Has(ItemName.Ship_Cannon),
-    # TODO: More conditional ones
+    EntranceName.MagmaRockToMagmaRockInterior: HasAll(
+        ItemName.Burst_Brooch,
+        ItemName.Growth,
+        ItemName.Lash_Pebble,
+        options=[OptionFilter(ShortcutMagmaRock, ShortcutMagmaRock.option_false)],
+        filtered_resolution=True,
+    ),
+    EntranceName.MarsLighthouseToMarsLighthouse_Activated: Or(
+        Has(ItemName.Mars_Star, options=[OptionFilter(ShortcutMarsLighthouse, ShortcutMarsLighthouse.option_true)]),
+        Has(
+            ItemName.Mars_Lighthouse_Heated,
+            options=[OptionFilter(ShortcutMarsLighthouse, ShortcutMarsLighthouse.option_false)],
+        ),
+    ),
+    EntranceName.MadraToLemurianShip: HasAll(
+        ItemName.Black_Crystal,
+        ItemName.Gabomba_Statue_Completed,
+        ItemName.Piers,
+        options=[OptionFilter(StartWithShip, StartWithShip.option_vanilla)],
+        filtered_resolution=True,
+    ),
 }
