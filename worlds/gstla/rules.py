@@ -37,4 +37,27 @@ ENTRANCE_RULES: dict[str, Rule] = {
     EntranceName.MadraToEasternSea: Has(ItemName.Ship),
     EntranceName.SeaOfTimeIsletToIsletCave: HasAll(ItemName.Mind_Read, ItemName.Lil_Turtle),
     EntranceName.SeaOfTimeToLemuria: HasAny(ItemName.Poseidon_defeated, ItemName.Grindstone),
+    # L100-200
+    EntranceName.TreasureIslandToTreasureIsland_Grindstone: Has(ItemName.Grindstone),
+    EntranceName.TreasureIsland_GrindstoneToTreasureIsland_PostReunion: Has(ItemName.Lifting_Gem),
+    EntranceName.EasternSeaToAnkohlRuins: Has(ItemName.Whirlwind),
+    EntranceName.AnkohlRuinsToAnkohlRuins_Sand: Has(ItemName.Sand),
+    EntranceName.EasternSeaToAquaRock: Has(ItemName.Douse_Drop),
+    EntranceName.TundariaTowerToTundariaTower_Parched: Has(ItemName.Parch),
+    EntranceName.EasternSeaToWesternSea: Or(
+        Has(ItemName.Grindstone),
+        HasAll(ItemName.Wings_of_Anemos, ItemName.Hover_Jade),
+    ),
+    EntranceName.WesternSeaToAttekaCavern: HasAll(ItemName.Wings_of_Anemos, ItemName.Hover_Jade),
+    EntranceName.WesternSeaToMagmaRock: Has(ItemName.Lifting_Gem),
+    # TODO: Here are some conditional ones
+    EntranceName.ContigoToAnemosInnerSanctum: Has(ItemName.Teleport_Lapis),
+    EntranceName.ContigoToJupiterLighthouse: Has(ItemName.Cyclone_Chip),
+    EntranceName.ContigoToReunion: Has(ItemName.Jupiter_Beacon_Lit),
+    EntranceName.ShamanVillageCaveToShamanVillage: Or(
+        Has(ItemName.Whirlwind),
+        HasAll(ItemName.Lifting_Gem, ItemName.Frost_Jewel),
+    ),
+    EntranceName.WesternSeaToProx: Has(ItemName.Ship_Cannon),
+    # TODO: More conditional ones
 }
