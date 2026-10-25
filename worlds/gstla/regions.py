@@ -30,8 +30,8 @@ def create_region(world: 'GSTLAWorld', region_data: RegionData):
         region.locations.append(loc)
     region.add_locations(gs_locations)
 
-    for regionExit in region_data.exits:
-        region.create_exit(regionExit)
+    for region_exit in region_data.exits:
+        region.create_exit(region_exit)
 
     world.multiworld.regions.append(region)
 
