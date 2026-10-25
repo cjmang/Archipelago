@@ -1,6 +1,7 @@
 # TODO:
 #  - Evaluate if CachedRuleBuilderWorld would do anything useful for us
 #  - Import ItemName as Item, EntranceName as Entrance after adding all of them
+#  - Why not use the rando logic from game_code? (asked Platano)
 
 from __future__ import annotations
 
