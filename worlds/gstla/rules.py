@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 #  Also: Replace EntranceNames with tuples?: `(Daila, ShrineOfTheSeaGod): Has(XYZ)`
 
 ENTRANCE_RULES: dict[str, Rule] = {
-    # L23-99 first
     EntranceName.DailaToShrineOfTheSeaGod: Has(ItemName.Lash_Pebble),
     EntranceName.DailaToKandoreanTemple: Has(ItemName.Whirlwind),
     EntranceName.MadraToMadraCatacombs: Has(ItemName.Reveal),
@@ -47,7 +46,6 @@ ENTRANCE_RULES: dict[str, Rule] = {
     EntranceName.MadraToEasternSea: Has(ItemName.Ship),
     EntranceName.SeaOfTimeIsletToIsletCave: HasAll(ItemName.Mind_Read, ItemName.Lil_Turtle),
     EntranceName.SeaOfTimeToLemuria: HasAny(ItemName.Poseidon_defeated, ItemName.Grindstone),
-    # L100-200
     EntranceName.TreasureIslandToTreasureIsland_Grindstone: Has(ItemName.Grindstone),
     EntranceName.TreasureIsland_GrindstoneToTreasureIsland_PostReunion: Has(ItemName.Lifting_Gem),
     EntranceName.EasternSeaToAnkohlRuins: Has(ItemName.Whirlwind),
