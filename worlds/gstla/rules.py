@@ -2,7 +2,11 @@
 #  - Evaluate if CachedRuleBuilderWorld would do anything useful for us
 #  - Import ItemName as Item, EntranceName as Entrance after adding all of them
 
-from rule_builder.rules import Has, HasAll, HasAny, Or, Rule
+from rule_builder.options import OptionFilter
+from rule_builder.rules import And, Has, HasAll, HasAny, HasGroup, Or, Rule
+from worlds.gstla.options import AnemosAccess
+from worlds.gstla.world import GSTLAWorld
+from .game_data import ItemType
 from .items import ItemName
 from .regions import EntranceName
 
@@ -50,8 +54,21 @@ ENTRANCE_RULES: dict[str, Rule] = {
     ),
     EntranceName.WesternSeaToAttekaCavern: HasAll(ItemName.Wings_of_Anemos, ItemName.Hover_Jade),
     EntranceName.WesternSeaToMagmaRock: Has(ItemName.Lifting_Gem),
-    # TODO: Here are some conditional ones
-    EntranceName.ContigoToAnemosInnerSanctum: Has(ItemName.Teleport_Lapis),
+    EntranceName.ContigoToAnemosInnerSanctum: And(
+        Has(ItemName.Teleport_Lapis),
+        HasGroup(
+            ItemType.Djinn.name,
+            72,
+            options=[OptionFilter(AnemosAccess, AnemosAccess.option_vanilla)],
+            filtered_resolution=True,
+        ),
+        HasGroup(
+            ItemType.Djinn.name,
+            28,
+            options=[OptionFilter(AnemosAccess, AnemosAccess.option_randomized)],
+            filtered_resolution=True,
+        ),
+    ),
     EntranceName.ContigoToJupiterLighthouse: Has(ItemName.Cyclone_Chip),
     EntranceName.ContigoToReunion: Has(ItemName.Jupiter_Beacon_Lit),
     EntranceName.ShamanVillageCaveToShamanVillage: Or(
