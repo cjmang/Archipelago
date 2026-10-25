@@ -47,7 +47,8 @@ from .locations import GSTLALocation, location_name_to_id, remote_blacklist
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
-from .rules_legacy import set_access_rules, set_entrance_rules, set_item_rules
+from .rules import set_entrance_rules
+from .rules_legacy import set_access_rules, set_item_rules
 from .web_world import GSTLAWeb
 
 if TYPE_CHECKING:
