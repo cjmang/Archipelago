@@ -2,14 +2,19 @@
 #  - Evaluate if CachedRuleBuilderWorld would do anything useful for us
 #  - Import ItemName as Item, EntranceName as Entrance after adding all of them
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from rule_builder.options import OptionFilter
 from rule_builder.rules import And, Has, HasAll, HasAny, HasGroup, Or, Rule
-from worlds.gstla.options import AnemosAccess
-from worlds.gstla.world import GSTLAWorld
 from .game_data import ItemType
 from .items import ItemName
 from .options import AnemosAccess, ShortcutMagmaRock, ShortcutMarsLighthouse, StartWithShip
 from .regions import EntranceName
+
+if TYPE_CHECKING:
+    from .world import GSTLAWorld
 
 # TODO:
 #  Rather use operators like "|" and "&" or HasAll/HasAny/Or/And?
@@ -99,3 +104,8 @@ ENTRANCE_RULES: dict[str, Rule] = {
         filtered_resolution=True,
     ),
 }
+
+
+def set_entrance_rules(world: GSTLAWorld) -> None:
+    for entrance, rule in ENTRANCE_RULES.items():
+        world.set_rule(world.get_entrance(entrance), rule)
