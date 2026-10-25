@@ -17,9 +17,9 @@ from typing import (
 )
 
 import settings
-from BaseClasses import Item, ItemClassification, Location, Tutorial
+from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
-from worlds.AutoWorld import WebWorld, World
+from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
 from .gen.item_data import characters, mimics
 from .gen.item_names import ItemName, item_id_by_name, name_by_item_id
@@ -44,12 +44,11 @@ from .items import (
 )
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, location_name_to_id, remote_blacklist
-from .option_groups import gstla_option_groups
-from .option_presets import gstla_options_presets
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
 from .rules import set_access_rules, set_entrance_rules, set_item_rules
+from .web_world import GSTLAWeb
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -61,23 +60,6 @@ import logging
 from worlds.Files import APTokenTypes
 
 logger = logging.getLogger()
-
-
-class GSTLAWeb(WebWorld):
-    theme = 'jungle'
-    option_groups = gstla_option_groups
-    options_presets = gstla_options_presets
-
-    tut_en = Tutorial(
-        'Multiworld Setup Guide',
-        'A guide to setting up Golden Sun The Lost Age randomizer on your computer',
-        'English',
-        'setup_en.md',
-        'setup/en',
-        ['Dragion', 'PlatanoBailando'],
-    )
-
-    tutorials = [tut_en]
 
 
 class GSTLASettings(settings.Group):
@@ -684,7 +666,8 @@ class GSTLAWorld(World):
         rando_file.write(write_me.to_bytes(length=1, byteorder='big'))
 
         write_me = 0
-        # write_me += 0 << 7 #adv-equip, not supported, requires AP to know shop artefact locations and forging locations
+        # write_me += 0 << 7 # adv-equip, not supported,
+        # requires AP to know shop artefact locations and forging locations
         debug_file.write('Adv Equip: false\n')
         write_me += self.options.add_non_obtainable_items << 6  # dummy-items
         debug_file.write(
