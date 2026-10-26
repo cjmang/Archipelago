@@ -94,7 +94,7 @@ def filter_set_dupes(a: typing.Sized | typing.Iterable[AccessRequirements]):
         for j, second in enumerate(a):
             if i == j:
                 continue
-            if first == second and i > j:
+            if first.requirements == second.requirements and i > j:
                 continue
             remove_list[i] |= first.requirements.issuperset(second.requirements)
     result += [x for i, x in enumerate(a) if not remove_list[i]]
