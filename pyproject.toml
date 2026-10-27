@@ -16,7 +16,7 @@ target-version = "py313"
 line-length = 120
 indent-width = 4
 
-src = ["external/archipelago"]  # symlink, same as ARCHIPELAGO_ROOT in justfile
+src = ["external/archipelago"]  # symlink, same as ARCHIPELAGO_ROOT in .env.local
 
 extend-exclude = [
     "external",
