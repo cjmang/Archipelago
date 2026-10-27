@@ -16,18 +16,20 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
    interpreter.
    This also allows us to re-use an existing installation across multiple APWorlds. For example, the "Slay The Spire 2"
    world works similar.
-2. [uv](https://docs.astral.sh/uv/) 0.13.4 or newer. For now, it's only used to install the linter and type checker. The
-   real APWorld requirements are still in `worlds/gstla/requirements.txt`.
-3. [just](https://github.com/casey/just), the command runner used for every task in this repo. You can also use
-   `uv run just`, if you don't want to install it properly.
+2. [uv](https://docs.astral.sh/uv/) 0.13.4 or newer. For now, it is only used to install the linter
+   ([ruff](https://docs.astral.sh/ruff/)), the type checker ([pyrefly](https://pyrefly.org/en/docs/)) and
+   the command runner ([just](https://github.com/casey/just)) that is used for every task in this repo. The real APWorld
+   requirements are still in `worlds/gstla/requirements.txt`.
 
 ### First run
 
 1. Copy `.env.local.template` to `.env.local` and set all variables.
-2. Run `just setup`. It creates `external/archipelago` as a link to your Archipelago checkout and links
+2. Run `uv sync`. It creates a virtual environment in `.venv` with `ruff`, `pyrefly` and `just`. All `just` commands
+   below are run as `uv run just <command>`. If you have `just` installed globally, a normal `just <command>` works too.
+3. Run `uv run just setup`. It creates `external/archipelago` as a link to your Archipelago checkout and links
    our `worlds/gstla` into its `worlds/` folder, so Archipelago can properly register the world.
-3. Run `just check` and `just test`. Note: As of now, ruff and pyrefly will show some errors. This will be fixed in the
-   future. New contributions should make sure to not introduce any new ones.
+4. Run `uv run just check` and `uv run just test`. Note: As of now, ruff and pyrefly will show some errors. This will
+   be fixed in the future. New contributions should make sure to not introduce any new ones.
 
 ### Commands
 
