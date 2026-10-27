@@ -27,8 +27,10 @@ setup:
 [windows]
 setup:
     New-Item -ItemType Directory -Force "{{justfile_directory()}}/external" | Out-Null
-    New-Item -ItemType Junction -Force -Path "{{archipelago}}" -Target "{{archipelago_root}}" | Out-Null
-    New-Item -ItemType Junction -Force -Path "{{archipelago}}/worlds/gstla" -Target "{{justfile_directory()}}/worlds/gstla" | Out-Null
+    if (Test-Path -LiteralPath "{{archipelago}}") { (Get-Item -LiteralPath "{{archipelago}}").Delete() }
+    New-Item -ItemType Junction -Path "{{archipelago}}" -Target "{{archipelago_root}}" | Out-Null
+    if (Test-Path -LiteralPath "{{archipelago}}/worlds/gstla") { (Get-Item -LiteralPath "{{archipelago}}/worlds/gstla").Delete() }
+    New-Item -ItemType Junction -Path "{{archipelago}}/worlds/gstla" -Target "{{justfile_directory()}}/worlds/gstla" | Out-Null
 
 
 [working-directory: 'external/archipelago']
