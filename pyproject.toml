@@ -1,7 +1,7 @@
 [project]
 name = "gstla"
 version = "0"  # placeholder for uv, the real version is in archipelago.json
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 
 [dependency-groups]
 dev = [
