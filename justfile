@@ -1,15 +1,15 @@
 # Requires you to have a .env.local.
-# If you don't have one yet, copy it from .env.local.template and edit it to your liking.
+# If you don't have one yet, run `just setup` or copy it from `.env.local.template` and edit it to your liking.
 
 set dotenv-filename := ".env.local"
 set ignore-comments
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
-archipelago_root := env("ARCHIPELAGO_ROOT", justfile_directory() / "../../archipelago")
+archipelago_root := absolute_path(env("ARCHIPELAGO_ROOT", "../../archipelago"))
 archipelago := justfile_directory() / "external/archipelago"
 
-# TODO: Also make python interpreter configurable (also see pyrefly config in pyproject.toml)
-python := if os_family() == "windows" { archipelago / ".venv/Scripts/python.exe" } else { archipelago / ".venv/bin/python" }
+default_python := if os_family() == "windows" { archipelago / ".venv/Scripts/python.exe" } else { archipelago / ".venv/bin/python" }
+python := absolute_path(env("PYTHON", default_python))
 seed := env("SEED", "1")
 temp_ap_dir := justfile_directory() / ".ap"
 
@@ -20,14 +20,16 @@ export AP_TEST_WORLDS := "gstla"
 
 [unix]
 setup:
+    cp -n "{{justfile_directory()}}/.env.local.template" "{{justfile_directory()}}/.env.local" || true
     mkdir -p "{{justfile_directory()}}/external"
-    ln -sfn "$(realpath "{{archipelago_root}}")" "{{archipelago}}"
+    ln -sfn "{{archipelago_root}}" "{{archipelago}}"
     ln -sfn "{{justfile_directory()}}/worlds/gstla" "{{archipelago}}/worlds/gstla"
 
 [windows]
 setup:
+    if (-not (Test-Path "{{justfile_directory()}}/.env.local")) { Copy-Item "{{justfile_directory()}}/.env.local.template" "{{justfile_directory()}}/.env.local" }
     New-Item -ItemType Directory -Force "{{justfile_directory()}}/external" | Out-Null
-    New-Item -ItemType Junction -Force -Path "{{archipelago}}" -Target (Resolve-Path "{{archipelago_root}}").Path | Out-Null
+    New-Item -ItemType Junction -Force -Path "{{archipelago}}" -Target "{{archipelago_root}}" | Out-Null
     New-Item -ItemType Junction -Force -Path "{{archipelago}}/worlds/gstla" -Target "{{justfile_directory()}}/worlds/gstla" | Out-Null
 
 
@@ -44,17 +46,19 @@ check: setup
 
 # Server/Client Testing
 local_server_port := env("LOCAL_SERVER_PORT", "38281")
-bizhawk_dir := justfile_directory() / "../../tools/bizhawk"
-emuhawk := env("EMUHAWK", if os_family() == "windows" { bizhawk_dir / "EmuHawk.exe" } else { bizhawk_dir / "EmuHawkMono.sh" })
+emuhawk := if env("EMUHAWK", "") == "" { "" } else { absolute_path(env("EMUHAWK")) }
 out_dir := temp_ap_dir / "out"
 out_base := out_dir / ("AP_" + seed)
 multiworld_zip := out_base + ".zip"
 patch_file := out_base + "_P1_Player.apgstla"
-vanilla_rom := env("GSTLA_VANILLA_ROM", "")
+patched_rom := out_base + "_P1_Player.gba"
+vanilla_rom := if env("GSTLA_VANILLA_ROM", "") == "" { "" } else { absolute_path(env("GSTLA_VANILLA_ROM")) }
+connector_lua := absolute_path(env("CONNECTOR_LUA", archipelago / "data/lua/connector_bizhawk_generic.lua"))
 
-# EmuHawk gets passed these two paths as they are. Breaks on WSL. TODO: WSL stuff
-connector_lua := env("CONNECTOR_LUA", archipelago / "data/lua/connector_bizhawk_generic.lua")
-patched_rom := env("GSTLA_PATCHED_ROM", out_base + "_P1_Player.gba")
+# EmuHawk gets passed these two paths as they are.
+wsl_compat := if os_family() == "windows" { "false" } else if emuhawk =~ '\.exe$' { "true" } else { "false" }
+connector_lua_arg := if wsl_compat == "true" { shell('wslpath -w "$1"', connector_lua) } else { connector_lua }
+patched_rom_arg := if wsl_compat == "true" { shell('wslpath -w "$1"', patched_rom) } else { patched_rom }
 
 
 [unix]
@@ -89,4 +93,4 @@ start-client *args: setup
 
 
 start-game: setup
-    "{{emuhawk}}" "--lua={{connector_lua}}" "{{patched_rom}}"
+    "{{emuhawk}}" "--lua={{connector_lua_arg}}" "{{patched_rom_arg}}"
