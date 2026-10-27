@@ -4,6 +4,7 @@
 set dotenv-filename := ".env.local"
 set dotenv-required
 set ignore-comments
+set quiet
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
 archipelago_root := absolute_path(env("ARCHIPELAGO_ROOT"))
