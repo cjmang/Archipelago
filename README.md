@@ -8,7 +8,10 @@ To see the current releases of the APWorld, click [here](https://github.com/cjma
 ## Poptracker
 You can find the Poptracker [here](https://github.com/cloudofdarkhole6/GSTLAPopTracker)
 
+## Contributing
+If you want to contribute, please check out our [Contributing guidelines](./CONTRIBUTING.md).
+
 TODO:
  - Link to Karanums Repo (maybe more references to Glitches and Speedrun stuff?)
- - Link to docs/contributing.md with setup steps, required AI disclosure stuff in PRs, requiring commit messages that are more than "fix stuff", also link to #68 for why this repo looks the way it does?
+ - Put AI disclosure stuff in own file or directly in contributing.md (see #63)
  - Link to discord thread
