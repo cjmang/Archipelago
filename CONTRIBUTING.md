@@ -16,9 +16,10 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
    interpreter.
    This also allows us to re-use an existing installation across multiple APWorlds. For example, the "Slay The Spire 2"
    world works similar.
-2. [just](https://github.com/casey/just), the command runner used for every task in this repo.
-3. [uv](https://docs.astral.sh/uv/) 0.13.4 or newer. For now, it's only used to install the linter and type checker. The
+2. [uv](https://docs.astral.sh/uv/) 0.13.4 or newer. For now, it's only used to install the linter and type checker. The
    real APWorld requirements are still in `worlds/gstla/requirements.txt`.
+3. [just](https://github.com/casey/just), the command runner used for every task in this repo. You can also use
+   `uv run just`, if you don't want to install it properly.
 
 ### First run
 
