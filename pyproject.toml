@@ -76,7 +76,7 @@ relative-imports-order = "closest-to-furthest"
 [tool.pyrefly]
 project-includes = ["worlds/gstla"]
 python-version = "3.13"
-python-interpreter-path = "external/archipelago/.venv/bin/python"  # ugh. Is a hardcoded path, but it's probably still the best way?
+python-interpreter-find-command = ["just", "--evaluate", "python"]
 search-path = [".", "external/archipelago"]
 
 [tool.uv]
