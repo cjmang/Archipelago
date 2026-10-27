@@ -46,19 +46,7 @@ check: setup
 
 # Server/Client Testing
 local_server_port := env("LOCAL_SERVER_PORT")
-emuhawk := if env("EMUHAWK") == "" { "" } else { absolute_path(env("EMUHAWK")) }
 out_dir := temp_ap_dir / "out"
-out_base := out_dir / ("AP_" + seed)
-multiworld_zip := out_base + ".zip"
-patch_file := out_base + "_P1_Player.apgstla"
-patched_rom := out_base + "_P1_Player.gba"
-vanilla_rom := if env("GSTLA_VANILLA_ROM") == "" { "" } else { absolute_path(env("GSTLA_VANILLA_ROM")) }
-connector_lua := absolute_path(env("CONNECTOR_LUA"))
-
-# EmuHawk gets passed these two paths as they are.
-wsl_compat := if os_family() == "windows" { "false" } else if emuhawk =~ '\.exe$' { "true" } else { "false" }
-connector_lua_arg := if wsl_compat == "true" { shell('wslpath -w "$1"', connector_lua) } else { connector_lua }
-patched_rom_arg := if wsl_compat == "true" { shell('wslpath -w "$1"', patched_rom) } else { patched_rom }
 
 
 [unix]
@@ -74,23 +62,20 @@ _prepare-ap-dir:
     Copy-Item "{{justfile_directory()}}/fixtures/gstla-test.yaml" "{{temp_ap_dir}}/players/"
 
 
+[unix]
 [working-directory: 'external/archipelago']
 start-server: setup _prepare-ap-dir
     {{python}} Generate.py --seed {{seed}} --player_files_path "{{temp_ap_dir}}/players" --outputpath "{{out_dir}}"
-    {{python}} MultiServer.py --port {{local_server_port}} --disable_save "{{multiworld_zip}}"
+    {{python}} MultiServer.py --port {{local_server_port}} --disable_save "{{out_dir}}"/AP_*.zip
 
-
+[windows]
 [working-directory: 'external/archipelago']
-patch: setup
-    {{python}} -m zipfile -e "{{multiworld_zip}}" "{{out_dir}}"
-    {{python}} -c "import settings, Patch; s = settings.get_settings(); s.gstla_options.rom_file = r'{{vanilla_rom}}' or s.gstla_options.rom_file; print(Patch.create_rom_file(r'{{patch_file}}'))"
+start-server: setup _prepare-ap-dir
+    {{python}} Generate.py --seed {{seed}} --player_files_path "{{temp_ap_dir}}/players" --outputpath "{{out_dir}}"
+    {{python}} MultiServer.py --port {{local_server_port}} --disable_save (Get-Item "{{out_dir}}/AP_*.zip").FullName
 
 
 [working-directory: 'external/archipelago']
 start-client *args: setup
     @echo "Load connector_bizhawk_generic.lua in the BizHawk Lua Console"
     {{python}} BizHawkClient.py --connect localhost:{{local_server_port}} {{args}}
-
-
-start-game: setup
-    "{{emuhawk}}" "--lua={{connector_lua_arg}}" "{{patched_rom_arg}}"
