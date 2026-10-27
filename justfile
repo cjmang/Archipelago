@@ -20,7 +20,7 @@ export AP_TEST_WORLDS := "gstla"
 
 [unix]
 setup:
-    cp -n "{{justfile_directory()}}/.env.local.template" "{{justfile_directory()}}/.env.local" || true
+    [ -e "{{justfile_directory()}}/.env.local" ] || cp "{{justfile_directory()}}/.env.local.template" "{{justfile_directory()}}/.env.local"
     mkdir -p "{{justfile_directory()}}/external"
     ln -sfn "{{archipelago_root}}" "{{archipelago}}"
     ln -sfn "{{justfile_directory()}}/worlds/gstla" "{{archipelago}}/worlds/gstla"
