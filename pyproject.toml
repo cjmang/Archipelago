@@ -82,3 +82,4 @@ search-path = [".", "external/archipelago"]
 
 [tool.uv]
 required-version = ">=0.13.4"  # minimum version with emsign certs removed
+exclude-newer = "5 days"  # supply chain attacks go brr
