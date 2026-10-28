@@ -14,9 +14,8 @@ python := absolute_path(env("PYTHON"))
 seed := env("SEED")
 temp_ap_dir := justfile_directory() / ".ap"
 
-# used by AP directly, not us
 export SKIP_REQUIREMENTS_UPDATE := "1"
-export AP_TEST_WORLDS := "gstla"
+export AP_TEST_WORLDS := "gstla"  # 0.6.8 only
 
 
 [unix]
@@ -37,6 +36,13 @@ setup:
 [working-directory: 'external/archipelago']
 test *args: setup
     {{python}} -m pytest worlds/gstla/test {{args}}
+
+
+# Requires AP 0.6.8+ to respect AP_TEST_WORLDS.
+# You can still run it with 0.6.7, but it'll take a while.
+[working-directory: 'external/archipelago']
+test-general *args: setup
+    {{python}} -m pytest test/general -m world {{args}}
 
 
 check: setup
