@@ -12,7 +12,7 @@ dev = [
 
 [tool.ruff]
 required-version = ">=0.16"
-target-version = "py313"
+target-version = "py311"  # increase once we only allow AP 0.6.8+
 line-length = 120
 indent-width = 4
 
@@ -76,7 +76,7 @@ relative-imports-order = "closest-to-furthest"
 
 [tool.pyrefly]
 project-includes = ["worlds/gstla"]
-python-version = "3.13"
+python-version = "3.11"  # increase once we only allow AP 0.6.8+
 python-interpreter-find-command = ["just", "--evaluate", "python"]
 search-path = [".", "external/archipelago"]
 
