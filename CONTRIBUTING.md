@@ -12,6 +12,7 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
 1. A clone of [Archipelago](https://github.com/ArchipelagoMW/Archipelago) with its own virtual environment,
    set up as described
    in [Running From Source](https://github.com/ArchipelagoMW/Archipelago/blob/main/docs/running%20from%20source.md).
+   Make sure you install the `requirements.txt`, `ci-requirements.txt` (and optionally the `WebHostLib/requirements.txt`).
    This gstla repo does not contain the real Archipelago code. It links to your checkout and runs everything through its
    interpreter.
    This also allows us to re-use an existing installation across multiple APWorlds. For example, the "Slay The Spire 2"
