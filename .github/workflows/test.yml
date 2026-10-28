@@ -1,4 +1,4 @@
-name: Simple test of APWorld
+name: Tests
 
 on:
   pull_request:
@@ -76,3 +76,8 @@ jobs:
       - name: Run world tests
         working-directory: gstla
         run: uv run just test -n auto
+
+      - name: Run AP generic world tests
+        if: matrix.ap-version != '0.6.7'  # 0.6.7 ignores AP_TEST_WORLDS and would load every world :')
+        working-directory: gstla
+        run: uv run just test-general -n auto
