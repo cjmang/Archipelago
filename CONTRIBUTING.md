@@ -44,7 +44,7 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
 | `just test-general`                                  | Run the Archipelago generic world tests for our world. Should only be used on AP 0.6.8+             |
 | `just start-server`                                  | Generates a single-player multiworld from `fixtures/gstla-test.yaml` and hosts it locally.          |
 | `just start-client`                                  | Starts the BizHawk client against the local server.                                                 |
-| `just build`                                         | Builds a release-ready APWorld (TODO, gotta use this in github workflows)                           |
+| `just build`                                         | Builds the actual .apworld file and moves it to `build/gstla.apworld`. Needs AP 0.6.8+              |
 
 ### Editors
 

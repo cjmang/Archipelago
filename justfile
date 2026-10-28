@@ -17,6 +17,8 @@ temp_ap_dir := justfile_directory() / ".ap"
 export SKIP_REQUIREMENTS_UPDATE := "1"
 export AP_TEST_WORLDS := "gstla"  # 0.6.8 only
 
+build_dir := justfile_directory() / "build"
+
 
 [unix]
 setup:
@@ -39,7 +41,7 @@ test *args: setup
 
 
 # Requires AP 0.6.8+ to respect AP_TEST_WORLDS.
-# You can still run it with 0.6.7, but it'll take a while.
+# You can still run it with 0.6.7, but it'll take ~20 mins instead of 2.
 [working-directory: 'external/archipelago']
 test-general *args: setup
     {{python}} -m pytest test/general -m world {{args}}
@@ -55,6 +57,25 @@ check-types: setup
     uv run pyrefly check
 
 check: lint check-format check-types
+
+
+# Somewhat requires AP 0.6.8+. 0.6.7 has no --skip_open_folder and theoretically opens a file browser instead :|
+# Also logs a few warnings/errors for other APWorlds. Can't turn off that they are even loaded. It is how it is.
+[unix]
+[working-directory: 'external/archipelago']
+build: setup
+    {{python}} Launcher.py "Build APWorlds" -- "Golden Sun The Lost Age" --skip_open_folder
+    mkdir -p "{{build_dir}}"
+    cp build/apworlds/gstla.apworld "{{build_dir}}/"
+    echo "Built {{build_dir}}/gstla.apworld"
+
+[windows]
+[working-directory: 'external/archipelago']
+build: setup
+    {{python}} Launcher.py "Build APWorlds" -- "Golden Sun The Lost Age" --skip_open_folder
+    New-Item -ItemType Directory -Force "{{build_dir}}" | Out-Null
+    Copy-Item build/apworlds/gstla.apworld "{{build_dir}}/"
+    Write-Output "Built {{build_dir}}/gstla.apworld"
 
 
 # Server/Client Testing
