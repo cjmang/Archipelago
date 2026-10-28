@@ -1,7 +1,7 @@
 name: Simple test of APWorld
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - gstla-new
   push:
@@ -16,22 +16,28 @@ jobs:
     strategy:
       fail-fast: false  # TODO?
       matrix:
-        ap-version: ['0.6.7', '0.6.8' ]  # TODO: maybe also include main branch? Not sure how stable it normally is
-        python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.11 and 3.12 respectively.
+        # ap-version: ['0.6.7', '0.6.8' ]  # TODO: maybe also include main branch? Not sure how stable it normally is
+        # python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.11 and 3.12 respectively.
+        ap-version: ['0.6.7']  # TEMP
+        python-version: ['3.12']  # TEMP
         os: ['ubuntu-latest']
-        include:  # always current AP release build with the bundled python version on windows specifically
-          - ap-version: '0.6.8'
-            python-version: '3.12'
-            os: 'windows-latest'
+        #include:  # always current AP release build with the bundled python version on windows specifically TEMP COMMENTED
+        #  - ap-version: '0.6.8'
+        #    python-version: '3.12'
+        #    os: 'windows-latest'
 
     steps:
-      # TODO: make em parallel
-      - name: Set up Python ${{ matrix.python-version }}
-        # for main AP venv, since we cannot properly use uv there (and just doing uv venv is not helpful here)
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      - name: Checkout gstla
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
+          path: gstla
+
+      - name: Checkout AP
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: 'ArchipelagoMW/Archipelago'
+          ref: ${{ matrix.ap-version }}
+          path: 'archipelago'
 
       - name: Set up uv
         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
@@ -39,12 +45,34 @@ jobs:
           enable-cache: true
           cache-suffix: ${{ matrix.python-version }}
           cache-dependency-glob: |
-            **/uv.lock
-            **/pyproject.toml
+            gstla/uv.lock
 
-      - name: Setup AP
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python ${{ matrix.python-version }}
+        id: setup-python
+        # for main AP venv, since we cannot properly use uv there (and just doing uv venv is not helpful here)
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          repository: 'https://github.com/ArchipelagoMW/Archipelago'
-          ref: ${{ matrix.ap-version }}
-          path: archipelago-${{ matrix.ap-version }}'
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            archipelago/requirements.txt
+            archipelago/ci-requirements.txt
+
+      - name: Install AP requirements
+        working-directory: archipelago
+        run: pip install -r requirements.txt -r ci-requirements.txt  # should match our setup guide in CONTRIBUTING.md
+
+      - name: Write .env.local
+        working-directory: gstla
+        shell: bash  # TODO: check windows?
+        run: |  # TODO: Could maybe also just do the workflow "env"?
+          cat > .env.local <<EOT
+          ARCHIPELAGO_ROOT='../archipelago'
+          PYTHON='${{ steps.setup-python.outputs.python-path }}'
+          SEED='1'
+          LOCAL_SERVER_PORT='38281'
+          EOT
+
+      - name: Run world tests
+        working-directory: gstla
+        run: uv run just test -n auto
