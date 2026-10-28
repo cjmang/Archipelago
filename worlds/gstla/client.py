@@ -11,7 +11,7 @@ from NetUtils import ClientStatus, NetworkItem
 from Utils import async_start
 from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
-from .DeathLink import GAME_STATE_READS, DeathDeliverer, GameState
+from .deathlink import GAME_STATE_READS, DeathDeliverer, GameState
 from .game_data import ItemType
 from .gen.item_data import mimics
 from .gen.location_data import (

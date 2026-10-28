@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import unittest
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
-from worlds.gstla.DeathLink import (
+from worlds.gstla.deathlink import (
     FIELD_DEATH_NARRATION_COUNT_ADDR,
     FIELD_DEATH_NARRATION_LIST_ADDR,
     FIELD_DEATH_SURVIVOR_COUNT_ADDR,
@@ -11,6 +11,7 @@ from worlds.gstla.DeathLink import (
     IN_BATTLE_BIT,
     SYSTEM_EVENT_ADDR,
     SYSTEM_EVENT_FIELD_DEATH,
+    CharacterIndex as Character,
     DeathDeliverer,
     DeathDeliveryState,
     GameState,
@@ -20,13 +21,13 @@ from worlds.gstla.DeathLink import (
     get_current_hp_address,
     get_current_hp_ratio_address,
 )
-from worlds.gstla.DeathLink import (
-    CharacterIndex as Character,
-)
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def _little_endian_u16(value: int) -> bytes:
-    return value.to_bytes(2, "little")
+    return value.to_bytes(2, 'little')
 
 
 def _recruited(*characters: Character) -> int:
