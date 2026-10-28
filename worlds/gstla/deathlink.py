@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from enum import Enum, IntEnum, auto
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 RECRUITMENT_ADDR = 0x40  # also BizClient.FLAG_START
 CHARACTER_BLOCK_SIZE = 0x14C
@@ -84,7 +86,7 @@ class GameState(NamedTuple):
     def from_read_result(cls, results: Sequence[bytes]) -> GameState:
         values = {}
         for (address, _width), result in zip(GAME_STATE_READS, results, strict=True):
-            values[address] = int.from_bytes(result, "little")
+            values[address] = int.from_bytes(result, 'little')
 
         return cls(
             recruitment=values[RECRUITMENT_ADDR],
@@ -188,8 +190,8 @@ class GameState(NamedTuple):
     @property
     def write_guards(self) -> list[tuple[int, bytes]]:
         return [
-            (SYSTEM_EVENT_ADDR, self.system_event.to_bytes(2, "little")),
-            (IN_BATTLE_ADDR, self.in_battle.to_bytes(1, "little")),
+            (SYSTEM_EVENT_ADDR, self.system_event.to_bytes(2, 'little')),
+            (IN_BATTLE_ADDR, self.in_battle.to_bytes(1, 'little')),
         ]
 
 
@@ -199,7 +201,7 @@ class MemoryWrite(NamedTuple):
 
     @classmethod
     def u16(cls, address: int, value: int) -> MemoryWrite:
-        return cls(address, value.to_bytes(2, "little"))
+        return cls(address, value.to_bytes(2, 'little'))
 
 
 def _build_zero_hp_writes(character: CharacterIndex) -> tuple[MemoryWrite, MemoryWrite]:
