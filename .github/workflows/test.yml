@@ -9,20 +9,26 @@ on:
       - gstla-new
   workflow_dispatch:
 
+permissions: {}
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental == true }}
     strategy:
-      fail-fast: false  # TODO?
+      fail-fast: false
       matrix:
-        ap-version: ['0.6.7', '0.6.8' ]  # TODO: maybe also include main branch? Not sure how stable it normally is
-        python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.11 and 3.12 respectively.
+        ap-version: ['0.6.7', '0.6.8']
+        python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.12
         os: ['ubuntu-latest']
         include:  # always current AP release build with the bundled python version on windows specifically
           - ap-version: '0.6.8'
             python-version: '3.12'
             os: 'windows-latest'
+          - ap-version: 'main'  # gotta know if what we're about to release is going to break soon. Not sure how stable this actually is.
+            python-version: '3.13'
+            os: 'ubuntu-latest'
+            experimental: true
 
     steps:
       - name: Checkout gstla
