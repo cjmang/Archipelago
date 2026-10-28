@@ -16,15 +16,13 @@ jobs:
     strategy:
       fail-fast: false  # TODO?
       matrix:
-        # ap-version: ['0.6.7', '0.6.8' ]  # TODO: maybe also include main branch? Not sure how stable it normally is
-        # python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.11 and 3.12 respectively.
-        ap-version: ['0.6.7']  # TEMP
-        python-version: ['3.12']  # TEMP
+        ap-version: ['0.6.7', '0.6.8' ]  # TODO: maybe also include main branch? Not sure how stable it normally is
+        python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.11 and 3.12 respectively.
         os: ['ubuntu-latest']
-        #include:  # always current AP release build with the bundled python version on windows specifically TEMP COMMENTED
-        #  - ap-version: '0.6.8'
-        #    python-version: '3.12'
-        #    os: 'windows-latest'
+        include:  # always current AP release build with the bundled python version on windows specifically
+          - ap-version: '0.6.8'
+            python-version: '3.12'
+            os: 'windows-latest'
 
     steps:
       - name: Checkout gstla
