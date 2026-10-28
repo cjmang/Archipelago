@@ -35,15 +35,16 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
 
 ### Commands
 
-| Command             | What it does                                                                                        |
-|---------------------|-----------------------------------------------------------------------------------------------------|
-| `just setup`        | Creates the links between the AP checkout and this repo. Every command runs this first.             |
-| `just check`        | Run the linter, format and type checks via ruff and pyrefly.                                        |
-| `just test`         | Run our world's tests with the Archipelago interpreter. Arguments will be passed through to pytest. |
-| `just test-general` | Run the Archipelago generic world tests for our world. Should only be used on AP 0.6.8+             |
-| `just start-server` | Generates a single-player multiworld from `fixtures/gstla-test.yaml` and hosts it locally.          |
-| `just start-client` | Starts the BizHawk client against the local server.                                                 |
-| `just build`        | Builds a release-ready APWorld (TODO, gotta use this in github workflows)                           |
+| Command                                              | What it does                                                                                        |
+|------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `just setup`                                         | Creates the links between the AP checkout and this repo. Every command runs this first.             |
+| `just lint`, `just check-format`, `just check-types` | Linting (ruff), Check formatting (ruff), Check types (pyrefly) (also see `just check` to run all)   |
+| `just check`                                         | Run the linter, format and type checks via ruff and pyrefly.                                        |
+| `just test`                                          | Run our world's tests with the Archipelago interpreter. Arguments will be passed through to pytest. |
+| `just test-general`                                  | Run the Archipelago generic world tests for our world. Should only be used on AP 0.6.8+             |
+| `just start-server`                                  | Generates a single-player multiworld from `fixtures/gstla-test.yaml` and hosts it locally.          |
+| `just start-client`                                  | Starts the BizHawk client against the local server.                                                 |
+| `just build`                                         | Builds a release-ready APWorld (TODO, gotta use this in github workflows)                           |
 
 ### Editors
 

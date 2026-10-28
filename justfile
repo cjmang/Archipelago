@@ -45,10 +45,16 @@ test-general *args: setup
     {{python}} -m pytest test/general -m world {{args}}
 
 
-check: setup
+lint: setup
     uv run ruff check worlds
+
+check-format: setup
     uv run ruff format --check worlds
+
+check-types: setup
     uv run pyrefly check
+
+check: lint check-format check-types
 
 
 # Server/Client Testing

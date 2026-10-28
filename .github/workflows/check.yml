@@ -32,6 +32,17 @@ jobs:
           ap-version: ${{ env.AP_VERSION }}
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Lint, format and type check
+      - name: Linting (ruff check)
+        if: always()
         working-directory: gstla
-        run: uv run just check
+        run: uv run just lint
+
+      - name: Check formatting (ruff format --check)
+        if: always()
+        working-directory: gstla
+        run: uv run just check-format
+
+      - name: Check types (pyrefly)
+        if: always()
+        working-directory: gstla
+        run: uv run just check-types
