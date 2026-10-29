@@ -525,7 +525,7 @@ class GameData:
                 else:
                     loc_name = LocationName.from_loc_data(loc, None, ' ' + num_words[count])
                 # loc_name = LocationName.from_loc_data(loc, None, ' ' + num_words[count])
-            assert loc_name.id not in self.location_names, 'Id: %s, Name: %s' % (hex(loc_name.id), loc_name.str_name)
+            assert loc_name.id not in self.location_names, f'{hex(loc_name.id)=}, {loc_name.str_name=}'
             self.location_names[loc_name.id] = loc_name
 
     def _setup_item_names(self):
