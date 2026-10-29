@@ -242,7 +242,7 @@ class LocationLogic:
                 outer_flags_expanded |= flags_expanded
             # print(count)
 
-        for name in self.flag_data.keys():
+        for name in self.flag_data:
             for loc in self.location_reqs:
                 assert name not in loc.requirements, f'Flag {name} is in req list of {loc}'
 

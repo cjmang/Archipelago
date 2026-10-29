@@ -177,17 +177,15 @@ class ItemName(NamedTuple):
 
     @classmethod
     def from_item_data(cls, item: ItemDatum, suffix=''):
-        ret = ItemName(item.id, ItemName.setup_py_name(item.name, suffix), ItemName.setup_str_name(item.name, suffix))
-        return ret
+        return ItemName(item.id, ItemName.setup_py_name(item.name, suffix), ItemName.setup_str_name(item.name, suffix))
 
     @classmethod
     def from_enemy_data(cls, enemy: EnemyDatum, event: bool = True):
-        ret = ItemName(
+        return ItemName(
             enemy.ap_id,
             ItemName.setup_py_name(enemy.name, '_' + str(enemy.id) + (' Event' if event else '')),
             ItemName.setup_str_name(enemy.name, ' ' + str(enemy.id) + (' Event' if event else '')),
         )
-        return ret
 
     @staticmethod
     def setup_py_name(name: str, suffix=''):

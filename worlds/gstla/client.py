@@ -132,10 +132,9 @@ class GoalManager:
         updated_flags: set[int] = set()
         for flag, is_set in client.goal_map.items():
             ap_id = self.desired_flags.get(flag, None)
-            if ap_id is not None:
-                if is_set and ap_id not in server_flags:
-                    await display_message(ctx.bizhawk_ctx, GoalManager.flag_to_name.get(flag, 'Unknown') + ' Completed')
-                    updated_flags.add(ap_id)
+            if ap_id is not None and is_set and ap_id not in server_flags:
+                await display_message(ctx.bizhawk_ctx, GoalManager.flag_to_name.get(flag, 'Unknown') + ' Completed')
+                updated_flags.add(ap_id)
 
         server_djinn = ctx.stored_data.get(client.get_djinn_location_key(ctx), [])
         if server_djinn is None:
@@ -514,14 +513,11 @@ class GSTLAClient(BizHawkClient):
             return True
         if self.coop == 0 or item.location in self.remote_blacklist:
             return False
-        if (
+        return (
             self.coop == 3
             or item.flags & (ItemClassification.progression | ItemClassification.trap) > 0
-            or self.coop == 2
-            and (item.flags & ItemClassification.useful) > 0
-        ):
-            return True
-        return False
+            or (self.coop == 2 and item.flags & ItemClassification.useful > 0)
+        )
 
     async def update_goal_flags(
         self, updated: set[int], ctx: BizHawkClientContext, include_djinn: bool = False
@@ -579,7 +575,7 @@ class GSTLAClient(BizHawkClient):
             # logger.info(f"Slot data: {ctx.slot_data}")
             # self.starting_items = StartingItemHandler(ctx.slot_data.get('start_inventory', dict()))
             self.goals.init_reqs_from_slotdata(ctx.slot_data)
-            for desired_flag in self.goals.desired_flags.keys():
+            for desired_flag in self.goals.desired_flags:
                 self.goal_map[desired_flag] = False
             self.check_summon_count(ctx)
             self.coop = ctx.slot_data.get('options', {}).get('coop', 0)
@@ -609,54 +605,51 @@ class GSTLAClient(BizHawkClient):
         await self._receive_items(ctx, result)
         self.check_summon_count(ctx)
 
-        if self.temp_locs != self.local_locations:
-            if self.temp_locs:
-                logger.debug('Sending locations to AP: %s', self.temp_locs)
-                await ctx.send_msgs([{'cmd': 'LocationChecks', 'locations': list(self.temp_locs)}])
-                self.local_locations = self.temp_locs
+        if self.temp_locs and self.temp_locs != self.local_locations:
+            logger.debug('Sending locations to AP: %s', self.temp_locs)
+            await ctx.send_msgs([{'cmd': 'LocationChecks', 'locations': list(self.temp_locs)}])
+            self.local_locations = self.temp_locs
 
-        if self.djinn_last_count != len(self.possessed_djinn):
-            if self.possessed_djinn:
-                logger.debug(f'Possesed djinn: {self.possessed_djinn}')
-                await ctx.send_msgs(
-                    [
-                        {
-                            'cmd': 'Set',
-                            'operation': 'update',
-                            'want_reply': True,
-                            'key': self.get_djinn_possessed_key(ctx),
-                            'default': [],
-                            'operations': [
-                                {
-                                    'operation': 'update',
-                                    'value': list(self.possessed_djinn),
-                                }
-                            ],
-                        }
-                    ]
-                )
-                self.djinn_last_count = len(self.possessed_djinn)
+        if self.possessed_djinn and self.djinn_last_count != len(self.possessed_djinn):
+            logger.debug(f'Possesed djinn: {self.possessed_djinn}')
+            await ctx.send_msgs(
+                [
+                    {
+                        'cmd': 'Set',
+                        'operation': 'update',
+                        'want_reply': True,
+                        'key': self.get_djinn_possessed_key(ctx),
+                        'default': [],
+                        'operations': [
+                            {
+                                'operation': 'update',
+                                'value': list(self.possessed_djinn),
+                            }
+                        ],
+                    }
+                ]
+            )
+            self.djinn_last_count = len(self.possessed_djinn)
 
-        if self.temp_events != self.local_events:
-            if self.temp_events:
-                await ctx.send_msgs(
-                    [
-                        {
-                            'cmd': 'Set',
-                            'operation': 'update',
-                            'want_reply': True,
-                            'key': self.get_event_key(ctx),
-                            'default': [],
-                            'operations': [
-                                {
-                                    'operation': 'update',
-                                    'value': list(self.temp_events),
-                                }
-                            ],
-                        }
-                    ]
-                )
-                self.local_events = self.temp_events
+        if self.temp_events and self.temp_events != self.local_events:
+            await ctx.send_msgs(
+                [
+                    {
+                        'cmd': 'Set',
+                        'operation': 'update',
+                        'want_reply': True,
+                        'key': self.get_event_key(ctx),
+                        'default': [],
+                        'operations': [
+                            {
+                                'operation': 'update',
+                                'value': list(self.temp_events),
+                            }
+                        ],
+                    }
+                ]
+            )
+            self.local_events = self.temp_events
 
         await self.goals.check_goals(self, ctx)
 
