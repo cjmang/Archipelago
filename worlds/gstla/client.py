@@ -356,24 +356,30 @@ class GSTLAClient(BizHawkClient):
             rom_flag = (section >> 8) * 0x14 + (section & 0xFF) + 0x30
             self.djinn_ram_to_rom[rom_flag] = djinn_flag
 
-    def _is_in_game(self, data: list[bytes]) -> bool:
+    @staticmethod
+    def _is_in_game(data: list[bytes]) -> bool:
         # Map ID 0x00 and 0x01 are Title Screen and Clear Data respectively, everything greater is safe
         current_map = int.from_bytes(data[_DataLocations.MAP_ID], 'little')
         return current_map > 1
 
-    def get_goal_flags_key(self, ctx: BizHawkClientContext) -> str:
+    @staticmethod
+    def get_goal_flags_key(ctx: BizHawkClientContext) -> str:
         return f'gstla_goal_flags_status_{ctx.slot}_{ctx.team}'
 
-    def get_event_key(self, ctx: BizHawkClientContext) -> str:
+    @staticmethod
+    def get_event_key(ctx: BizHawkClientContext) -> str:
         return f'gstla_events_status_{ctx.slot}_{ctx.team}'
 
-    def get_djinn_location_key(self, ctx: BizHawkClientContext) -> str:
+    @staticmethod
+    def get_djinn_location_key(ctx: BizHawkClientContext) -> str:
         return f'gstla_goal_djinn_status_{ctx.slot}_{ctx.team}'
 
-    def get_djinn_possessed_key(self, ctx: BizHawkClientContext) -> str:
+    @staticmethod
+    def get_djinn_possessed_key(ctx: BizHawkClientContext) -> str:
         return f'gstla_djinn_held_{ctx.slot}_{ctx.team}'
 
-    def get_map_info_key(self, ctx: BizHawkClientContext) -> str:
+    @staticmethod
+    def get_map_info_key(ctx: BizHawkClientContext) -> str:
         return f'gstla_map_info_{ctx.slot}_{ctx.team}'
 
     def check_summon_count(self, ctx: BizHawkClientContext) -> None:

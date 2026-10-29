@@ -357,7 +357,7 @@ class GSTLAWorld(World):
         for sphere, mimic_locs in mimic_map.items():
             logger.info(f'{sphere=}, {mimic_locs=}')
             start = min(bisect(breakpoints, sphere), len(mimics) - 3)
-            mimic_list = mimics[start: start + 3]
+            mimic_list = mimics[start : start + 3]
             for mimic_loc in mimic_locs:
                 if mimic_loc.locked:
                     # Guess someone really wanted this mimic here
