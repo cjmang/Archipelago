@@ -350,20 +350,20 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     # that do not support having a mimic and fail generation. On repeated generations it results into 65-70 mimics
     # failing to be placed, otherwise it works fine.
     if world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
-        for i in range(40):
+        for _ in range(40):
             item = get_filler_item(world, False)
             ap_item = create_item_direct(item, player)
             world.multiworld.itempool.append(ap_item)
             sum_locations -= 1
 
     if world.options.item_shuffle > 2 and world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
-        for i in range(60):
+        for _ in range(60):
             item = get_filler_item(world, False)
             ap_item = create_item_direct(item, player)
             world.multiworld.itempool.append(ap_item)
             sum_locations -= 1
 
-    for i in range(sum_locations):
+    for _ in range(sum_locations):
         item = get_filler_item(world)
         ap_item = create_filler(world, item)
         world.multiworld.itempool.append(ap_item)
