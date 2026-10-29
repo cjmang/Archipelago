@@ -60,3 +60,16 @@ Your commit messages *should* describe what you have changed and why.
 You can leave out the "why" if it's immediately visible and understandable
 or there is a comment directly in the code explaining it.
 So no "fix stuff". A "fix typo in option XYZ" is fine.
+
+## Changes to Options
+
+If you change *any* option, make sure of the following:
+
+1. Check if you can make the option backwards-compatible. For example, it might have a default fallback that doesn't break behavior on earlier versions.
+2. Check if it makes sense to update any presets containing the existing option or to put a new option in there.
+3. The contributor and the maintainers should make sure that either a related Pull Request exists or some kind of informal heads-up is given for our `external dependencies` (see below).
+
+
+## Known external dependencies
+
+* [ArchipelagoMW/AsyncTools](https://github.com/ArchipelagoMW/AsyncTools) - Used for the official "Big Async"
