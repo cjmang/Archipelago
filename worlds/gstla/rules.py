@@ -244,19 +244,14 @@ def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
         needed_items.add(ItemName.Valukar_defeated)
     if 'Dullahan' in goal_conditions:
         needed_items.add(ItemName.Dullahan_defeated)
-    if 'Djinn Hunt' in goal_conditions:
-        djinn_needed = world.options.djinn_hunt_count.value
-    else:
-        djinn_needed = 0
-    if 'Summon Hunt' in goal_conditions:
-        summons_needed = world.options.summon_hunt_count.value
-    else:
-        summons_needed = 0
+
+    djinn_needed = world.options.djinn_hunt_count.value if 'Djinn Hunt' in goal_conditions else 0
+    summons_needed = world.options.summon_hunt_count.value if 'Summon Hunt' in goal_conditions else 0
 
     add_rule(
         world.get_location(LocationName.Victory_Event),
         lambda state: (
-            all([state.has(item, player) for item in needed_items])
+            all(state.has(item, player) for item in needed_items)
             and state.count_group(ItemType.Djinn.name, player) >= djinn_needed
             and state.count_group(ItemType.Summon.name, player) >= summons_needed
         ),

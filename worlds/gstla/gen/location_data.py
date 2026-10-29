@@ -72,7 +72,7 @@ def create_loctype_to_datamapping() -> dict[str, list[LocationData]]:
     of that type
     """
     types: dict[str, list[LocationData]] = {}
-    for idx, data in enumerate(all_locations):
+    for data in all_locations:
         if data.loc_type not in types:
             types[data.loc_type] = []
         types[data.loc_type].append(data)

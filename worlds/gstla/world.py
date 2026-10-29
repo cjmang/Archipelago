@@ -152,7 +152,8 @@ class GSTLAWorld(World):
         self._character_levels: list[tuple[int, int]] = []
         self.goal_conditions: set[str] = set()
 
-    def generate_early(self) -> None:
+    def generate_early(self) -> None:  # noqa: PLR0912
+        # TODO: There has to be a way to simplify these
         if len(self.options.goal.value) == 0:
             raise OptionError(f'A goal must be selected for Golden Sun TLA for player {self.player_name}')
 
@@ -249,9 +250,9 @@ class GSTLAWorld(World):
                 'coop': self.options.coop.value,
             }
         }
-        goal_dict = dict()
+        goal_dict = {}
         flags = set()
-        counts = dict()
+        counts = {}
         for goal in self.goal_conditions:
             if 'Hunt' in goal:
                 continue
@@ -333,17 +334,30 @@ class GSTLAWorld(World):
                 world._scale_characters(max_sphere, character_map[slot])
 
     def _scale_mimics(self, max_sphere: int, mimic_map: defaultdict[int, list[Location]]):
-        mimic_lists = []
-        for i in range(1, len(mimics) - 1):
-            mimic_lists.append(mimics[i - 1 : i + 2])
+        """Replace every mimic in this world with one whose strength fits the sphere it was placed in.
 
+        At the time of writing, we have 9 types of Mimics that can spawn.
+        `max_sphere` is where the victory location sits for this world. Could be any number provided by the multiworld.
+
+        For every sphere from 1 to max_sphere, we get a choice of 3 mimics that correlate to that sphere.
+        So for example if we get 11 spheres:
+          - Sphere 1: (Mimic Lv5, Mimic Lv10, Mimic Lv15)
+          - Sphere 2: (Mimic Lv10, Mimic Lv15, Mimic Lv20)
+          - Sphere 10: (Mimic Lv50, Mimic Lv55, Mimic Lv55)
+          - Sphere 11: (Mimic Lv50, Mimic Lv55, Mimic Lv55)  # highest level of available mimics, so it doesn't increase
+
+        We then roll one of those three per Sphere and that is the one that will get placed in that Sphere.
+        So "Sphere 1": "Mimic Lv15", "Sphere 2": "Mimic Lv10", ..., "Sphere 10": "Mimic Lv50".
+
+        (Levels in this example are freely chosen. Check the "Mimic" entries in `enemies.json` for proper values)
+        Docstring made by someone other than the author, so take it with a grain of salt.
+        """
         breakpoints = [(max_sphere + 1) / 7 * i for i in range(1, 8)]
 
         for sphere, mimic_locs in mimic_map.items():
-            breakpoint_index = bisect(breakpoints, sphere)
-            if breakpoint_index >= len(mimic_lists):
-                breakpoint_index = len(mimic_lists) - 1
-            mimic_list = mimic_lists[breakpoint_index]
+            logger.info(f'{sphere=}, {mimic_locs=}')
+            start = min(bisect(breakpoints, sphere), len(mimics) - 3)
+            mimic_list = mimics[start : start + 3]
             for mimic_loc in mimic_locs:
                 if mimic_loc.locked:
                     # Guess someone really wanted this mimic here
@@ -351,7 +365,9 @@ class GSTLAWorld(World):
                 current_item = mimic_loc.item
                 current_item.location = None
                 new_mimic = create_item_direct(self.random.choice(mimic_list), self.player)
-                # logger.info("Replacing mimic %s with mimic %s in sphere %d", current_item.name, new_mimic.name, sphere)
+                # logger.info(
+                #     "Replacing mimic %s with mimic %s in sphere %d", current_item.name, new_mimic.name, sphere
+                # )
                 mimic_loc.item = None
                 mimic_loc.place_locked_item(new_mimic)
 

@@ -104,11 +104,8 @@ class GSTLAPatchExtension(APPatchExtension):
 def get_base_rom_path(file_name: str = '') -> str:
     options = settings.get_settings()
     if not file_name:
-        gstla_options = options.get('gstla_options', None)
-        if gstla_options is None:
-            file_name = 'Golden Sun - The Lost Age (UE) [!].gba'
-        else:
-            file_name = gstla_options['rom_file']
+        gstla_options = options.get('gstla_options', None) or {}
+        file_name = gstla_options.get('rom_file', 'Golden Sun - The Lost Age (UE) [!].gba')
     if not os.path.exists(file_name):
         file_name = Utils.user_path(file_name)
     return file_name
@@ -118,7 +115,8 @@ def get_base_rom_bytes(file_name: str = '') -> bytes:
     base_rom_bytes = getattr(get_base_rom_bytes, 'base_rom_bytes', None)
     if not base_rom_bytes:
         file_name = get_base_rom_path(file_name)
-        base_rom_bytes = bytes(open(file_name, 'rb').read())
+        with open(file_name, 'rb') as rom_file:
+            base_rom_bytes = rom_file.read()
 
         basemd5 = hashlib.md5()
         basemd5.update(base_rom_bytes)

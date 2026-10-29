@@ -35,7 +35,7 @@ mimic_names = [
 class LocationDatum(NamedTuple):
     rando_flag: int
     flag: int
-    mapId: int
+    map_id: int
     locked: bool
     is_summon: bool
     is_key_item: bool
@@ -177,17 +177,15 @@ class ItemName(NamedTuple):
 
     @classmethod
     def from_item_data(cls, item: ItemDatum, suffix=''):
-        ret = ItemName(item.id, ItemName.setup_py_name(item.name, suffix), ItemName.setup_str_name(item.name, suffix))
-        return ret
+        return ItemName(item.id, ItemName.setup_py_name(item.name, suffix), ItemName.setup_str_name(item.name, suffix))
 
     @classmethod
     def from_enemy_data(cls, enemy: EnemyDatum, event: bool = True):
-        ret = ItemName(
+        return ItemName(
             enemy.ap_id,
             ItemName.setup_py_name(enemy.name, '_' + str(enemy.id) + (' Event' if event else '')),
             ItemName.setup_str_name(enemy.name, ' ' + str(enemy.id) + (' Event' if event else '')),
         )
-        return ret
 
     @staticmethod
     def setup_py_name(name: str, suffix=''):
@@ -228,9 +226,9 @@ class GameData:
         self.raw_psy_data: list[PsyDatum] = []
         self.raw_character_data: list[CharacterDatum] = []
         self.raw_enemy_data: list[EnemyDatum] = []
-        self.location_names: dict[int, LocationName] = dict()
-        self.item_names: dict[int, ItemName] = dict()
-        self.events: dict[int, EventDatum] = dict()
+        self.location_names: dict[int, LocationName] = {}
+        self.item_names: dict[int, ItemName] = {}
+        self.events: dict[int, EventDatum] = {}
         self.vanilla_item_ids: set[int] = set()
         self.vanilla_shop_contents: set[int] = set()
         self.forgeable_ids: set[int] = set()
@@ -414,7 +412,7 @@ class GameData:
                     item['useEffect'],
                 )
             )
-        coins = dict()
+        coins = {}
         for loc in self.raw_location_data:
             if loc.vanilla_contents > 0x8000:
                 # TODO: get the name in a better way?
@@ -507,7 +505,7 @@ class GameData:
 
     def _setup_location_names(self):
         names: defaultdict[str, int] = defaultdict(lambda: 0)
-        tracker_name_data: dict[int, str] = dict()
+        tracker_name_data: dict[int, str] = {}
         tracker_names: defaultdict[str, int] = defaultdict(lambda: 0)
         with open(os.path.join(SCRIPT_DIR, 'data', 'locations.json')) as infile:
             tracker_data = json.load(infile)[0]
@@ -527,16 +525,13 @@ class GameData:
                 else:
                     loc_name = LocationName.from_loc_data(loc, None, ' ' + num_words[count])
                 # loc_name = LocationName.from_loc_data(loc, None, ' ' + num_words[count])
-            assert loc_name.id not in self.location_names, 'Id: %s, Name: %s' % (hex(loc_name.id), loc_name.str_name)
+            assert loc_name.id not in self.location_names, f'{hex(loc_name.id)=}, {loc_name.str_name=}'
             self.location_names[loc_name.id] = loc_name
 
     def _setup_item_names(self):
         for item in self.raw_item_data:
             item_id = item.id
-            if item_id in SPECIAL_NAMES:
-                item_name = SPECIAL_NAMES[item_id]
-            else:
-                item_name = ItemName.from_item_data(item)
+            item_name = SPECIAL_NAMES.get(item_id, ItemName.from_item_data(item))
             assert item_name.id not in self.item_names, (item_name.id, item_name.str_name)
             self.item_names[item_name.id] = item_name
 

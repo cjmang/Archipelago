@@ -1,10 +1,10 @@
 # This file was generated using jinja2 from a template. If this file needs
 # to be changed, either change the template, or the code leveraging the template.
 from typing import Callable, List, Dict, NamedTuple, Optional
-from enum import Enum, IntFlag, auto
+from enum import StrEnum, IntFlag, auto
 from BaseClasses import MultiWorld
 
-class LocationType(str, Enum):
+class LocationType(StrEnum):
    Item = "Item"
    Event = "Event"
    Djinn = "Djinn"

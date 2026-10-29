@@ -242,7 +242,7 @@ class LocationLogic:
                 outer_flags_expanded |= flags_expanded
             # print(count)
 
-        for name in self.flag_data.keys():
+        for name in self.flag_data:
             for loc in self.location_reqs:
                 assert name not in loc.requirements, f'Flag {name} is in req list of {loc}'
 
@@ -304,8 +304,7 @@ class LocationLogic:
             assert data.name not in new_reqs
             if data.name in requirement_map:
                 new_reqs.add(requirement_map[data.name])
-            for flag_reqs in data.reqs:
-                result.append(LocationRequirements(reqs.flag, flag_reqs, new_reqs))
+            result.extend(LocationRequirements(reqs.flag, flag_reqs, new_reqs) for flag_reqs in data.reqs)
 
         return None if len(result) == 0 else result
 

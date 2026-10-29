@@ -117,25 +117,13 @@ USEFUL_ITEM_GROUPS: dict[str, set[int]] = {
         189,  # Water of Life
         190,  # Mist Potion
     },
-    'forge_materials': {
-        x
-        for x in range(429, 438)  # Tear Stone through Orihalcon
-    },
-    'class_change_items': {
-        x
-        for x in range(443, 446)  # Mysterious Card, Trainer's Whip, Tomagathericon
-    },
+    'forge_materials': set(range(429, 438)),  # Tear Stone through Orihalcon
+    'class_change_items': set(range(443, 446)),  # Mysterious Card, Trainer's Whip, Tomagathericon
 }
 
 OTHER_ITEM_GROUPS: dict[str, set[int]] = {
-    'rusty_items': {
-        x
-        for x in range(417, 428)  # Rusty Sword - Robber's Blade through Goblin's Rod
-    },
-    'stat_boosters': {
-        x
-        for x in range(191, 197)  # Power Bread through Lucky Pepper
-    },
+    'rusty_items': set(range(417, 428)),  # Rusty Sword - Robber's Blade through Goblin's Rod
+    'stat_boosters': set(range(191, 197)),  # Power Bread through Lucky Pepper
 }
 
 
@@ -247,7 +235,7 @@ def generate_item_names(env: Environment, data: GameData):
             for x in data.raw_item_data
             if x.id not in EXCLUDED_ITEMS
         ]
-        summons = [x for x in data.raw_summon_data]
+        summons = list(data.raw_summon_data)
         name_list += [{'name': x.name, 'id': x.id} for x in summons]
         events = [data.item_names[event.event_id] for event in data.events.values()]
         name_list += [{'name': data.item_names[x.id].py_name, 'id': x.id} for x in events]
@@ -274,15 +262,15 @@ def generate_item_data(env: Environment, data: GameData):  # noqa: PLR0912, PLR0
         write_warning(outfile)
         names = data.item_names
 
-        summons = [x for x in data.raw_summon_data]
-        psyenergies = [x for x in data.raw_psy_data]
-        characters = [c for c in data.raw_character_data]
-        djinns = [x for x in data.raw_djinn_data]
+        summons = list(data.raw_summon_data)
+        psyenergies = list(data.raw_psy_data)
+        characters = list(data.raw_character_data)
+        djinns = list(data.raw_djinn_data)
         psyitems = []
         mimics = []
         other_prog = []
-        other_useful = dict()
-        other_items = dict()
+        other_useful = {}
+        other_items = {}
         shop_only = []
         forge_only = []
         lucky_only = []

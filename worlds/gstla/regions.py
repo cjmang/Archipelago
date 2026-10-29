@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def create_region(world: 'GSTLAWorld', region_data: RegionData):
     region = Region(region_data.name, world.player, world.multiworld)
-    gs_locations: dict[str, int | None] = dict()
+    gs_locations: dict[str, int | None] = {}
     for location in region_data.locations:
         location_data = location_name_to_id[location]
         # logging.error(region.name + ' ' + location)

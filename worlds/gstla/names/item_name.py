@@ -1,5 +1,6 @@
 # TODO: Is this obsolete? It's never used anywhere. Only .gen.item_names is.
 
+
 class ItemName:
     ##KeyItem
     Empty = '???'
