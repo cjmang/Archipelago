@@ -531,10 +531,7 @@ class GameData:
     def _setup_item_names(self):
         for item in self.raw_item_data:
             item_id = item.id
-            if item_id in SPECIAL_NAMES:
-                item_name = SPECIAL_NAMES[item_id]
-            else:
-                item_name = ItemName.from_item_data(item)
+            item_name = SPECIAL_NAMES.get(item_id, ItemName.from_item_data(item))
             assert item_name.id not in self.item_names, (item_name.id, item_name.str_name)
             self.item_names[item_name.id] = item_name
 
