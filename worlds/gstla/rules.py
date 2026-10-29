@@ -256,7 +256,7 @@ def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
     add_rule(
         world.get_location(LocationName.Victory_Event),
         lambda state: (
-            all([state.has(item, player) for item in needed_items])
+            all(state.has(item, player) for item in needed_items)
             and state.count_group(ItemType.Djinn.name, player) >= djinn_needed
             and state.count_group(ItemType.Summon.name, player) >= summons_needed
         ),

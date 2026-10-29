@@ -538,7 +538,7 @@ class GSTLAClient(BizHawkClient):
                     'operations': [
                         {
                             'operation': 'update',
-                            'value': [x for x in updated],
+                            'value': list(updated),
                         }
                     ],
                 }
@@ -554,7 +554,7 @@ class GSTLAClient(BizHawkClient):
                     'operations': [
                         {
                             'operation': 'update',
-                            'value': [x for x in self.checked_djinn],
+                            'value': list(self.checked_djinn),
                         }
                     ],
                 }
@@ -629,7 +629,7 @@ class GSTLAClient(BizHawkClient):
                             'operations': [
                                 {
                                     'operation': 'update',
-                                    'value': [x for x in self.possessed_djinn],
+                                    'value': list(self.possessed_djinn),
                                 }
                             ],
                         }
@@ -650,7 +650,7 @@ class GSTLAClient(BizHawkClient):
                             'operations': [
                                 {
                                     'operation': 'update',
-                                    'value': [x for x in self.temp_events],
+                                    'value': list(self.temp_events),
                                 }
                             ],
                         }
