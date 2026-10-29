@@ -14,9 +14,10 @@ python := absolute_path(env("PYTHON"))
 seed := env("SEED")
 temp_ap_dir := justfile_directory() / ".ap"
 
-# used by AP directly, not us
 export SKIP_REQUIREMENTS_UPDATE := "1"
-export AP_TEST_WORLDS := "gstla"
+export AP_TEST_WORLDS := "gstla"  # 0.6.8 only
+
+build_dir := justfile_directory() / "build"
 
 
 [unix]
@@ -39,10 +40,42 @@ test *args: setup
     {{python}} -m pytest worlds/gstla/test {{args}}
 
 
-check: setup
+# Requires AP 0.6.8+ to respect AP_TEST_WORLDS.
+# You can still run it with 0.6.7, but it'll take ~20 mins instead of 2.
+[working-directory: 'external/archipelago']
+test-general *args: setup
+    {{python}} -m pytest test/general -m world {{args}}
+
+
+lint: setup
     uv run ruff check worlds
+
+check-format: setup
     uv run ruff format --check worlds
+
+check-types: setup
     uv run pyrefly check
+
+check: lint check-format check-types
+
+
+# Somewhat requires AP 0.6.8+. 0.6.7 has no --skip_open_folder and theoretically opens a file browser instead :|
+# Also logs a few warnings/errors for other APWorlds. Can't turn off that they are even loaded. It is how it is.
+[unix]
+[working-directory: 'external/archipelago']
+build: setup
+    {{python}} Launcher.py "Build APWorlds" -- "Golden Sun The Lost Age" --skip_open_folder
+    mkdir -p "{{build_dir}}"
+    cp build/apworlds/gstla.apworld "{{build_dir}}/"
+    echo "Built {{build_dir}}/gstla.apworld"
+
+[windows]
+[working-directory: 'external/archipelago']
+build: setup
+    {{python}} Launcher.py "Build APWorlds" -- "Golden Sun The Lost Age" --skip_open_folder
+    New-Item -ItemType Directory -Force "{{build_dir}}" | Out-Null
+    Copy-Item build/apworlds/gstla.apworld "{{build_dir}}/"
+    Write-Output "Built {{build_dir}}/gstla.apworld"
 
 
 # Server/Client Testing

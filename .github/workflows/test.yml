@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  pull_request:
+    branches:
+      - gstla-new
+  push:
+    branches:
+      - gstla-new
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental == true }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ap-version: ['0.6.7', '0.6.8']
+        python-version: ['3.11', '3.12', '3.13']  # based on AP 0.6.7 + 0.6.8. The AP release build for users run with 3.12
+        os: ['ubuntu-latest']
+        include:  # always current AP release build with the bundled python version on windows specifically
+          - ap-version: '0.6.8'
+            python-version: '3.12'
+            os: 'windows-latest'
+          - ap-version: 'main'  # gotta know if what we're about to release is going to break soon. Not sure how stable this actually is.
+            python-version: '3.13'
+            os: 'ubuntu-latest'
+            experimental: true
+
+    steps:
+      - name: Checkout gstla
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: gstla
+
+      - name: Set up Archipelago
+        uses: ./gstla/.github/actions/setup-ap
+        with:
+          ap-version: ${{ matrix.ap-version }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run world tests
+        working-directory: gstla
+        run: uv run just test -n auto
+
+      - name: Run AP generic world tests
+        if: matrix.ap-version != '0.6.7'  # 0.6.7 ignores AP_TEST_WORLDS and would load every world :')
+        working-directory: gstla
+        run: uv run just test-general -n auto

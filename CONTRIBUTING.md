@@ -12,7 +12,8 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
 1. A clone of [Archipelago](https://github.com/ArchipelagoMW/Archipelago) with its own virtual environment,
    set up as described
    in [Running From Source](https://github.com/ArchipelagoMW/Archipelago/blob/main/docs/running%20from%20source.md).
-   Make sure you install the `requirements.txt`, `ci-requirements.txt` (and optionally the `WebHostLib/requirements.txt`).
+   Make sure you install the `requirements.txt`, `ci-requirements.txt` (and optionally the
+   `WebHostLib/requirements.txt`).
    This gstla repo does not contain the real Archipelago code. It links to your checkout and runs everything through its
    interpreter.
    This also allows us to re-use an existing installation across multiple APWorlds. For example, the "Slay The Spire 2"
@@ -34,20 +35,23 @@ You can find the reasoning for this in [cjmang/Archipelago#68](https://github.co
 
 ### Commands
 
-| Command             | What it does                                                                                        |
-|---------------------|-----------------------------------------------------------------------------------------------------|
-| `just setup`        | Creates the links between the AP checkout and this repo. Every command runs this first.             |
-| `just check`        | Run the linter, format and type checks via ruff and pyrefly.                                        |
-| `just test`         | Run our world's tests with the Archipelago interpreter. Arguments will be passed through to pytest. |
-| `just start-server` | Generates a single-player multiworld from `fixtures/gstla-test.yaml` and hosts it locally.          |
-| `just start-client` | Starts the BizHawk client against the local server.                                                 |
-| `just build`        | Builds a release-ready APWorld (TODO, gotta use this in github workflows)                           |
+| Command                                              | What it does                                                                                        |
+|------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `just setup`                                         | Creates the links between the AP checkout and this repo. Every command runs this first.             |
+| `just lint`, `just check-format`, `just check-types` | Linting (ruff), Check formatting (ruff), Check types (pyrefly) (also see `just check` to run all)   |
+| `just check`                                         | Run the linter, format and type checks via ruff and pyrefly.                                        |
+| `just test`                                          | Run our world's tests with the Archipelago interpreter. Arguments will be passed through to pytest. |
+| `just test-general`                                  | Run the Archipelago generic world tests for our world. Should only be used on AP 0.6.8+             |
+| `just start-server`                                  | Generates a single-player multiworld from `fixtures/gstla-test.yaml` and hosts it locally.          |
+| `just start-client`                                  | Starts the BizHawk client against the local server.                                                 |
+| `just build`                                         | Builds the actual .apworld file and moves it to `build/gstla.apworld`. Needs AP 0.6.8+              |
 
 ### Editors
 
 - **PyCharm**: Use the python interpreter from the Archipelago checkout as the project interpreter and add that repos
   root directory to its interpreter paths. Otherwise imports such as `BaseClasses` show as unresolved. (If you only use
   pyrefly checking inside of PyCharm, you can probably skip this step.)
+  Also mark the "external" directory as "Excluded", so the search stays in this repo.
 - **VSCode**: Not tested. Feel free to open an issue or Pull Request for this.
 
 ## Commit messages

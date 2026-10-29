@@ -1,0 +1,48 @@
+name: Checks
+
+on:
+  pull_request:
+    branches:
+      - gstla-new
+  push:
+    branches:
+      - gstla-new
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  AP_VERSION: '0.6.7'
+  PYTHON_VERSION: '3.11'  # minimum version for 0.6.7 + 0.6.8, also see pyproject.toml
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gstla
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: gstla
+
+      - name: Set up Archipelago
+        uses: ./gstla/.github/actions/setup-ap
+        with:
+          ap-version: ${{ env.AP_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Linting (ruff check)
+        if: always()
+        working-directory: gstla
+        run: uv run just lint
+
+      - name: Check formatting (ruff format --check)
+        if: always()
+        working-directory: gstla
+        run: uv run just check-format
+
+      # TODO: uncomment once pyrefly is clean
+      # - name: Check types (pyrefly)
+      #   if: always()
+      #   working-directory: gstla
+      #   run: uv run just check-types
