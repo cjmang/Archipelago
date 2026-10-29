@@ -364,7 +364,9 @@ class GSTLAWorld(World):
                 current_item = mimic_loc.item
                 current_item.location = None
                 new_mimic = create_item_direct(self.random.choice(mimic_list), self.player)
-                # logger.info("Replacing mimic %s with mimic %s in sphere %d", current_item.name, new_mimic.name, sphere)
+                # logger.info(
+                #     "Replacing mimic %s with mimic %s in sphere %d", current_item.name, new_mimic.name, sphere
+                # )
                 mimic_loc.item = None
                 mimic_loc.place_locked_item(new_mimic)
 
