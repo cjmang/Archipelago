@@ -35,7 +35,7 @@ mimic_names = [
 class LocationDatum(NamedTuple):
     rando_flag: int
     flag: int
-    mapId: int
+    map_id: int
     locked: bool
     is_summon: bool
     is_key_item: bool
