@@ -3,7 +3,7 @@ from __future__ import annotations
 import base64
 import logging
 from collections import defaultdict
-from enum import Enum, IntEnum
+from enum import IntEnum, StrEnum
 from typing import TYPE_CHECKING, Any
 
 from BaseClasses import ItemClassification
@@ -34,7 +34,7 @@ PREVENT_FLEEING_ADDR = 0x48B
 IN_BATTLE_ADDR = 0x60
 
 
-class _MemDomain(str, Enum):
+class _MemDomain(StrEnum):
     EWRAM = 'EWRAM'
     ROM = 'ROM'
 

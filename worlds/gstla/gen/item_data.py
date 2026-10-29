@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from typing_extensions import Unpack
@@ -20,11 +20,11 @@ else:
     base_event = object
 
 
-class TrapType(str, Enum):
+class TrapType(StrEnum):
     Mimic = 'Mimic'
 
 
-class FillerType(str, Enum):
+class FillerType(StrEnum):
     ForgeMaterials = 'Forge Materials'
     RustyMaterials = 'Rusty Materials'
     StatBoosts = 'Stat Boosts'
