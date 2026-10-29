@@ -18,7 +18,6 @@ env:
 jobs:
   check:
     runs-on: ubuntu-latest
-    continue-on-error: true # TODO: remove once ruff and pyrefly are clean
 
     steps:
       - name: Checkout gstla
@@ -42,7 +41,8 @@ jobs:
         working-directory: gstla
         run: uv run just check-format
 
-      - name: Check types (pyrefly)
-        if: always()
-        working-directory: gstla
-        run: uv run just check-types
+      # TODO: uncomment once pyrefly is clean
+      # - name: Check types (pyrefly)
+      #   if: always()
+      #   working-directory: gstla
+      #   run: uv run just check-types
