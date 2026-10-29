@@ -152,7 +152,8 @@ class GSTLAWorld(World):
         self._character_levels: list[tuple[int, int]] = []
         self.goal_conditions: set[str] = set()
 
-    def generate_early(self) -> None:
+    def generate_early(self) -> None:  # noqa: PLR0912
+        # TODO: There has to be a way to simplify these
         if len(self.options.goal.value) == 0:
             raise OptionError(f'A goal must be selected for Golden Sun TLA for player {self.player_name}')
 
