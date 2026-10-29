@@ -99,15 +99,15 @@ class GoalManager:
 
     def __init__(self):
         self.flag_requirements: set[str] = set()
-        self.count_requirements: dict[str, int] = dict()
-        self.desired_flags: dict[int, int] = dict()
+        self.count_requirements: dict[str, int] = {}
+        self.desired_flags: dict[int, int] = {}
         self.current: defaultdict[str, defaultdict[str, bool]] = defaultdict(lambda: defaultdict(lambda: False))
         self.initialized = False
 
     def init_reqs_from_slotdata(self, slot_data: dict[str, Any]) -> None:
         reqs: dict[str, Any] = slot_data['goal']
         if reqs is None:
-            reqs = dict()
+            reqs = {}
 
         if 'flags' in reqs:
             self.flag_requirements: set[str] = reqs['flags']
@@ -175,7 +175,7 @@ class GoalManager:
             required_count = self.count_requirements['djinn']
             server_count = ctx.stored_data.get(client.get_djinn_location_key(ctx), None)
             if server_count is None:
-                server_count = dict()
+                server_count = {}
             if required_count > len(server_count):
                 return False
 
@@ -284,9 +284,9 @@ class GSTLAClient(BizHawkClient):
         self.slot_name = ''
         self.flag_map: defaultdict[int, set[int]] = defaultdict(lambda: set())
         self.event_flag_map: defaultdict[int, set[int]] = defaultdict(lambda: set())
-        self.goal_map: dict[int, bool] = dict()
-        self.djinn_ram_to_rom: dict[int, int] = dict()
-        self.djinn_flag_map: dict[int, str] = dict()
+        self.goal_map: dict[int, bool] = {}
+        self.djinn_ram_to_rom: dict[int, int] = {}
+        self.djinn_flag_map: dict[int, str] = {}
         self.djinn_flag_to_loc_id: dict[int, int] = {d.flag: d.id for d in djinn_locations}
         self.checked_djinn: set[int] = set()
         self.possessed_djinn: set[int] = set()
@@ -582,7 +582,7 @@ class GSTLAClient(BizHawkClient):
             for desired_flag in self.goals.desired_flags.keys():
                 self.goal_map[desired_flag] = False
             self.check_summon_count(ctx)
-            self.coop = ctx.slot_data.get('options', dict()).get('coop', 0)
+            self.coop = ctx.slot_data.get('options', {}).get('coop', 0)
             ctx.set_notify(self.get_goal_flags_key(ctx), self.get_djinn_location_key(ctx))
             # logger.info(self.goals.flag_requirements)
             # logger.info(self.goals.count_requirements)

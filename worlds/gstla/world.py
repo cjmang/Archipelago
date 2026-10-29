@@ -249,9 +249,9 @@ class GSTLAWorld(World):
                 'coop': self.options.coop.value,
             }
         }
-        goal_dict = dict()
+        goal_dict = {}
         flags = set()
-        counts = dict()
+        counts = {}
         for goal in self.goal_conditions:
             if 'Hunt' in goal:
                 continue

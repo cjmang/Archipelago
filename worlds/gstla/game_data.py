@@ -228,9 +228,9 @@ class GameData:
         self.raw_psy_data: list[PsyDatum] = []
         self.raw_character_data: list[CharacterDatum] = []
         self.raw_enemy_data: list[EnemyDatum] = []
-        self.location_names: dict[int, LocationName] = dict()
-        self.item_names: dict[int, ItemName] = dict()
-        self.events: dict[int, EventDatum] = dict()
+        self.location_names: dict[int, LocationName] = {}
+        self.item_names: dict[int, ItemName] = {}
+        self.events: dict[int, EventDatum] = {}
         self.vanilla_item_ids: set[int] = set()
         self.vanilla_shop_contents: set[int] = set()
         self.forgeable_ids: set[int] = set()
@@ -414,7 +414,7 @@ class GameData:
                     item['useEffect'],
                 )
             )
-        coins = dict()
+        coins = {}
         for loc in self.raw_location_data:
             if loc.vanilla_contents > 0x8000:
                 # TODO: get the name in a better way?
@@ -507,7 +507,7 @@ class GameData:
 
     def _setup_location_names(self):
         names: defaultdict[str, int] = defaultdict(lambda: 0)
-        tracker_name_data: dict[int, str] = dict()
+        tracker_name_data: dict[int, str] = {}
         tracker_names: defaultdict[str, int] = defaultdict(lambda: 0)
         with open(os.path.join(SCRIPT_DIR, 'data', 'locations.json')) as infile:
             tracker_data = json.load(infile)[0]

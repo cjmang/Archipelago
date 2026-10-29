@@ -281,8 +281,8 @@ def generate_item_data(env: Environment, data: GameData):  # noqa: PLR0912, PLR0
         psyitems = []
         mimics = []
         other_prog = []
-        other_useful = dict()
-        other_items = dict()
+        other_useful = {}
+        other_items = {}
         shop_only = []
         forge_only = []
         lucky_only = []
