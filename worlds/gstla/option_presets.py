@@ -17,6 +17,7 @@ from .options import (
     CharStatShuffle,
     ClassPsynergy,
     ClassPsynergyLevels,
+    DeathLink,
     DjinnLogic,
     DjinnShuffle,
     EasierBosses,
@@ -116,6 +117,7 @@ easy = {
     ManualRetreatGlitch.internal_name: ManualRetreatGlitch.option_false,
     MusicShuffle.internal_name: MusicShuffle.option_false,
     TelportEverywhere.internal_name: TelportEverywhere.option_true,
+    DeathLink.internal_name: DeathLink.option_false
 }
 
 open_mode = {
@@ -175,6 +177,7 @@ open_mode = {
     ManualRetreatGlitch.internal_name: ManualRetreatGlitch.option_false,
     MusicShuffle.internal_name: MusicShuffle.option_false,
     TelportEverywhere.internal_name: TelportEverywhere.option_true,
+    DeathLink.internal_name: DeathLink.option_false
 }
 
 gstla_options_presets: dict[str, dict[str, Any]] = {'Easy': easy, 'Open Mode': open_mode}

@@ -1,6 +1,15 @@
 from dataclasses import dataclass
 
-from Options import Choice, NamedRange, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
+from Options import (
+    Choice,
+    DeathLink as CoreDeathLink,
+    NamedRange,
+    OptionSet,
+    PerGameCommonOptions,
+    Range,
+    StartInventoryPool,
+    Toggle,
+)
 
 
 class StartWithShip(Choice):
@@ -891,6 +900,16 @@ class ShortcutMagmaRock(Toggle):
     default = 0
 
 
+class DeathLink(CoreDeathLink):
+    """
+    When all of the characters in your party are downed, everyone who enabled death link dies in their game.
+    Of course, the reverse is true too.
+    Note: can also be toggled at runtime with the "/deathlink" client command.
+    """
+    internal_name = "death_link"
+    default = 0
+
+
 @dataclass
 class GSTLAOptions(PerGameCommonOptions):
     # Pool and Logic settings
@@ -976,6 +995,7 @@ class GSTLAOptions(PerGameCommonOptions):
     teleport_to_dungeons_and_towns: TelportEverywhere
     auto_run: AutoRun
     coop: Coop
+    death_link: DeathLink
     disable_shop_gametickets: DisableShopGameTickets
 
     start_inventory_from_pool: StartInventoryPool
