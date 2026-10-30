@@ -152,7 +152,7 @@ class GSTLAWorld(World):
         self._character_levels: list[tuple[int, int]] = []
         self.goal_conditions: set[str] = set()
 
-    def generate_early(self) -> None:  # noqa: PLR0912
+    def generate_early(self) -> None:
         # TODO: There has to be a way to simplify these
         if len(self.options.goal.value) == 0:
             raise OptionError(f'A goal must be selected for Golden Sun TLA for player {self.player_name}')
@@ -160,8 +160,15 @@ class GSTLAWorld(World):
         if self.options.random_goals.value == 0 or self.options.random_goals.value >= len(self.options.goal.value):
             self.goal_conditions = self.options.goal.value
         else:
-            for goal in self.random.sample(list(self.options.goal.value), k=self.options.random_goals.value):
-                self.goal_conditions.add(goal)
+            self.goal_conditions = set(
+                # sampled list has to be sorted, otherwise a seed is not deterministic
+                self.random.sample(sorted(self.options.goal.value), k=self.options.random_goals.value)
+            )
+
+            # Gotta write back to options.goal so that the spoiler log also saves the proper goal.
+            # Note: The CSV from ArchipelagoMW/AsyncTools (Big Async) would still show all goals.
+            # Gotta use triggers for that. See https://github.com/ArchipelagoMW/AsyncTools/pull/483
+            self.options.goal.value = set(self.goal_conditions)
 
         if 'Dullahan' in self.goal_conditions and self.options.omit_locations.value > 0:
             self.options.omit_locations.value = 0
