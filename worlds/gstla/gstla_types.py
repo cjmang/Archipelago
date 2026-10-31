@@ -89,7 +89,7 @@ class ItemType(IntEnum):
 
 # TODO: remove all stale references to these
 ItemType.Psynergy._add_alias_('Psyenergy')
-ItemType.PsynergyItem._add_alias_('PsynergyItem')
+ItemType.PsynergyItem._add_alias_('PsyenergyItem')
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -99,3 +99,30 @@ class ItemData:
     type: ItemType
     classification: ItemClassification
     category: ItemCategory
+
+
+class PsynergyID(IntEnum):
+    GROWTH = 12
+    DOUSE = 33
+    FROST = 24
+    WHIRLWIND = 78
+    LASH = 133
+    POUND = 134
+    TREMOR = 135
+    SCOOP = 136
+    CYCLONE = 137
+    PARCH = 138
+    SAND = 139
+    MIND_READ = 141
+    FORCE = 142
+    LIFT = 143
+    REVEAL = 144
+    HALT = 145
+    CLOAK = 146
+    CARRY = 147
+    CATCH = 148
+    BURST = 151
+    GRIND = 152
+    HOVER = 153
+    BLAZE = 154
+    TELEPORT = 156
