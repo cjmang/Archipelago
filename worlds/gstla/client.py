@@ -10,7 +10,6 @@ from BaseClasses import ItemClassification
 from NetUtils import ClientStatus, NetworkItem
 from worlds._bizhawk import display_message, read, write
 from worlds._bizhawk.client import BizHawkClient
-from .game_data import ItemType
 from .gen.item_data import mimics
 from .gen.location_data import (
     LocationType,
@@ -20,6 +19,7 @@ from .gen.location_data import (
     event_name_to_data,
 )
 from .gen.location_names import LocationName, loc_names_by_id, option_name_to_goal_name
+from .gstla_types import ItemType
 from .items import items_by_id
 from .locations import remote_blacklist
 
