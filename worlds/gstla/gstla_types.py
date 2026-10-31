@@ -73,18 +73,23 @@ class ItemType(IntEnum):
     Shield = 3
     Helm = 4
     Boots = 5
-    PsyenergyItem = 6
+    PsynergyItem = 6
     Trident = 7
     Ring = 8
     Shirt = 9
     Class = 10
     KeyItem = 11
-    Psyenergy = 12
+    Psynergy = 12
     Djinn = 13
     Event = 14
     Character = 15
     Mimic = 16
     Summon = 17
+
+
+# TODO: remove all stale references to these
+ItemType.Psynergy._add_alias_('Psyenergy')
+ItemType.PsynergyItem._add_alias_('PsynergyItem')
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
