@@ -27,6 +27,12 @@ class BaseItem(ABC):
     ap_id: int
     name: str
 
+    @property
+    def in_pool(self) -> bool:
+        # only use this if you want to filter some items,
+        # like a "cloak" psynergy or some summons
+        return True
+
     def as_item(self) -> ItemData:
         return ItemData(
             id=self.ap_id,
