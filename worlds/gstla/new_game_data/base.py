@@ -6,6 +6,15 @@ from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType
 
 
 class BaseItem(ABC):
+    """
+    Base class for all AP items.
+    All subclasses should use @dataclass(frozen=True, slots=True, kw_only=True)
+    This is the poor mans Pydantic model so that we can guarantee that the model is really what it looks like.
+    Also: a slotted dataclass should reduce memory usage quite a bit. If we have hundreds to thousands of instances,
+    this is probably pretty good. Only drawback: Can't use super() calls in those subclasses.
+    But the tradeoff's worth it, I think.
+    """
+
     # TODO: classvars here should probably be validated, gotta use __init_subclass__ or something iirc
     ITEM_TYPE: ClassVar[ItemType]
     CLASSIFICATION: ClassVar[ItemClassification]
