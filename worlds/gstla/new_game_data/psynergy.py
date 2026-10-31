@@ -21,6 +21,11 @@ FILLER_PSYNERGIES = [
     PsynergyID.CATCH,
 ]
 
+UNUSED_PSYNERGIES = [
+    PsynergyID.CLOAK,
+    PsynergyID.HALT,
+]
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LearnedPsynergy(BaseItem):
@@ -53,6 +58,10 @@ class PsynergyItem(BaseItem):
     @property
     def ap_id(self) -> int:
         return 0xE00 + self.ability_id
+
+    @property
+    def in_pool(self):
+        return self.ability_id not in UNUSED_PSYNERGIES
 
     def as_item(self) -> ItemData:
         item = BaseItem.as_item(self)
