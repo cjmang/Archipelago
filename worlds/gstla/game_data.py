@@ -127,6 +127,7 @@ class PsyDatum(NamedTuple):
 
 
 class CharacterDatum(NamedTuple):
+    # migrated to game_data/character.py
     id: int
     name: str
     flag: int
@@ -269,7 +270,7 @@ class GameData:
         self._setup_location_names()
         self._setup_item_names()
         self._setup_psy_energies()
-        self._setup_characters()
+        self._setup_characters()  # migrated to game_data/character.py
 
     def _load_locations(self):
         with open(os.path.join(SCRIPT_DIR, 'data', 'item_locations.json'), 'r') as loc_file:
@@ -530,6 +531,7 @@ class GameData:
             self.item_names[d.id] = ItemName(d.id, d.name.replace(' ', '_'), d.name)
 
     def _setup_characters(self):
+        # migrated to game_data/character.py
         self.raw_character_data += [
             CharacterDatum(3328, 'Isaac', 3328, 16384384),
             CharacterDatum(3329, 'Garet', 3329, 16384386),
