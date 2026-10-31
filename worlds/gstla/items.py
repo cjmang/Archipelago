@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, TypeVar
 
 from BaseClasses import Item, ItemClassification
-from .game_data import ItemType
 from .gen.internal_item_data import InternalItemData
 from .gen.item_data import (
     FillerType,
@@ -31,6 +30,7 @@ from .gen.item_data import (
 from .gen.item_names import ItemName
 from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import LocationName, loc_names_by_id
+from .gstla_types import ItemType
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld

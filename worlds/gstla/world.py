@@ -25,13 +25,13 @@ from .gen.item_data import characters, mimics
 from .gen.item_names import ItemName, item_id_by_name, name_by_item_id
 from .gen.location_data import LocationType
 from .gen.location_names import ids_by_loc_name, loc_names_by_id
+from .gstla_types import ItemType
 from .items import (
     AP_PLACEHOLDER_ITEM,
     AP_PROG_PLACEHOLDER_ITEM,
     AP_USEFUL_PLACEHOLDER_ITEM,
     FILLER_WEIGHT_OPTION_NAMES,
     GSTLAItem,
-    ItemType,
     all_items,
     create_events,
     create_filler_pool_weights,
