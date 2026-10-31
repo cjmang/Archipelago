@@ -1,5 +1,9 @@
+import pkgutil
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, ClassVar, Self
+
+import orjson
 
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType
@@ -36,3 +40,7 @@ class BaseItem(ABC):
     @abstractmethod
     def load(cls, *args: Any, **kwargs: Any) -> tuple[Self, ...]:
         """Every subclass should be able to decide itself where it comes from. Most get filled by data/*.json files."""
+
+    @staticmethod
+    def read_json(path: str | Path) -> dict:
+        return orjson.loads(pkgutil.get_data('worlds.gstla', str(path)))
