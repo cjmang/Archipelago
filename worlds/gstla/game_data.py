@@ -1,8 +1,10 @@
 import json
 import os
 from collections import defaultdict
-from enum import Enum, IntEnum, IntFlag, auto
+from enum import IntEnum, IntFlag, auto
 from typing import Any, NamedTuple
+
+from .gstla_types import ItemType
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
@@ -63,27 +65,6 @@ class EventDatum(NamedTuple):
     flag: int
     location_name: str
     item_name: str
-
-
-class ItemType(int, Enum):
-    Consumable = 0  # is this the right name?
-    Weapon = 1
-    Armor = 2
-    Shield = 3
-    Helm = 4
-    Boots = 5
-    PsyenergyItem = 6
-    Trident = 7
-    Ring = 8
-    Shirt = 9
-    Class = 10
-    KeyItem = 11
-    Psyenergy = 12
-    Djinn = 13
-    Event = 14
-    Character = 15
-    Mimic = 16
-    Summon = 17
 
 
 class ItemFlags(IntFlag):
