@@ -1,7 +1,7 @@
 import pkgutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, ClassVar, Self
+from typing import TYPE_CHECKING, Any, ClassVar, Self
 
 import orjson
 
@@ -23,8 +23,13 @@ class BaseItem(ABC):
     CLASSIFICATION: ClassVar[ItemClassification]
     CATEGORY: ClassVar[ItemCategory]
 
-    ap_id: int
-    name: str
+    if TYPE_CHECKING:
+
+        @property
+        def ap_id(self) -> int: ...
+
+        @property
+        def name(self) -> str: ...
 
     def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
