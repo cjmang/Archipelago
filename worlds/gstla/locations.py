@@ -4,7 +4,8 @@ from BaseClasses import Location, Region
 
 # TODO: revert
 from worlds.gstla.gen.location_data import LocationData, LocationType, all_locations as all_gen_locations
-from worlds.gstla.gen.location_names import LocationName, loc_names_by_id
+from worlds.gstla.gen.location_names import loc_names_by_id
+from worlds.gstla.names.location_name import LocationName
 from .gstla_types import ItemType
 
 if TYPE_CHECKING:

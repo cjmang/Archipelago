@@ -6,8 +6,8 @@ from typing_extensions import Unpack
 import worlds.gstla.gen.internal_item_data as ItemLists  # noqa: N812
 from BaseClasses import ItemClassification
 from worlds.gstla.game_data import ElementType, ItemType
+from worlds.gstla.names.item_name import ItemName
 from .internal_item_data import InternalDjinnItemData, InternalEventItemData, InternalItemData
-from .item_names import ItemName
 
 if TYPE_CHECKING:
     # TODO: Swap name

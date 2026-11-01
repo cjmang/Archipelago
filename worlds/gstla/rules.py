@@ -3,12 +3,13 @@ from typing import TYPE_CHECKING, cast
 
 from worlds.generic.Rules import add_item_rule, add_rule
 from .gen.item_data import summon_list
-from .gen.item_names import ItemName
 from .gen.location_data import LocationRestriction, LocationType
-from .gen.location_names import LocationName, loc_names_by_id
+from .gen.location_names import loc_names_by_id
 from .items import ItemType, all_items
 from .locations import location_type_to_data
 from .names.entrance_name import EntranceName
+from .names.item_name import ItemName
+from .names.location_name import LocationName
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

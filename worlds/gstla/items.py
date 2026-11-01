@@ -27,10 +27,11 @@ from .gen.item_data import (
     useful_remainder,
     vanilla_coins,
 )
-from .gen.item_names import ItemName
 from .gen.location_data import LocationType, location_type_to_data
-from .gen.location_names import LocationName, loc_names_by_id
+from .gen.location_names import loc_names_by_id
 from .gstla_types import ItemType
+from .names.item_name import ItemName
+from .names.location_name import LocationName
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld
