@@ -291,7 +291,7 @@ class GSTLAClient(BizHawkClient):
         self.checked_djinn: set[int] = set()
         self.possessed_djinn: set[int] = set()
         self.djinn_last_count: int = 0
-        self.mimics = {x.id: x for x in mimics}
+        self.mimics = {x.id: x for x in mimics}  # TODO: remove or what?
         self.summons: set[int] = set()
         self.summon_item_index: int = 0
         for loc in all_locations:
