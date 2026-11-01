@@ -1,8 +1,8 @@
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from typing import Self
 
 from BaseClasses import ItemClassification
-from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType, PsynergyID
+from worlds.gstla.gstla_types import ItemCategory, ItemType, PsynergyID
 from .base import BaseItem
 
 # we don't have an easy 1:1 mapping in the data files from
@@ -29,9 +29,9 @@ UNUSED_PSYNERGIES = [
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LearnedPsynergy(BaseItem):
-    ITEM_TYPE = ItemType.Psynergy
-    CLASSIFICATION = ItemClassification.progression
-    CATEGORY = ItemCategory.learned_psynergy
+    category = ItemCategory.learned_psynergy
+    classification = ItemClassification.progression
+    item_type = ItemType.Psynergy
 
     ability_id: PsynergyID
     name: str
@@ -47,9 +47,8 @@ class LearnedPsynergy(BaseItem):
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class PsynergyItem(BaseItem):
-    ITEM_TYPE = ItemType.PsynergyItem
-    CLASSIFICATION = ItemClassification.progression
-    CATEGORY = ItemCategory.psynergy_items
+    category = ItemCategory.psynergy_items
+    item_type = ItemType.PsynergyItem
 
     item_id: int  # items.json id, not the AP id
     name: str
@@ -63,11 +62,11 @@ class PsynergyItem(BaseItem):
     def in_pool(self) -> bool:
         return self.ability_id not in UNUSED_PSYNERGIES
 
-    def as_item(self) -> ItemData:
-        item = BaseItem.as_item(self)
+    @property
+    def classification(self) -> ItemClassification:
         if self.ability_id in FILLER_PSYNERGIES:
-            return replace(item, classification=ItemClassification.filler)
-        return item
+            return ItemClassification.filler
+        return ItemClassification.progression
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:

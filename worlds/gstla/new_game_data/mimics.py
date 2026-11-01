@@ -21,9 +21,9 @@ MIMIC_NAMES: list[str] = [
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Mimic(BaseItem):
-    ITEM_TYPE = ItemType.Mimic
-    CLASSIFICATION = ItemClassification.trap
-    CATEGORY = ItemCategory.mimics
+    category = ItemCategory.mimics
+    classification = ItemClassification.trap
+    item_type = ItemType.Mimic
 
     tier: int  # for now, just based on the order of MIMIC_NAMES
     name: str

@@ -36,9 +36,9 @@ class Character(BaseItem):
     But we also use these numbers (3328) as the location ID for Isaac
     """
 
-    ITEM_TYPE = ItemType.Character
-    CLASSIFICATION = ItemClassification.progression
-    CATEGORY = ItemCategory.characters
+    category = ItemCategory.characters
+    classification = ItemClassification.progression
+    item_type = ItemType.Character
 
     # addr: int  # unused, is some ROM address/offset
     index: CharacterIndex

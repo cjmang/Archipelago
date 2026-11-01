@@ -1,12 +1,14 @@
 import pkgutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Self
+from typing import TYPE_CHECKING, Any, Self
 
 import orjson
 
-from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType
+
+if TYPE_CHECKING:
+    from BaseClasses import ItemClassification
 
 
 class BaseItem(ABC):
@@ -18,11 +20,6 @@ class BaseItem(ABC):
     this is probably pretty good. Only drawback: Can't use super() calls in those subclasses.
     But the tradeoff's worth it, I think.
     """
-
-    ITEM_TYPE: ClassVar[ItemType]
-    CLASSIFICATION: ClassVar[ItemClassification]
-    CATEGORY: ClassVar[ItemCategory]
-
     if TYPE_CHECKING:
 
         @property
@@ -31,11 +28,20 @@ class BaseItem(ABC):
         @property
         def name(self) -> str: ...
 
+        @property
+        def item_type(self) -> ItemType: ...
+
+        @property
+        def classification(self) -> ItemClassification: ...
+
+        @property
+        def category(self) -> ItemCategory: ...
+
     def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
-        for var in ['ITEM_TYPE', 'CLASSIFICATION', 'CATEGORY']:
-            if not hasattr(cls, var):
-                raise TypeError(f'{cls.__name__} must set {var}')
+        for attr in ['item_type', 'classification', 'category']:
+            if not hasattr(cls, attr):
+                raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
 
     @property
     def in_pool(self) -> bool:
@@ -47,9 +53,9 @@ class BaseItem(ABC):
         return ItemData(
             id=self.ap_id,
             name=self.name,
-            type=self.ITEM_TYPE,
-            classification=self.CLASSIFICATION,
-            category=self.CATEGORY,
+            type=self.item_type,
+            classification=self.classification,
+            category=self.category,
         )
 
     @classmethod
