@@ -7,7 +7,8 @@ from typing import TextIO
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from worlds.gstla.new_game_data.coins import COIN_ID_OFFSET
-from .game_data import ElementType, GameData, ItemFlags, ItemType
+from .game_data import ElementType, GameData, ItemType
+from .gstla_types import ItemFlag
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
@@ -312,7 +313,7 @@ def generate_item_data(env: Environment, data: GameData):  # noqa: PLR0912, PLR0
                 if (
                     item.item_type in {ItemType.Shirt, ItemType.Boots, ItemType.Ring}
                     or item.item_type in {ItemType.Armor, ItemType.Weapon, ItemType.Helm, ItemType.Shield}
-                    and item.flags & ItemFlags.Rare > 0
+                    and item.flags & ItemFlag.Rare > 0
                 ):
                     classifications[item.id] = 'useful'
                 else:
