@@ -10,9 +10,9 @@ COIN_ID_OFFSET = 0x8000  # ROM stores coin items as 0x8000 + amount
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Coins(BaseItem):
-    ITEM_TYPE = ItemType.Consumable
-    CLASSIFICATION = ItemClassification.filler
-    CATEGORY = ItemCategory.vanilla_coins
+    category = ItemCategory.vanilla_coins
+    classification = ItemClassification.filler
+    item_type = ItemType.Consumable
 
     amount: int
 

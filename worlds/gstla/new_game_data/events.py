@@ -39,9 +39,9 @@ EVENTS: tuple[tuple[int, int, str, str], ...] = (
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Event(BaseItem):
-    ITEM_TYPE = ItemType.Event
-    CLASSIFICATION = ItemClassification.progression
-    CATEGORY = ItemCategory.events
+    category = ItemCategory.events
+    classification = ItemClassification.progression
+    item_type = ItemType.Event
 
     ap_id: int  # same as the corresponding location
     flag_index: int

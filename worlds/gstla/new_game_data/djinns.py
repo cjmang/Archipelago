@@ -30,9 +30,9 @@ def flag_index_to_djinn(flag: int) -> tuple[ElementType, int]:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Djinn(BaseItem):
-    ITEM_TYPE = ItemType.Djinn
-    CLASSIFICATION = ItemClassification.progression_skip_balancing
-    CATEGORY = ItemCategory.djinn
+    category = ItemCategory.djinn
+    classification = ItemClassification.progression_skip_balancing
+    item_type = ItemType.Djinn
 
     element: ElementType
     index: int
