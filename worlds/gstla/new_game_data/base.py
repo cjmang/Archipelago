@@ -19,13 +19,18 @@ class BaseItem(ABC):
     But the tradeoff's worth it, I think.
     """
 
-    # TODO: classvars here should probably be validated, gotta use __init_subclass__ or something iirc
     ITEM_TYPE: ClassVar[ItemType]
     CLASSIFICATION: ClassVar[ItemClassification]
     CATEGORY: ClassVar[ItemCategory]
 
     ap_id: int
     name: str
+
+    def __init_subclass__(cls, **kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+        for var in ['ITEM_TYPE', 'CLASSIFICATION', 'CATEGORY']:
+            if not hasattr(cls, var):
+                raise TypeError(f'{cls.__name__} must set {var}')
 
     @property
     def in_pool(self) -> bool:
@@ -49,4 +54,7 @@ class BaseItem(ABC):
 
     @staticmethod
     def read_json(path: str | Path) -> dict:
-        return orjson.loads(pkgutil.get_data('worlds.gstla', str(path)))
+        data_path = pkgutil.get_data('worlds.gstla', str(path))
+        if data_path is None:
+            raise ValueError(f'Could not find json file {path=}')
+        return orjson.loads(data_path)
