@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import IntEnum, StrEnum, auto
+from enum import IntEnum, IntFlag, StrEnum, auto
 
 from BaseClasses import ItemClassification
 
@@ -99,6 +99,19 @@ class ItemData:
     type: ItemType
     classification: ItemClassification
     category: ItemCategory
+
+
+class ItemFlag(IntFlag):
+    # TODO: Move into gstla_types?
+    NONE = 0
+    Cursed = auto()  # 1 "Curses on pickup"
+    Sticky = auto()  # 2 "Unremovable"
+    Rare = auto()  # 4 "If dropped, can be bought back from shops"
+    Important = auto()  # 8 "Cannot be dropped"
+    Stackable = auto()  # 16 "Carry up to 30"
+    NoTransfer = auto()  # 32 "Cannot be transfered from GS1 to GS2"
+    UnusedOne = auto()
+    UnusedTwo = auto()
 
 
 class PsynergyID(IntEnum):

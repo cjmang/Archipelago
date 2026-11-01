@@ -1,10 +1,10 @@
 import json
 import os
 from collections import defaultdict
-from enum import IntEnum, IntFlag, auto
+from enum import IntEnum
 from typing import Any, NamedTuple
 
-from .gstla_types import ItemType
+from .gstla_types import ItemFlag, ItemType
 from .new_game_data.coins import COIN_ID_OFFSET
 from .new_game_data.forgeable import load_forge_mapping
 from .new_game_data.mimics import MIMIC_NAMES
@@ -58,25 +58,13 @@ class EventDatum(NamedTuple):
     item_name: str
 
 
-class ItemFlags(IntFlag):
-    NONE = 0
-    Cursed = auto()  # 1 "Curses on pickup"
-    Sticky = auto()  # 2 "Unremovable"
-    Rare = auto()  # 4 "If dropped, can be bought back from shops"
-    Important = auto()  # 8 "Cannot be dropped"
-    Stackable = auto()  # 16 "Carry up to 30"
-    NoTransfer = auto()  # 32 "Cannot be transfered from GS1 to GS2"
-    UnusedOne = auto()
-    UnusedTwo = auto()
-
-
 class ItemDatum(NamedTuple):
     # TODO: add more?
     id: int
     name: str
     addr: int
     item_type: ItemType
-    flags: ItemFlags
+    flags: ItemFlag
     use_effect: int = 0
     # TODO: event type is a property of locations, not of items
     # event_type: int
@@ -351,7 +339,7 @@ class GameData:
                         name=MIMIC_NAMES[datum.vanilla_contents],
                         addr=datum.addr[0],
                         item_type=ItemType.Mimic,
-                        flags=ItemFlags.NONE,
+                        flags=ItemFlag.NONE,
                         use_effect=0,
                         is_mimic=True,
                     )
@@ -386,7 +374,7 @@ class GameData:
                     item['name'],
                     item['addr'],
                     item_type,
-                    ItemFlags(item['flags']),
+                    ItemFlag(item['flags']),
                     item['useEffect'],
                 )
             )
@@ -399,7 +387,7 @@ class GameData:
                     f'Coins {loc.vanilla_contents - COIN_ID_OFFSET}',
                     loc.addr[0],
                     ItemType.Consumable,
-                    ItemFlags(0),
+                    ItemFlag(0),
                 )
         for coin in coins.values():
             self.raw_item_data.append(coin)
