@@ -169,6 +169,17 @@ class ItemName(NamedTuple):
 
 
 SPECIAL_NAMES = {
+    # TODO: Something's wrong here?
+    # see https://goldensun.fandom.com/wiki/Rusty_items#Light_Blades
+    # 417 in forgeable.json is "Rusty Sword", which is supposed to be a light blade,
+    # but it maps to Robber's Blade, which is a long sword.
+    # The not matching ones:
+    # 417 (Rusty Sword / Light) -> 288 (Corsair's Edge)
+    # 418 (Rusty Sword / Long)  -> 277 (Robber's Blade)
+    # 419 (Rusty Sword / Light) -> 289 (Pirate's Sabre)
+    # 420 (Rusty Sword / Long)  -> 278 (Soul Brand)
+    # (I don't think it really matters tbh, but might as well fix it.)
+
     419: ItemName(419, 'Rusty_Sword_CorsairsEdge', "Rusty Sword - Corsair's Edge"),
     417: ItemName(417, 'Rusty_Sword_RobbersBlade', "Rusty Sword - Robber's Blade"),
     420: ItemName(420, 'Rusty_Sword_PiratesSabre', "Rusty Sword - Pirate's Sabre"),
