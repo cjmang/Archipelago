@@ -8,6 +8,7 @@ from .gen.location_names import loc_names_by_id
 from .items import ItemType, all_items
 from .locations import location_type_to_data
 from .names import EntranceName, ItemName, LocationName
+from .new_game_data.coins import COIN_ID_OFFSET
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -1571,7 +1572,7 @@ class _RestrictionRule:
                 and item.name not in _RestrictionRule.summon_names
             )
         if self.loc_restrictions & LocationRestriction.NoMoney > 0:
-            ret &= item.item_data.id < 0x8000
+            ret &= item.item_data.id < COIN_ID_OFFSET
         return ret
 
 

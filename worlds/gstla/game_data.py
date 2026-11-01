@@ -5,6 +5,7 @@ from enum import IntEnum, IntFlag, auto
 from typing import Any, NamedTuple
 
 from .gstla_types import ItemType
+from .new_game_data.coins import COIN_ID_OFFSET
 from .new_game_data.mimics import MIMIC_NAMES
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
@@ -385,11 +386,11 @@ class GameData:
             )
         coins = {}
         for loc in self.raw_location_data:
-            if loc.vanilla_contents > 0x8000:
+            if loc.vanilla_contents > COIN_ID_OFFSET:
                 # TODO: get the name in a better way?
                 coins[loc.vanilla_contents] = ItemDatum(
                     loc.vanilla_contents,
-                    f'Coins {loc.vanilla_contents - 0x8000}',
+                    f'Coins {loc.vanilla_contents - COIN_ID_OFFSET}',
                     loc.addr[0],
                     ItemType.Consumable,
                     ItemFlags(0),
