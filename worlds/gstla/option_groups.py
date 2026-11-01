@@ -20,6 +20,7 @@ from .options import (
     ClassPsynergyLevels,
     CoinsFillerWeight,
     CommonConsumablesFillerWeight,
+    DeathLink,
     DisableShopGameTickets,
     DjinnHuntCount,
     DjinnLogic,
@@ -171,6 +172,7 @@ gstla_option_groups = [
             MusicShuffle,
             AutoRun,
             DisableShopGameTickets,
+            DeathLink,
         ],
     ),
     OptionGroup(
