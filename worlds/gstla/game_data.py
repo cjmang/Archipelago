@@ -404,17 +404,17 @@ class GameData:
             # Largest vanilla item id is 460
             self.raw_djinn_data.append(
                 DjinnDatum(
-                    djinn['addr'],
-                    djinn['vanillaId'],
-                    ElementType(djinn['vanillaElement']),
-                    djinn['vanillaName'],
-                    djinn['addr'],
+                    ap_id=djinn['addr'],
+                    id=djinn['vanillaId'],
+                    element=ElementType(djinn['vanillaElement']),
+                    name=djinn['vanillaName'],
+                    addr=djinn['addr'],
                     # From emo tracker pack
-                    djinn['statAddr'],
-                    djinn['stats'],
+                    stats_addr=djinn['statAddr'],
+                    stats=djinn['stats'],
                     # 0x30 is the start of the djinn flags; the game has flag slots for 20 djinn
                     # per element, even though there's only 18 per element, so some flags are just unused
-                    0x30 + (djinn['vanillaElement'] * 20) + djinn['vanillaId'],
+                    vanilla_flag=0x30 + (djinn['vanillaElement'] * 20) + djinn['vanillaId'],
                 )
             )
         for djinn in self.raw_djinn_data:
@@ -537,7 +537,7 @@ class GameData:
     def _setup_events(self):
         # Just some offset to avoid colliding with anything else; needs to avoid any location or item ids in AP
         event_offset = 5000
-        events = [
+        events = [  # TODO: move to game_data/events.py, dedup
             EventDatum(event_offset + 1, 0x778, 'Mars Lighthouse - Doom Dragon', 'Doom Dragon Defeated'),
             EventDatum(event_offset + 2, 0x8AB, 'Alhafra Briggs', 'Briggs defeated'),
             EventDatum(event_offset + 3, 0x97F, 'Alhafra Prison Briggs', 'Briggs escaped'),

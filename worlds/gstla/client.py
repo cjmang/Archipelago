@@ -347,6 +347,7 @@ class GSTLAClient(BizHawkClient):
             ctx.auth = self.slot_name
 
     async def _load_djinn(self, ctx: BizHawkClientContext) -> None:
+        # TODO: Simplify this via the Djinn dataclass
         if len(self.djinn_ram_to_rom) > 0:
             return
         # Don't put this in the data locations class; we don't want to check this regularly
