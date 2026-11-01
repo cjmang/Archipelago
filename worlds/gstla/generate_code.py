@@ -6,6 +6,7 @@ from typing import TextIO
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from worlds.gstla.new_game_data.coins import COIN_ID_OFFSET
 from .game_data import ElementType, GameData, ItemFlags, ItemType
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
@@ -334,7 +335,7 @@ def generate_item_data(env: Environment, data: GameData):  # noqa: PLR0912, PLR0
                 forge_only.append(datum)
             elif item.id in lucky_only_ids:
                 lucky_only.append(datum)
-            elif item.id > 0x8000:
+            elif item.id > COIN_ID_OFFSET:
                 vanilla_coins.append(datum)
             elif item.id not in vanilla_item_ids:
                 non_vanilla.append(datum)

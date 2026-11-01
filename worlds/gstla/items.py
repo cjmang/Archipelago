@@ -70,22 +70,6 @@ items_by_id: dict[int, ItemData] = {item.id: item for item in all_items}
 coin_items: dict[int, ItemData] = {}
 
 
-def _get_coin_item(id: int):
-    assert id > 0x8000
-    # number of coins is offset from 0x8000
-    if id not in coin_items:
-        # TODO: is consumable the right item type?
-        coin_item = ItemData(
-            InternalItemData(id, f'{id - 0x8000} Coins', ItemClassification.filler, 0, ItemType.Consumable)
-        )
-        coin_items[id] = coin_item
-        assert coin_item.name not in item_table
-        item_table[coin_item.name] = coin_item
-        print(coin_item.name)
-        return coin_item
-    return coin_items[id]
-
-
 def create_item(
     name: str, player: int, event: bool = False, classification: ItemClassification | None = None
 ) -> 'Item':
