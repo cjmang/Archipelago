@@ -6,6 +6,7 @@ from typing import Any, NamedTuple
 
 from .gstla_types import ItemType
 from .new_game_data.coins import COIN_ID_OFFSET
+from .new_game_data.forgeable import load_forge_mapping
 from .new_game_data.mimics import MIMIC_NAMES
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
@@ -179,7 +180,6 @@ SPECIAL_NAMES = {
     # 419 (Rusty Sword / Light) -> 289 (Pirate's Sabre)
     # 420 (Rusty Sword / Long)  -> 278 (Soul Brand)
     # (I don't think it really matters tbh, but might as well fix it.)
-
     419: ItemName(419, 'Rusty_Sword_CorsairsEdge', "Rusty Sword - Corsair's Edge"),
     417: ItemName(417, 'Rusty_Sword_RobbersBlade', "Rusty Sword - Robber's Blade"),
     420: ItemName(420, 'Rusty_Sword_PiratesSabre', "Rusty Sword - Pirate's Sabre"),
@@ -372,13 +372,8 @@ class GameData:
                     self.vanilla_shop_contents.add(artifact)
 
     def _load_forgeables(self):
-        with open(os.path.join(SCRIPT_DIR, 'data', 'forgeables.json'), 'r') as forge_file:
-            forge_data = json.load(forge_file)
-
-        for forge in forge_data.values():
-            for result in forge['results']:
-                if result != 0:
-                    self.forgeable_ids.add(result)
+        for result in load_forge_mapping().values():
+            self.forgeable_ids.update(result)
 
     def _load_items(self):
         with open(os.path.join(SCRIPT_DIR, 'data', 'items.json'), 'r') as item_file:
