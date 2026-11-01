@@ -6,7 +6,7 @@ from typing import Any, NamedTuple
 
 from .gstla_types import ItemFlag, ItemType
 from .new_game_data.coins import COIN_ID_OFFSET
-from .new_game_data.forgeable import load_forge_mapping
+from .new_game_data.forgeables import load_forge_mapping
 from .new_game_data.mimics import MIMIC_NAMES
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
