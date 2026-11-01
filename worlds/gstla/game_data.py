@@ -168,6 +168,7 @@ SPECIAL_NAMES = {
     # 419 (Rusty Sword / Light) -> 289 (Pirate's Sabre)
     # 420 (Rusty Sword / Long)  -> 278 (Soul Brand)
     # (I don't think it really matters tbh, but might as well fix it.)
+    # Obsolete, moved to equipment.NAME_OVERRIDES
     419: ItemName(419, 'Rusty_Sword_CorsairsEdge', "Rusty Sword - Corsair's Edge"),
     417: ItemName(417, 'Rusty_Sword_RobbersBlade', "Rusty Sword - Robber's Blade"),
     420: ItemName(420, 'Rusty_Sword_PiratesSabre', "Rusty Sword - Pirate's Sabre"),
