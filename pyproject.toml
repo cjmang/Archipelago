@@ -8,6 +8,11 @@ dev = [
     "pyrefly>=1.4.0",
     "ruff>=0.16",
     "rust-just>=1.59.0",
+
+    # The ones below are just for proper type checking with pyrefly
+    "jinja2",  # remove soonish
+    "orjson",  # installed via AP itself
+    "requests",  # from requirements.txt
 ]
 
 [tool.ruff]
@@ -77,7 +82,6 @@ relative-imports-order = "closest-to-furthest"
 [tool.pyrefly]
 project-includes = ["worlds/gstla"]
 python-version = "3.11"  # increase once we only allow AP 0.6.8+
-python-interpreter-find-command = ["just", "--evaluate", "python"]
 search-path = [".", "external/archipelago"]
 
 [tool.uv]
