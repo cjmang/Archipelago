@@ -2,6 +2,7 @@
 # to be changed, either change the template, or the code leveraging the template.
 from typing import Dict
 class InternalItemName:
+    # TODO: obsolete. delete.
     # Consumable
     Empty = "Empty"
     Herb = "Herb"

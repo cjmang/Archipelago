@@ -18,10 +18,11 @@ from .gen.location_data import (
     event_id_to_name,
     event_name_to_data,
 )
-from .gen.location_names import LocationName, loc_names_by_id, option_name_to_goal_name
+from .gen.location_names import loc_names_by_id, option_name_to_goal_name
 from .gstla_types import ItemType
 from .items import items_by_id
 from .locations import remote_blacklist
+from .names.location_name import LocationName
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientCommandProcessor, BizHawkClientContext

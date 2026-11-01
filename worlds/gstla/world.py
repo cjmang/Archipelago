@@ -22,7 +22,7 @@ from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
 from .gen.item_data import characters, mimics
-from .gen.item_names import ItemName, item_id_by_name, name_by_item_id
+from .gen.item_names import item_id_by_name, name_by_item_id
 from .gen.location_data import LocationType
 from .gen.location_names import ids_by_loc_name, loc_names_by_id
 from .gstla_types import ItemType
@@ -44,6 +44,7 @@ from .items import (
 )
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, location_name_to_id, remote_blacklist
+from .names.item_name import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
