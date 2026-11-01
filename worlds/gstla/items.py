@@ -30,8 +30,7 @@ from .gen.item_data import (
 from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import loc_names_by_id
 from .gstla_types import ItemType
-from .names.item_name import ItemName
-from .names.location_name import LocationName
+from .names import ItemName, LocationName
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld

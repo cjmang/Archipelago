@@ -1,6 +1,5 @@
 from worlds.gstla.gen.location_data import LocationRestriction
-from worlds.gstla.names.item_name import ItemName
-from worlds.gstla.names.location_name import LocationName
+from worlds.gstla.names import ItemName, LocationName
 from worlds.gstla.test import GSTestBase
 
 
