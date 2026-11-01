@@ -44,7 +44,7 @@ from .items import (
 )
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, location_name_to_id, remote_blacklist
-from .names.item_name import ItemName
+from .names import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch

@@ -7,9 +7,7 @@ from .gen.location_data import LocationRestriction, LocationType
 from .gen.location_names import loc_names_by_id
 from .items import ItemType, all_items
 from .locations import location_type_to_data
-from .names.entrance_name import EntranceName
-from .names.item_name import ItemName
-from .names.location_name import LocationName
+from .names import EntranceName, ItemName, LocationName
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

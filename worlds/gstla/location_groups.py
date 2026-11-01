@@ -1,4 +1,4 @@
-from .names.location_name import LocationName
+from .names import LocationName
 
 goldensuntla_location_groups = {
     'Idejima': {

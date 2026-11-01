@@ -1,4 +1,4 @@
-from worlds.gstla.names.location_name import LocationName
+from worlds.gstla.names import LocationName
 from .internal_location_names import ids_by_py_name
 
 ids_by_loc_name: dict[str, int] = {getattr(LocationName, key): value for key, value in ids_by_py_name.items()}

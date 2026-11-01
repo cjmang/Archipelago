@@ -1,4 +1,4 @@
-from worlds.gstla.names.item_name import ItemName
+from worlds.gstla.names import ItemName
 from .internal_item_names import item_id_by_py_name
 
 item_id_by_name: dict[str, int] = {getattr(ItemName, key): value for key, value in item_id_by_py_name.items()}
