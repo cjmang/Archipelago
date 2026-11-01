@@ -224,6 +224,7 @@ class GSTLAWorld(World):
         pre_fill = []
         for key, val in GSTLAWorld.item_name_groups.items():
             if key in [ItemType.Djinn.name, ItemType.Character.name, ItemType.Mimic.name]:
+                # TODO: Mimics are never matched here? ItemType.Mimic is "Mimic", item_name_groups has "Mimics"
                 pre_fill.extend([create_item(item, self.player) for item in val])
         return pre_fill
 

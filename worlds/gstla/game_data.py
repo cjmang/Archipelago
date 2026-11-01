@@ -5,6 +5,7 @@ from enum import IntEnum, IntFlag, auto
 from typing import Any, NamedTuple
 
 from .gstla_types import ItemType
+from .new_game_data.mimics import MIMIC_NAMES
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
@@ -20,18 +21,6 @@ num_words = {
     9: 'Nine',
     10: 'Ten',
 }
-
-mimic_names = [
-    'Milquetoast Mimic',
-    'Clumsy Mimic',
-    'Mimic',
-    'Journeyman Mimic',
-    'Advanced Mimic',
-    'Sacred Mimic',
-    'Royal Mimic',
-    'Imperial Mimic',
-    'Divine Mimic',
-]
 
 
 class LocationDatum(NamedTuple):
@@ -346,13 +335,13 @@ class GameData:
                 self.raw_item_data.append(
                     # Agreed upon rando id of 0xA00 + mimic id
                     ItemDatum(
-                        0xA01 + datum.vanilla_contents,
-                        mimic_names[datum.vanilla_contents],
-                        datum.addr[0],
-                        ItemType.Mimic,
-                        ItemFlags.NONE,
-                        0,
-                        True,
+                        id=0xA01 + datum.vanilla_contents,
+                        name=MIMIC_NAMES[datum.vanilla_contents],
+                        addr=datum.addr[0],
+                        item_type=ItemType.Mimic,
+                        flags=ItemFlags.NONE,
+                        use_effect=0,
+                        is_mimic=True,
                     )
                 )
             else:
