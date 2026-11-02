@@ -81,7 +81,6 @@ def _get_coin_item(id: int):
         coin_items[id] = coin_item
         assert coin_item.name not in item_table
         item_table[coin_item.name] = coin_item
-        print(coin_item.name)
         return coin_item
     return coin_items[id]
 
