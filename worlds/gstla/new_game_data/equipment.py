@@ -5,13 +5,14 @@ from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemFlag, ItemType
 from worlds.gstla.names import ItemName
 from .base import BaseItem
+from .item_sources import get_item_sources
 
 # TODO: I (draca) have a feeling that the balancing on these is off.
 #       From the 7-8 runs I've played now, it seems like Shirts and Boots are extremely rare?
 #       I get so many weapons not knowing what to do with them, but seemingly no Shirts & Boots?
 ALWAYS_USEFUL_EQUIPMENT_TYPES = {ItemType.Shirt, ItemType.Boots, ItemType.Ring}
 USEFUL_IF_RARE_EQUIPMENT_TYPES = {ItemType.Weapon, ItemType.Armor, ItemType.Shield, ItemType.Helm}
-
+RUSTY_ITEM_IDS = {417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427}
 NAME_OVERRIDES: dict[int, str] = {
     # some of the item names in the json are duplicated, gotta make 'em unique
     123: ItemName.Dragon_Shield_GS,
@@ -28,8 +29,10 @@ NAME_OVERRIDES: dict[int, str] = {
     426: ItemName.Rusty_Staff_GlowerStaff,
     427: ItemName.Rusty_Staff_GoblinsRod,
 }
-CLASSIFICATION_OVERRIDES = {}  # generate_code.CLASSIFICATION_OVERRIDES
-EXCLUDED_ITEMS = []  # generate_code.EXCLUDED_ITEMS
+CLASSIFICATION_OVERRIDES: dict[str, ItemClassification] = {
+    ItemName.Shamans_Rod: ItemClassification.progression,
+}
+EXCLUDED_ITEMS = []  # empty, might want to change in the future for balancing
 EQUIPMENT_TYPES = [
     ItemType.Weapon,
     ItemType.Armor,
@@ -38,7 +41,6 @@ EQUIPMENT_TYPES = [
     ItemType.Boots,
     ItemType.Ring,
     ItemType.Shirt,
-    # ItemType.Trident,  should we?
 ]
 
 
@@ -50,9 +52,6 @@ class EquipmentItem(BaseItem):
     This has historically been treated as a normal item, like key items or consumables,
     but they should probably be in their own dataclass.
     Especially if we want to do more things with gear progression in the future.
-
-    # TODO: progression stuff in other_progression (+ Trident?)
-    # TODO: rusty items?
     """
 
     ap_id: int  # the same as the ROM item id
@@ -80,11 +79,23 @@ class EquipmentItem(BaseItem):
 
     @property
     def category(self) -> ItemCategory:
-        # TODO: hm. we'd have to read item_location.json here, too.
-        #       Should we rather have some categorizer centralized somewhere?
-        #       Maybe via a contextvar?
-        #       No idea if AP would like that, generation time and all that.
-        pass
+        if self.classification == ItemClassification.progression:
+            return ItemCategory.other_progression
+        if self.ap_id in RUSTY_ITEM_IDS:
+            return ItemCategory.rusty_items
+
+        sources = get_item_sources()
+        if self.ap_id in sources.chests:
+            if self.classification == ItemClassification.useful:
+                return ItemCategory.useful_remainder
+            return ItemCategory.misc  # shouldn't happen
+        if self.ap_id in sources.shops:
+            return ItemCategory.shop_only
+        if self.ap_id in sources.forge:
+            return ItemCategory.forge_only
+        if self.ap_id in sources.lucky:
+            return ItemCategory.lucky_only
+        return ItemCategory.non_vanilla
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:

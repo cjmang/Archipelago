@@ -18,7 +18,7 @@ CLASSIFICATION_OVERRIDES: defaultdict[int, str] = defaultdict(
     {
         # NOTE: using strings here, because importing ItemClassification from BaseClasses will cause a circular import
         # TODO: re-evaluate if we could fix this now
-        65: 'progression',  #    ItemName.Shamans_Rod
+        65: 'progression',  #    ItemName.Shamans_Rod - MIGRATED TO equipment.CLASSIFICATION_OVERRIDES
         458: 'progression',  #    ItemName.Sea_Gods_Tear
         439: 'progression',  #    ItemName.Right_Prong
         448: 'progression',  #    ItemName.Healing_Fungus
