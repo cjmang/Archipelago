@@ -1,6 +1,7 @@
 from .characters import Character
 from .coins import Coins
 from .djinns import Djinn
+from .equipment import EquipmentItem
 from .events import Event
 from .mimics import Mimic
 from .psynergy import LearnedPsynergy, PsynergyItem
@@ -11,9 +12,10 @@ __all__ = [
     'Character',
     'Coins',
     'Djinn',
+    'EquipmentItem',
     'Event',
-    'Mimic',
     'LearnedPsynergy',
+    'Mimic',
     'PsynergyItem',
     'Summon',
 ]
