@@ -7,6 +7,7 @@ from typing import Any, NamedTuple
 from .gstla_types import ItemFlag, ItemType
 from .new_game_data.coins import COIN_ID_OFFSET
 from .new_game_data.forgeables import load_forge_mapping
+from .new_game_data.item_sources import LUCKY_MEDAL_IDS, LUCKY_WHEEL_IDS
 from .new_game_data.mimics import MIMIC_NAMES
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
@@ -204,52 +205,8 @@ class GameData:
         self.vanilla_item_ids: set[int] = set()
         self.vanilla_shop_contents: set[int] = set()
         self.forgeable_ids: set[int] = set()
-        self.lucky_medal_ids: set[int] = {
-            # 23, # Assassin Blade
-            # 37, # Burning Axe
-            # 48, # Grevious Mace
-            # 81, # Spirit Armor
-            # 97, # Kimono
-            # 108, # Cocktail Dress
-            # 124, # Earth Shield
-            # 133, # Battle Gloves
-            # 142, # Guardian Armlet
-            # 152, # Adept's Helm
-            # 160, # Ninja Hood
-            # 171, # Glittering Tiara
-            183,  # Potion
-            186,  # Psy Crystal
-            189,  # Water of Life
-            280,  # Hestia Blade
-            302,  # Mighty Axe
-            320,  # Fireman's Pole
-            327,  # Leda's Bracelet
-            335,  # Erebus Armor
-            341,  # Wild Coat
-            342,  # Floral Dress
-            359,  # Aegis Shield
-            364,  # Crafted Gloves
-            380,  # Minerva Helm
-            387,  # Crown of Glory
-            395,  # Brilliant Circlet
-        }
-        self.lucky_wheels_ids: set[int] = {
-            181,  # Nut
-            182,  # Vial
-            183,  # Potion
-            188,  # Elixer
-            186,  # Psy Crystal
-            189,  # Water of Life
-            258,  # Fur Boots
-            257,  # Quick Boots
-            256,  # Hyper Boots
-            252,  # Running Shirt
-            251,  # Silk Shirt
-            250,  # Mythril Shirt
-            264,  # Sleep Ring
-            263,  # War Ring
-            262,  # Adept Ring
-        }
+        self.lucky_medal_ids: set[int] = LUCKY_MEDAL_IDS
+        self.lucky_wheels_ids = LUCKY_WHEEL_IDS
         self._load_locations()
         self._load_items()
         self._load_shop_data()
@@ -349,6 +306,7 @@ class GameData:
                 self.vanilla_item_ids.add(datum.vanilla_contents)
 
     def _load_shop_data(self):
+        # superseded by get_item_sources().shops
         with open(os.path.join(SCRIPT_DIR, 'data', 'shops.json'), 'r') as shop_file:
             shop_data = json.load(shop_file)
 
@@ -361,6 +319,7 @@ class GameData:
                     self.vanilla_shop_contents.add(artifact)
 
     def _load_forgeables(self):
+        # superseded by get_item_sources().forge
         for result in load_forge_mapping().values():
             self.forgeable_ids.update(result)
 
