@@ -8,8 +8,8 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from worlds.gstla.new_game_data.coins import COIN_ID_OFFSET
 from worlds.gstla.new_game_data.items import EXCLUDED_ITEMS
-from .game_data import ElementType, GameData, ItemType
-from .gstla_types import ItemFlag
+from .game_data import GameData, ItemType
+from .gstla_types import ElementType, ItemFlag
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 

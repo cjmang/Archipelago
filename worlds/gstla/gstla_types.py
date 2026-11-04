@@ -139,3 +139,10 @@ class PsynergyID(IntEnum):
     HOVER = 153
     BLAZE = 154
     TELEPORT = 156
+
+
+class ElementType(IntEnum):
+    Earth = 0
+    Water = 1
+    Fire = 2
+    Air = 3

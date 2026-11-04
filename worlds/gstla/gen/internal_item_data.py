@@ -1,7 +1,8 @@
 # This file was generated using jinja2 from a template. If this file needs
 # to be changed, either change the template, or the code leveraging the template.
 from typing import List, NamedTuple, Dict
-from worlds.gstla.game_data import ElementType, ItemType
+from worlds.gstla.game_data import ItemType
+from worlds.gstla.gstla_types import ElementType
 from BaseClasses import ItemClassification
 from .item_names import name_by_item_id
 
