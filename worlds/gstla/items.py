@@ -333,6 +333,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     # We guarentee a number of filler items when item shuffle all is on, it adds a hefty amount of hidden locations
     # that do not support having a mimic and fail generation. On repeated generations it results into 65-70 mimics
     # failing to be placed, otherwise it works fine.
+    # TODO: Can't we place a mimic trap for ourselves there instead then?
     if world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
         for _ in range(40):
             item = get_filler_item(world, False)
