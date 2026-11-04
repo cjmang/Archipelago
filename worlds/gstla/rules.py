@@ -2,13 +2,13 @@ import math
 from typing import TYPE_CHECKING, cast
 
 from worlds.generic.Rules import add_item_rule, add_rule
-from .gen.item_data import summon_list
 from .gen.location_data import LocationRestriction, LocationType
 from .gen.location_names import loc_names_by_id
-from .items import ItemType, all_items
+from .items import ItemType
 from .locations import location_type_to_data
 from .names import EntranceName, ItemName, LocationName
 from .new_game_data.coins import COIN_ID_OFFSET
+from .new_game_data.loader import load_game_data
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -1550,7 +1550,7 @@ def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
 
 
 class _RestrictionRule:
-    summon_names = {x.name for x in summon_list}
+    summon_names = {summon.name for summon in load_game_data().summons.values()}
 
     def __init__(self, player: int, loc_restrictions: LocationRestriction):
         self.player = player
@@ -1578,8 +1578,9 @@ class _RestrictionRule:
 
 def set_item_rules(world: 'GSTLAWorld'):
     player = world.player
-    djinn: set[str] = {item.name for item in all_items if item.type == ItemType.Djinn}
-    characters: set[str] = {item.name for item in all_items if item.type == ItemType.Character}
+    game_data = load_game_data()
+    characters: set[str] = {item.name for item in game_data.characters.values()}
+    djinn: set[str] = {item.name for item in game_data.djinn.values()}
 
     for loc in location_type_to_data[LocationType.Djinn]:
         add_item_rule(

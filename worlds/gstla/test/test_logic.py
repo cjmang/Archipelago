@@ -7,17 +7,18 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from BaseClasses import CollectionState, Item
-from worlds.gstla.gen.item_data import ItemData, events
 from worlds.gstla.gen.location_data import LocationType
 from worlds.gstla.gen.location_names import loc_names_by_id
 from worlds.gstla.locations import all_locations
 from worlds.gstla.names import ItemName
+from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.test import GSTestBase
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
 if TYPE_CHECKING:
     from worlds.gstla.locations import GSTLALocation
+    from worlds.gstla.new_game_data.events import Event
 
 requirement_map = {
     # "Ship": ItemName.Ship,
@@ -327,14 +328,16 @@ class TestTreasureLogic(GSTestBase):
     def setUp(self) -> None:
         super().setUp()
         world = self.get_world()
+        game_data = load_game_data()
+
         self.locations_by_flag: dict[int, GSTLALocation] = {
             x.rando_flag: world.get_location(loc_names_by_id[x.ap_id])
             for x in all_locations
             if x.loc_type != LocationType.Event and x.loc_type != LocationType.Djinn
         }
         self.test_state = CollectionState(self.multiworld)
-        self.event_items: dict[str, ItemData] = {}
-        for event in events:
+        self.event_items: dict[str, Event] = {}
+        for event in game_data.events.values():
             self.event_items[event.name] = event
         for _ in range(72):
             self.test_state.collect(world.create_item(ItemName.Fizz), True)

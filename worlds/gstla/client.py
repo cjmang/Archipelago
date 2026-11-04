@@ -10,7 +10,6 @@ from BaseClasses import ItemClassification
 from NetUtils import ClientStatus, NetworkItem
 from worlds._bizhawk import display_message, read, write
 from worlds._bizhawk.client import BizHawkClient
-from .gen.item_data import mimics
 from .gen.location_data import (
     LocationType,
     all_locations,
@@ -20,9 +19,9 @@ from .gen.location_data import (
 )
 from .gen.location_names import loc_names_by_id, option_name_to_goal_name
 from .gstla_types import ItemType
-from .items import items_by_id
 from .locations import remote_blacklist
 from .names import LocationName
+from .new_game_data.loader import load_game_data
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientCommandProcessor, BizHawkClientContext
@@ -281,6 +280,8 @@ class GSTLAClient(BizHawkClient):
 
     def __init__(self):
         super().__init__()
+        game_data = load_game_data()
+
         self.slot_name = ''
         self.flag_map: defaultdict[int, set[int]] = defaultdict(lambda: set())
         self.event_flag_map: defaultdict[int, set[int]] = defaultdict(lambda: set())
@@ -291,7 +292,7 @@ class GSTLAClient(BizHawkClient):
         self.checked_djinn: set[int] = set()
         self.possessed_djinn: set[int] = set()
         self.djinn_last_count: int = 0
-        self.mimics = {x.id: x for x in mimics}  # TODO: remove or what?
+        self.mimics = game_data.mimics  # TODO: unused, remove or what?
         self.summons: set[int] = set()
         self.summon_item_index: int = 0
         for loc in all_locations:
@@ -385,12 +386,13 @@ class GSTLAClient(BizHawkClient):
         return f'gstla_map_info_{ctx.slot}_{ctx.team}'
 
     def check_summon_count(self, ctx: BizHawkClientContext) -> None:
+        game_data = load_game_data()
         if self.summon_item_index >= len(ctx.items_received):
             return
         end = len(ctx.items_received)
         for i in range(self.summon_item_index, end):
             item = ctx.items_received[i]
-            itemdata = items_by_id[item.item]
+            itemdata = game_data.item_by_id[item.item]
             if itemdata.type == ItemType.Summon:
                 self.summons.add(itemdata.id)
         self.summon_item_index = end
