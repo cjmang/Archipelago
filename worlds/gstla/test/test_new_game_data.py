@@ -31,21 +31,39 @@ LEGACY_CATEGORY_MAPPING: dict[ItemCategory, str] = {
     ItemCategory.vanilla_coins: 'vanilla_coins',
 }
 
+IGNORE_ORDERS_FOR_CATEGORIES = [
+    # in these 3 categories the order changed, but that is a-okay.
+    # datapackage will change, but oh well.
+    ItemCategory.stat_boosters,  # [192, 193, 194, 195, 196, 191] != [191, 192, 193, 194, 195, 196]
+    ItemCategory.useful_consumables,  # [186, 189, 190, 183] != [183, 186, 189, 190]
+    #
+    # [384, 259, 388, 7, 10, 266, 394, 279, 281,[124 chars] 383]
+    # !=
+    # [7, 10, 26, 259, 266, 279, 281, 283, 287, [124 chars] 414]
+    ItemCategory.useful_remainder,
+]
+
 
 class TestNewGameData(unittest.TestCase):
-    # TODO: useful_consumables, useful_remainder, stat_boosters don't match yet?
+    maxDiff = None
+
     def test_new_matches_old(self):
         data = load_new_game_data()
         for category, old_list_name in LEGACY_CATEGORY_MAPPING.items():
-            with self.subTest(category=category):
-                expected = [
+            with self.subTest(category=category.name):
+                expected = {
                     # old rusty stuff
-                    (item.id, NAME_OVERRIDES.get(item.id, item.name), item.type, item.progression)
+                    item.id: (NAME_OVERRIDES.get(item.id, item.name), item.type.name, item.progression.name)
                     for item in getattr(legacy_item_data, old_list_name)
-                ]
-                actual = [
-                    (item.id, item.name, item.type, item.classification)
+                }
+                actual = {
+                    item.id: (item.name, item.type.name, item.classification.name)
                     for item in data.item_by_id.values()
                     if item.category == category
-                ]
+                }
+
                 self.assertEqual(expected, actual)
+                if category.name in IGNORE_ORDERS_FOR_CATEGORIES:
+                    self.assertEqual(sorted(expected), sorted(actual))
+                else:
+                    self.assertEqual(list(expected), list(actual))
