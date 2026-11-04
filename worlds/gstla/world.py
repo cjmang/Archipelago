@@ -21,8 +21,7 @@ from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
-from .gen.item_data import characters, mimics
-from .gen.item_names import item_id_by_name, name_by_item_id
+from .gen.item_data import mimics
 from .gen.location_data import LocationType
 from .gen.location_names import ids_by_loc_name, loc_names_by_id
 from .gstla_types import ItemType
@@ -32,7 +31,6 @@ from .items import (
     AP_USEFUL_PLACEHOLDER_ITEM,
     FILLER_WEIGHT_OPTION_NAMES,
     GSTLAItem,
-    all_items,
     create_events,
     create_filler_pool_weights,
     create_item,
@@ -45,6 +43,7 @@ from .items import (
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, location_name_to_id, remote_blacklist
 from .names import ItemName
+from .new_game_data.loader import load_game_data
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
@@ -116,17 +115,17 @@ class GSTLAWorld(World):
     location_flags_populated = set()
     settings: ClassVar[GSTLASettings]
 
-    item_name_to_id = item_id_by_name  # {item.itemName: itemfor item in all_items if item.type != ItemType.Event}
+    item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}
     location_name_to_id = (
         ids_by_loc_name  # {location: location_name_to_id[location].id for location in location_name_to_id}
     )
     web = GSTLAWeb()
 
     item_name_groups = {
-        ItemType.Djinn.name: {item.name for item in all_items if item.type == ItemType.Djinn},
-        ItemType.Character.name: {item.name for item in all_items if item.type == ItemType.Character},
-        ItemType.Summon.name: {item.name for item in all_items if item.type == ItemType.Summon},
-        'Mimics': {item.name for item in all_items if item.type == ItemType.Mimic},
+        ItemType.Djinn.name: {item.name for item in load_game_data().djinn.values()},
+        ItemType.Character.name: {item.name for item in load_game_data().characters.values()},
+        ItemType.Summon.name: {item.name for item in load_game_data().summons.values()},
+        'Mimics': {item.name for item in load_game_data().mimics.values()},
         'Lash': {ItemName.Lash_Pebble},
         'Pound': {ItemName.Pound_Cube},
         'Force': {ItemName.Orb_of_Force},
@@ -310,11 +309,12 @@ class GSTLAWorld(World):
 
     @classmethod
     def _handle_spheres(cls, multiworld: MultiWorld):
+        game_data = load_game_data()
         mimic_map: defaultdict[int, defaultdict[int, list[Location]]] = defaultdict(lambda: defaultdict(lambda: []))
         character_map: defaultdict[int, defaultdict[int, list[GSTLAItem]]] = defaultdict(
             lambda: defaultdict(lambda: [])
         )
-        toons = {c.id for c in characters}
+        character_item_ids = set(game_data.characters)
         spheres = multiworld.get_spheres()
         max_spheres: defaultdict[int, int] = defaultdict(lambda: -1)
         for i, sphere in enumerate(spheres):
@@ -331,7 +331,7 @@ class GSTLAWorld(World):
                 gsitem = cast('GSTLAItem', loc.item)
                 if gsitem.item_data.is_mimic:
                     mimic_map[loc.item.player][i].append(loc)
-                elif loc.item.code in toons:
+                elif loc.item.code in character_item_ids:
                     character_map[loc.item.player][i].append(gsitem)
 
         for slot, max_sphere in max_spheres.items():
@@ -501,7 +501,7 @@ class GSTLAWorld(World):
             for char, level in self._character_levels:
                 rando_file.write(char.to_bytes(length=1, byteorder='little'))
                 rando_file.write(level.to_bytes(length=1, byteorder='little'))
-                debug_file.write(f'{name_by_item_id[char + 0xD00]} has starting level {level}\n')
+                debug_file.write(f'{load_game_data().item_by_id[char + 0xD00].name} has starting level {level}\n')
 
     def _write_options_for_rando(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0915
         write_me = 0
