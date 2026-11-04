@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cache
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import orjson
 
@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 
     from worlds.gstla.gstla_types import ItemData
     from .base import BaseItem
+
+ItemT = TypeVar('ItemT', bound='BaseItem')
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -58,7 +60,7 @@ class GameData:
         return data.decode()
 
 
-def _get_items_by_ap_id(rows: tuple[BaseItem, ...]) -> dict[int, BaseItem]:
+def _get_items_by_ap_id(rows: tuple[ItemT, ...]) -> dict[int, ItemT]:
     table = {row.ap_id: row for row in rows}
     if len(table) != len(rows):
         raise ValueError(f'Duplicate AP ids in {type(rows[0]).__name__}')
