@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from typing import Self
 
 from BaseClasses import ItemClassification
-from worlds.gstla.game_data import ElementType  # TODO: move to gstla_types?
-from worlds.gstla.gstla_types import ItemCategory, ItemType
+from worlds.gstla.gstla_types import ElementType, ItemCategory, ItemType
 from .base import BaseItem
 
 # TODO: merge the constants below with the stuff from somewhere else:

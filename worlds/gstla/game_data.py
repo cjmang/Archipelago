@@ -1,10 +1,9 @@
 import json
 import os
 from collections import defaultdict
-from enum import IntEnum
 from typing import Any, NamedTuple
 
-from .gstla_types import ItemFlag, ItemType
+from .gstla_types import ElementType, ItemFlag, ItemType
 from .new_game_data.coins import COIN_ID_OFFSET
 from .new_game_data.forgeables import load_forge_mapping
 from .new_game_data.item_sources import LUCKY_MEDAL_IDS, LUCKY_WHEEL_IDS
@@ -70,13 +69,6 @@ class ItemDatum(NamedTuple):
     # TODO: event type is a property of locations, not of items
     # event_type: int
     is_mimic: bool = False
-
-
-class ElementType(IntEnum):
-    Earth = 0
-    Water = 1
-    Fire = 2
-    Air = 3
 
 
 class DjinnDatum(NamedTuple):

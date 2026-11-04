@@ -5,7 +5,8 @@ from typing_extensions import Unpack
 
 import worlds.gstla.gen.internal_item_data as ItemLists  # noqa: N812
 from BaseClasses import ItemClassification
-from worlds.gstla.game_data import ElementType, ItemType
+from worlds.gstla.game_data import ItemType
+from worlds.gstla.gstla_types import ElementType
 from worlds.gstla.names import ItemName
 from .internal_item_data import InternalDjinnItemData, InternalEventItemData, InternalItemData
 
