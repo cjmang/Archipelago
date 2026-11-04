@@ -7,6 +7,7 @@ from typing import TextIO
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from worlds.gstla.new_game_data.coins import COIN_ID_OFFSET
+from worlds.gstla.new_game_data.items import EXCLUDED_ITEMS
 from .game_data import ElementType, GameData, ItemType
 from .gstla_types import ItemFlag
 
@@ -126,28 +127,6 @@ USEFUL_ITEM_GROUPS: dict[str, set[int]] = {
 OTHER_ITEM_GROUPS: dict[str, set[int]] = {
     'rusty_items': set(range(417, 428)),  # Rusty Sword - Robber's Blade through Goblin's Rod
     'stat_boosters': set(range(191, 197)),  # Power Bread through Lucky Pepper
-}
-
-
-# Items that should not be part of the item data at all
-EXCLUDED_ITEMS = {
-    184,  # Hermes' Water
-    185,  # Empty Bottle
-    220,  # Venus Star
-    221,  # Mercury Star
-    223,  # Mythril Bag (Jupiter)
-    224,  # Mythril Bag (Empty)
-    225,  # Small Jewel
-    230,  # Dragon's Eye
-    232,  # Anchor Charm
-    234,  # Cell Key
-    235,  # Boat Ticket
-    237,  # Mystic Draught
-    245,  # Mythril Bag (Mars & Jupiter)
-    246,  # Jupiter Star
-    247,  # Mars Star, 222, Mythril Bag (Mars) is actually used in the game
-    450,  # Signal Whistle
-    457,  # Large Bread
 }
 
 

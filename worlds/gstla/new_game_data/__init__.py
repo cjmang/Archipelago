@@ -3,6 +3,7 @@ from .coins import Coins
 from .djinns import Djinn
 from .equipment import EquipmentItem
 from .events import Event
+from .items import VanillaItem
 from .mimics import Mimic
 from .psynergy import LearnedPsynergy, PsynergyItem
 from .summons import Summon
@@ -18,4 +19,5 @@ __all__ = [
     'Mimic',
     'PsynergyItem',
     'Summon',
+    'VanillaItem',
 ]
