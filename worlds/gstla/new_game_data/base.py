@@ -19,6 +19,8 @@ class BaseItem(ABC):
     Also: a slotted dataclass should reduce memory usage quite a bit. If we have hundreds to thousands of instances,
     this is probably pretty good. Only drawback: Can't use super() calls in those subclasses.
     But the tradeoff's worth it, I think.
+
+    TODO: rename in_pool? Split between in_pool and in_filler or something?
     """
     if TYPE_CHECKING:
 
