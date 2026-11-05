@@ -9,7 +9,7 @@ from .base import BaseItem
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Summon(BaseItem):
     category = ItemCategory.summons
-    classification = ItemClassification.useful  # progression on "Summon Hunt", see items.py
+    classification = ItemClassification.useful  # "progression" on "Summon Hunt", see items.py
     item_type = ItemType.Summon
 
     index: int

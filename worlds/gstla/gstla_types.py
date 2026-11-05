@@ -87,11 +87,6 @@ class ItemType(IntEnum):
     Summon = 17
 
 
-# TODO: remove all stale references to these
-ItemType.Psynergy._add_alias_('Psyenergy')
-ItemType.PsynergyItem._add_alias_('PsyenergyItem')
-
-
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ItemData:
     id: int  # AP item ID
@@ -103,7 +98,6 @@ class ItemData:
 
 
 class ItemFlag(IntFlag):
-    # TODO: Move into gstla_types?
     NONE = 0
     Cursed = auto()  # 1 "Curses on pickup"
     Sticky = auto()  # 2 "Unremovable"
