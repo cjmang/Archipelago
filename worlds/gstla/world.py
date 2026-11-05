@@ -31,11 +31,9 @@ from .items import (
     FILLER_WEIGHT_OPTIONS,
     GSTLAItem,
     create_events,
-    create_filler_pool_weights,
     create_item,
     create_item_direct,
     create_items,
-    create_trap_pool_weights,
     get_filler_item,
 )
 from .location_groups import goldensuntla_location_groups
@@ -199,9 +197,6 @@ class GSTLAWorld(World):
         if sum(option.value for option in filler_weight_options) == 0:
             for option in filler_weight_options:
                 option.value = 1
-
-        create_filler_pool_weights(self)
-        create_trap_pool_weights(self)
 
     def create_regions(self) -> None:
         create_regions(self)
