@@ -1,35 +1,14 @@
 from typing import TYPE_CHECKING, TypeVar
 
 from BaseClasses import Item, ItemClassification
-from .gen.internal_item_data import InternalItemData
 from .gen.item_data import (
     FillerType,
     ItemData,
     TrapType,
-    all_items as all_gen_items,
-    characters as character_items,
-    class_change_items,
-    djinn_items,
-    events,
-    forge_materials,
-    forge_only,
-    lucky_only,
-    mimics,
-    other_progression,
-    psyenergy_as_item_list,
-    psyenergy_list,
-    remainder,
-    rusty_items,
-    shop_only,
-    stat_boosters,
-    summon_list,
-    useful_consumables,
-    useful_remainder,
-    vanilla_coins,
 )
 from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import loc_names_by_id
-from .gstla_types import ItemType
+from .gstla_types import ItemCategory, ItemData as NewItemData, ItemType
 from .names import ItemName, LocationName
 from .new_game_data.loader import load_game_data
 from .options import AddDummyItems, AddGs1Items
@@ -42,12 +21,16 @@ class GSTLAItem(Item):
     """The GSTLA version of an AP item"""
 
     game: str = 'Golden Sun The Lost Age'
-    item_data: ItemData
+    item_data: NewItemData
 
     def __init__(
-        self, item: ItemData, player: int = None, event: bool = False, classification: ItemClassification | None = None
+        self,
+        item: NewItemData,
+        player: int,
+        event: bool = False,
+        classification: ItemClassification | None = None,
     ):
-        classification = item.progression if classification is None else classification
+        classification = item.classification if classification is None else classification
         if event:
             super().__init__(item.name, classification, None, player)
         else:
@@ -55,15 +38,28 @@ class GSTLAItem(Item):
         self.item_data = item
 
 
-AP_USEFUL_PLACEHOLDER_ITEM = ItemData(
-    InternalItemData(0xA00, 'AP Useful Placeholder', ItemClassification.useful, -1, ItemType.Consumable)
+AP_USEFUL_PLACEHOLDER_ITEM = NewItemData(
+    id=0xA00,
+    name='AP Useful Placeholder',
+    category=ItemCategory.non_vanilla,
+    classification=ItemClassification.useful,
+    type=ItemType.Consumable,
 )
-AP_PROG_PLACEHOLDER_ITEM = ItemData(
-    InternalItemData(0xA0A, 'AP Progression Placeholder', ItemClassification.progression, -1, ItemType.Consumable)
+AP_PROG_PLACEHOLDER_ITEM = NewItemData(
+    id=0xA0A,
+    name='AP Progression Placeholder',
+    category=ItemCategory.non_vanilla,
+    classification=ItemClassification.progression,
+    type=ItemType.Consumable,
 )
-AP_PLACEHOLDER_ITEM = ItemData(
-    InternalItemData(0xA0B, 'AP Placeholder', ItemClassification.filler, -1, ItemType.Consumable)
+AP_PLACEHOLDER_ITEM = NewItemData(
+    id=0xA0B,
+    name='AP Placeholder',
+    category=ItemCategory.non_vanilla,
+    classification=ItemClassification.filler,
+    type=ItemType.Consumable,
 )
+
 
 OPTION_BASED_ITEMS: dict[type[AddGs1Items | AddDummyItems], tuple[str, ...]] = {
     AddGs1Items: (ItemName.Elven_Shirt, ItemName.Clerics_Ring),
@@ -84,21 +80,6 @@ OPTION_BASED_ITEMS: dict[type[AddGs1Items | AddDummyItems], tuple[str, ...]] = {
 }
 
 
-all_items = all_gen_items
-item_table: dict[str, ItemData] = {item.name: item for item in all_items}
-items_by_id: dict[int, ItemData] = {item.id: item for item in all_items}
-
-coin_items: dict[int, ItemData] = {}
-
-"""
-TODO:
-Okay, the stuff below can be broken down into these parts:
- - decide which items get put into the pool via the world options
- - place locked items at specific locations (bspw djinns)
- - DONE: change counter after every write (sum_locations -= 1)
-"""
-
-
 def create_item(
     name: str, player: int, event: bool = False, classification: ItemClassification | None = None
 ) -> 'GSTLAItem':
@@ -112,7 +93,8 @@ def create_item(
     Returns:
         The newly created item
     """
-    item = item_table[name]
+    game_data = load_game_data()
+    item = game_data.item_by_name[name]
     return GSTLAItem(item, player, event, classification)
 
 
@@ -124,7 +106,6 @@ def create_item_direct(
 
 # TODO: Is the line below the reason for my missing boots? :')
 filler_gear_types = {ItemType.Shield, ItemType.Armor, ItemType.Weapon, ItemType.Helm}
-filler_forge_mats = {item.id for item in forge_materials}
 
 
 def create_filler(world: 'GSTLAWorld', item: ItemData):
@@ -135,7 +116,7 @@ def create_filler(world: 'GSTLAWorld', item: ItemData):
         and equipment[item.id].is_rare
         and item.type in filler_gear_types
         or world.options.forge_materials_are_filler
-        and item.id in filler_forge_mats
+        and item.category == ItemCategory.forge_materials
     ):
         return create_item_direct(item, world.player, False, ItemClassification.filler)
     return create_item_direct(item, world.player)
@@ -148,28 +129,32 @@ def create_events(world: 'GSTLAWorld'):
     Parameters:
         world: The world to generate events for
     """
-    for event in events:
+    game_data = load_game_data()
+    for event in game_data.events.values():
         event_item = create_item(event.name, world.player, True)
 
-        if event.location == LocationName.Lemurian_Ship_Engine_Room and world.options.lemurian_ship == 2:
+        if event.location_name == LocationName.Lemurian_Ship_Engine_Room and world.options.lemurian_ship == 2:
             # world.multiworld.push_precollected(event_item)
             continue
 
-        if event.location == LocationName.Contigo_Wings_of_Anemos and world.options.start_with_wings_of_anemos == 1:
-            # world.multiworld.push_precollected(event_item)
-            continue
-
-        if world.options.omit_locations.value == 2 and (
-            event.location == LocationName.Treasure_Isle_Star_Magician
-            or event.location == LocationName.Yampi_Desert_Cave_Valukar
-            or event.location == LocationName.Islet_Cave_Sentinel
+        if (
+            event.location_name == LocationName.Contigo_Wings_of_Anemos
+            and world.options.start_with_wings_of_anemos == 1
         ):
+            # world.multiworld.push_precollected(event_item)
             continue
 
-        if event.location == LocationName.Anemos_Inner_Sanctum_Dullahan and world.options.omit_locations.value > 0:
+        if world.options.omit_locations.value == 2 and event.location_name in [
+            LocationName.Islet_Cave_Sentinel,
+            LocationName.Treasure_Isle_Star_Magician,
+            LocationName.Yampi_Desert_Cave_Valukar,
+        ]:
             continue
 
-        event_location = world.get_location(event.location)
+        if event.location_name == LocationName.Anemos_Inner_Sanctum_Dullahan and world.options.omit_locations.value > 0:
+            continue
+
+        event_location = world.get_location(event.location_name)
         event_location.place_locked_item(event_item)
 
 
