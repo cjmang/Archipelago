@@ -31,6 +31,7 @@ from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import loc_names_by_id
 from .gstla_types import ItemType
 from .names import ItemName, LocationName
+from .new_game_data.loader import load_game_data
 from .options import AddDummyItems, AddGs1Items
 
 if TYPE_CHECKING:
@@ -127,9 +128,11 @@ filler_forge_mats = {item.id for item in forge_materials}
 
 
 def create_filler(world: 'GSTLAWorld', item: ItemData):
+    equipment = load_game_data().equipment
     if (
         world.options.artifacts_are_filler
-        and item.is_rare
+        and item.id in equipment
+        and equipment[item.id].is_rare
         and item.type in filler_gear_types
         or world.options.forge_materials_are_filler
         and item.id in filler_forge_mats
