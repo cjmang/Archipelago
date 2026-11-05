@@ -99,6 +99,7 @@ class ItemData:
     type: ItemType
     classification: ItemClassification
     category: ItemCategory
+    shuffled: bool
 
 
 class ItemFlag(IntFlag):

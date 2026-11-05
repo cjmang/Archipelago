@@ -34,7 +34,7 @@ class Mimic(BaseItem):
         return 0xA01 + self.tier
 
     @property
-    def in_pool(self) -> bool:
+    def shuffled(self) -> bool:
         # might be filled in as traps, though
         return False
 

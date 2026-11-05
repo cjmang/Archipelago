@@ -19,8 +19,6 @@ class BaseItem(ABC):
     Also: a slotted dataclass should reduce memory usage quite a bit. If we have hundreds to thousands of instances,
     this is probably pretty good. Only drawback: Can't use super() calls in those subclasses.
     But the tradeoff's worth it, I think.
-
-    TODO: rename in_pool? Split between in_pool and in_filler or something?
     """
 
     if TYPE_CHECKING:
@@ -47,18 +45,23 @@ class BaseItem(ABC):
                 raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
 
     @property
-    def in_pool(self) -> bool:
-        # only use this if you want to filter some items,
-        # like a "cloak" psynergy or some summons
+    def shuffled(self) -> bool:
+        """Decides if this item should go into the item pool as a regular shuffled entry.
+
+        Should be set to False for something like:
+         - Items that we never want to have in the first place, like "Cloak Ball" or "Halt Gem"
+         - Anything that gets a location via any other way, like Fillers, Traps or Djinns (for now)
+        """
         return True
 
     def as_item(self) -> ItemData:
         return ItemData(
             id=self.ap_id,
             name=self.name,
-            type=self.item_type,
-            classification=self.classification,
             category=self.category,
+            classification=self.classification,
+            shuffled=self.shuffled,
+            type=self.item_type,
         )
 
     @classmethod
