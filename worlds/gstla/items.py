@@ -99,7 +99,7 @@ def create_item(
 
 
 def create_item_direct(
-    item: ItemData,
+    item: NewItemData,
     player: int,
     event: bool = False,
     classification: ItemClassification | None = None,
@@ -111,7 +111,7 @@ def create_item_direct(
 filler_gear_types = {ItemType.Shield, ItemType.Armor, ItemType.Weapon, ItemType.Helm}
 
 
-def create_filler(world: 'GSTLAWorld', item: ItemData):
+def create_filler(world: 'GSTLAWorld', item: NewItemData):
     equipment = load_game_data().equipment
     if (
         world.options.artifacts_are_filler
@@ -324,48 +324,50 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     world.multiworld.itempool.extend(pool)
 
 
-def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:  # noqa: PLR0912
+def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> NewItemData:  # noqa: PLR0912
+    game_data = load_game_data()
+    item: NewItemData | None = None
     if includetraps and world.options.trap_chance > 0 and world.random.randint(1, 100) <= world.options.trap_chance:
         trap_pool_weights = create_trap_pool_weights(world)
         trap_type = world.random.choices(list(trap_pool_weights.keys()), list(trap_pool_weights.values()))[0]
 
         if trap_type == TrapType.Mimic:
-            item = world.random.choice(mimics)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.mimics])
 
     else:
         filler_pool_weights = create_filler_pool_weights(world)
         filler_type = world.random.choices(list(filler_pool_weights.keys()), list(filler_pool_weights.values()))[0]
 
         if filler_type == FillerType.ForgeMaterials:
-            item = world.random.choice(forge_materials)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.forge_materials])
 
         elif filler_type == FillerType.RustyMaterials:
-            item = world.random.choice(rusty_items)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.rusty_items])
 
         elif filler_type == FillerType.StatBoosts:
-            item = world.random.choice(stat_boosters)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.stat_boosters])
 
         elif filler_type == FillerType.UsefulConsumables:
-            item = world.random.choice(useful_consumables)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.useful_consumables])
 
         elif filler_type == FillerType.ForgedEquipment:
-            item = world.random.choice(forge_only)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.forge_only])
 
         elif filler_type == FillerType.LuckyEquipment:
-            item = world.random.choice(lucky_only)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.lucky_only])
 
         elif filler_type == FillerType.ShopEquipment:
-            item = world.random.choice(shop_only)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.shop_only])
 
         elif filler_type == FillerType.Coins:
-            item = world.random.choice(vanilla_coins)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.vanilla_coins])
 
         elif filler_type == FillerType.CommonConsumables:
-            item = world.random.choice(remainder)
+            item = world.random.choice(game_data.items_by_category[ItemCategory.remainder])
 
     # fall back if for some reason we dont have an item
     if not item:
-        item = world.random.choice(remainder)
+        item = world.random.choice(game_data.items_by_category[ItemCategory.remainder])
 
     return item
 
