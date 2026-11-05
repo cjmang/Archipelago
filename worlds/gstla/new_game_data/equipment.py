@@ -46,13 +46,7 @@ EQUIPMENT_TYPES = [
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class EquipmentItem(BaseItem):
-    """
-    All the gear: Weapons, armor, shirts, shields, helms, boots and rings
-
-    This has historically been treated as a normal item, like key items or consumables,
-    but they should probably be in their own dataclass.
-    Especially if we want to do more things with gear progression in the future.
-    """
+    """Weapons, armor, shirts, shields, helms, boots and rings"""
 
     ap_id: int  # the same as the ROM item id
     rom_name: str
