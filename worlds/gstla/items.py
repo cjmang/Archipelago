@@ -99,7 +99,10 @@ def create_item(
 
 
 def create_item_direct(
-    item: ItemData, player: int, event: bool = False, classification: ItemClassification | None = None
+    item: ItemData,
+    player: int,
+    event: bool = False,
+    classification: ItemClassification | None = None,
 ):
     return GSTLAItem(item, player, event, classification)
 
@@ -162,30 +165,31 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     """Creates all the items for GSTLA that need to be shuffled into the multiworld, and
     adds them to the multiworld's item pool.
     """
+    game_data = load_game_data()
     pool: list[GSTLAItem] = []
 
     # djinn
-    sorted_item_list = sorted(djinn_items, key=lambda item: item.id)
-    sorted_loc_list = sorted(location_type_to_data[LocationType.Djinn], key=lambda location: location.id)
+    sorted_djinns = sorted(game_data.items_by_category[ItemCategory.djinn], key=lambda djinn: djinn.id)
+    sorted_djinn_locs = sorted(location_type_to_data[LocationType.Djinn], key=lambda loc: loc.id)
 
     if world.options.shuffle_djinn == 1:
         for i in range(0, 4):
             slice_start = 0 + i * 18
-            sub_djinns = sorted_item_list[slice_start : slice_start + 18]
-            sub_locs = sorted_loc_list[slice_start : slice_start + 18]
+            sub_djinns = sorted_djinns[slice_start : slice_start + 18]
+            sub_locs = sorted_djinn_locs[slice_start : slice_start + 18]
 
             world.random.shuffle(sub_djinns)
             world.random.shuffle(sub_locs)
 
-            sorted_item_list[slice_start : slice_start + 18] = sub_djinns
-            sorted_loc_list[slice_start : slice_start + 18] = sub_locs
+            sorted_djinns[slice_start : slice_start + 18] = sub_djinns
+            sorted_djinn_locs[slice_start : slice_start + 18] = sub_locs
     elif world.options.shuffle_djinn > 1:
-        world.random.shuffle(sorted_item_list)
-        world.random.shuffle(sorted_loc_list)
+        world.random.shuffle(sorted_djinns)
+        world.random.shuffle(sorted_djinn_locs)
 
-    for item in sorted_item_list:
+    for item in sorted_djinns:
         ap_item = create_item_direct(item, player, True)
-        location = sorted_loc_list.pop(0)
+        location = sorted_djinn_locs.pop(0)
         ap_loc = world.get_location(loc_names_by_id[location.ap_id])
         ap_loc.address = None
         ap_loc.place_locked_item(ap_item)
@@ -194,7 +198,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     char_locs = {
         loc_names_by_id[char_lock.ap_id]: char_lock for char_lock in location_type_to_data[LocationType.Character]
     }
-    char_items = {char.name: char for char in character_items}
+    char_items = {char.name: char for char in game_data.items_by_category[ItemCategory.characters]}
 
     # if not vanilla character shuffle we can do special things
     if world.options.shuffle_characters > 0:
@@ -226,19 +230,19 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
             ap_location = world.get_location(starting_char_loc)
             ap_location.place_locked_item(ap_item)
 
-    sorted_item_list = sorted(char_items.values(), key=lambda item: item.id)
-    sorted_loc_list = sorted(char_locs.values(), key=lambda location: location.id)
+    sorted_chars = sorted(char_items.values(), key=lambda char: char.id)
+    sorted_char_locs = sorted(char_locs.values(), key=lambda loc: loc.id)
 
     if world.options.shuffle_characters > 0:
-        world.random.shuffle(sorted_item_list)
-        world.random.shuffle(sorted_loc_list)
+        world.random.shuffle(sorted_chars)
+        world.random.shuffle(sorted_char_locs)
 
-    for character in sorted_item_list:
+    for character in sorted_chars:
         ap_item = create_item_direct(character, player)
 
         # Vanilla (Shuffled)
         if world.options.shuffle_characters < 2:
-            location = sorted_loc_list.pop(0)
+            location = sorted_char_locs.pop(0)
             ap_loc = world.get_location(loc_names_by_id[location.ap_id])
             ap_loc.place_locked_item(ap_item)
 
@@ -248,27 +252,29 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
 
     unfilled = len(world.multiworld.get_unfilled_locations(player))
 
-    for item in psyenergy_as_item_list:
+    for item in game_data.items_by_category[ItemCategory.psynergy_items]:
         # Ignore cloak ball and halt gem, they are not required for anything
         if item.name == ItemName.Cloak_Ball or item.name == ItemName.Halt_Gem:
+            # TODO: already handled in item.in_pool
             continue
 
         ap_item = create_item_direct(item, player)
         pool.append(ap_item)
-    for item in psyenergy_list:
+    for item in game_data.items_by_category[ItemCategory.learned_psynergy]:
         ap_item = create_item_direct(item, player)
         pool.append(ap_item)
     summon_classification = None
     if 'Summon Hunt' in world.goal_conditions:
         summon_classification = ItemClassification.progression_deprioritized_skip_balancing
-    for item in summon_list:
+    for item in game_data.items_by_category[ItemCategory.summons]:
         # Ignore summons that are obtained by gaining X djinn
         if item.id < 3856:
+            # TODO: already handled in item.in_pool
             continue
         ap_item = create_item_direct(item, player, classification=summon_classification)
         pool.append(ap_item)
 
-    for item in other_progression:
+    for item in game_data.items_by_category[ItemCategory.other_progression]:
         if world.options.lemurian_ship != 0 and item.name == ItemName.Black_Crystal:
             # The black crystal is unnecessary when the ship door is not closed
             continue
@@ -277,13 +283,13 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
 
     if world.options.item_shuffle == 3:
         # Adding one progressive lucky medal
-        pool.append(create_item_direct(items_by_id[229], player, False, ItemClassification.progression))
+        pool.append(create_item_direct(game_data.item_by_id[229], player, False, ItemClassification.progression))
 
-    for item in class_change_items:
+    for item in game_data.items_by_category[ItemCategory.class_change_items]:
         ap_item = create_item_direct(item, player)
         pool.append(ap_item)
 
-    for item in useful_remainder:
+    for item in game_data.items_by_category[ItemCategory.useful_remainder]:
         ap_item = create_filler(world, item)
         pool.append(ap_item)
 
