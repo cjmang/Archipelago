@@ -1,16 +1,34 @@
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Protocol
 
 from BaseClasses import Item, ItemClassification
-from .gen.item_data import FillerType, TrapType
 from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import loc_names_by_id
 from .gstla_types import ItemCategory, ItemData, ItemType
 from .names import ItemName, LocationName
 from .new_game_data.loader import load_game_data
-from .options import AddDummyItems, AddGs1Items
+from .options import (
+    AddDummyItems,
+    AddGs1Items,
+    CoinsFillerWeight,
+    CommonConsumablesFillerWeight,
+    ForgedEquipmentFillerWeight,
+    ForgeMaterialsFillerWeight,
+    LuckyEquipmentFillerWeight,
+    MimicTrapWeight,
+    RustyMaterialsFillerWeight,
+    ShopEquipmentFillerWeight,
+    StatBoostFillerWeight,
+    UncommonConsumableFillerWeight,
+)
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld
+
+
+class WeightOption(Protocol):
+    # not too happy about having to use a custom protocol here,
+    # but the upstream Option classes do not have our internal_name attribute
+    internal_name: str
 
 
 class GSTLAItem(Item):
@@ -320,84 +338,49 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     world.multiworld.itempool.extend(pool)
 
 
-def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:  # noqa: PLR0912
+# reordering these will lead to different seeds, so don't do it willy-nilly
+FILLER_WEIGHT_OPTIONS: dict[ItemCategory, type[WeightOption]] = {
+    ItemCategory.vanilla_coins: CoinsFillerWeight,
+    ItemCategory.remainder: CommonConsumablesFillerWeight,
+    ItemCategory.forge_materials: ForgeMaterialsFillerWeight,
+    ItemCategory.forge_only: ForgedEquipmentFillerWeight,
+    ItemCategory.lucky_only: LuckyEquipmentFillerWeight,
+    ItemCategory.rusty_items: RustyMaterialsFillerWeight,
+    ItemCategory.shop_only: ShopEquipmentFillerWeight,
+    ItemCategory.stat_boosters: StatBoostFillerWeight,
+    ItemCategory.useful_consumables: UncommonConsumableFillerWeight,
+}
+
+TRAP_WEIGHT_OPTIONS: dict[ItemCategory, type[WeightOption]] = {
+    ItemCategory.mimics: MimicTrapWeight,
+}
+
+
+def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:
     game_data = load_game_data()
-    item: ItemData | None = None
     if includetraps and world.options.trap_chance > 0 and world.random.randint(1, 100) <= world.options.trap_chance:
-        trap_pool_weights = create_trap_pool_weights(world)
-        trap_type = world.random.choices(list(trap_pool_weights.keys()), list(trap_pool_weights.values()))[0]
-
-        if trap_type == TrapType.Mimic:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.mimics])
-
+        weights = create_trap_pool_weights(world)
     else:
-        filler_pool_weights = create_filler_pool_weights(world)
-        filler_type = world.random.choices(list(filler_pool_weights.keys()), list(filler_pool_weights.values()))[0]
-
-        if filler_type == FillerType.ForgeMaterials:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.forge_materials])
-
-        elif filler_type == FillerType.RustyMaterials:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.rusty_items])
-
-        elif filler_type == FillerType.StatBoosts:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.stat_boosters])
-
-        elif filler_type == FillerType.UsefulConsumables:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.useful_consumables])
-
-        elif filler_type == FillerType.ForgedEquipment:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.forge_only])
-
-        elif filler_type == FillerType.LuckyEquipment:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.lucky_only])
-
-        elif filler_type == FillerType.ShopEquipment:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.shop_only])
-
-        elif filler_type == FillerType.Coins:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.vanilla_coins])
-
-        elif filler_type == FillerType.CommonConsumables:
-            item = world.random.choice(game_data.items_by_category[ItemCategory.remainder])
-
-    # fall back if for some reason we dont have an item
-    if not item:
-        item = world.random.choice(game_data.items_by_category[ItemCategory.remainder])
-
-    return item
+        weights = create_filler_pool_weights(world)
+    category = world.random.choices(list(weights), list(weights.values()))[0]
+    return world.random.choice(game_data.items_by_category[category])
 
 
-FILLER_WEIGHT_OPTION_NAMES: dict[FillerType, str] = {
-    FillerType.Coins: 'coins_filler_weight',
-    FillerType.CommonConsumables: 'common_consumable_filler_weight',
-    FillerType.ForgeMaterials: 'forge_material_filler_weight',
-    FillerType.ForgedEquipment: 'forged_equipment_filler_weight',
-    FillerType.LuckyEquipment: 'lucky_equipment_filler_weight',
-    FillerType.RustyMaterials: 'rusty_material_filler_weight',
-    FillerType.ShopEquipment: 'shop_equipment_filler_weight',
-    FillerType.StatBoosts: 'stat_boost_filler_weight',
-    FillerType.UsefulConsumables: 'uncommon_consumable_filler_weight',
-}
-
-TRAP_WEIGHT_OPTION_NAMES: dict[TrapType, str] = {
-    TrapType.Mimic: 'mimic_trap_weight',
-}
+def _get_pool_weights(
+    world: 'GSTLAWorld', option_types: dict[ItemCategory, type[WeightOption]]
+) -> dict[ItemCategory, int]:
+    weights = {
+        category: getattr(world.options, option_type.internal_name).value
+        for category, option_type in option_types.items()
+    }
+    return {category: weight for category, weight in weights.items() if weight > 0}
 
 
-PoolType = TypeVar('PoolType', FillerType, TrapType)
+def create_filler_pool_weights(world: 'GSTLAWorld') -> dict[ItemCategory, int]:
+    """Creates a dictionary mapping filler categories to weight to be used for rolling filler items in the itempool"""
+    return _get_pool_weights(world, FILLER_WEIGHT_OPTIONS)
 
 
-def _get_pool_weights(world: 'GSTLAWorld', option_names: dict[PoolType, str]) -> dict[PoolType, int]:
-    weights = {pool_type: getattr(world.options, name).value for pool_type, name in option_names.items()}
-    return {pool_type: weight for pool_type, weight in weights.items() if weight > 0}
-
-
-def create_filler_pool_weights(world: 'GSTLAWorld') -> dict[FillerType, int]:
-    """Creates a dictionary mapping FillerTypes to weight to be used for rolling filler items in the itempool"""
-    return _get_pool_weights(world, FILLER_WEIGHT_OPTION_NAMES)
-
-
-def create_trap_pool_weights(world: 'GSTLAWorld') -> dict[TrapType, int]:
-    """Creates a dictionary mapping TrapTypes to weight to be used for rolling trap items in the itempool"""
-    return _get_pool_weights(world, TRAP_WEIGHT_OPTION_NAMES)
+def create_trap_pool_weights(world: 'GSTLAWorld') -> dict[ItemCategory, int]:
+    """Creates a dictionary mapping trap categories to weight to be used for rolling trap items in the itempool"""
+    return _get_pool_weights(world, TRAP_WEIGHT_OPTIONS)
