@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass
 from functools import cache
 from typing import TYPE_CHECKING, TypeVar
@@ -21,7 +22,7 @@ from .summons import Summon
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from worlds.gstla.gstla_types import ItemData
+    from worlds.gstla.gstla_types import ItemCategory, ItemData
     from .base import BaseItem
 
 ItemT = TypeVar('ItemT', bound='BaseItem')
@@ -40,9 +41,11 @@ class GameData:
     psynergy_items: Mapping[int, PsynergyItem]
     summons: Mapping[int, Summon]
 
-    # item_by_id and item_by_name are the things actually read by AP
+    # item_by_id and item_by_name are the things actually read by AP (probably want to rename to items_*)
     item_by_id: Mapping[int, ItemData]
     item_by_name: Mapping[str, ItemData]
+
+    items_by_category: Mapping[ItemCategory, tuple[ItemData, ...]]
 
     def dump_by_id(self):
         # TODO: classification flag into str?
@@ -84,6 +87,7 @@ def load_game_data() -> GameData:
 
     item_by_id: dict[int, ItemData] = {}
     item_by_name: dict[str, ItemData] = {}
+    items_by_category: defaultdict[ItemCategory, list[ItemData]] = defaultdict(list)
     for table in tables.values():
         for row in table.values():
             item = row.as_item()
@@ -93,9 +97,11 @@ def load_game_data() -> GameData:
                 raise ValueError(f'Duplicate item name {item.name}: {item.id} vs {item_by_name[item.name].id}')
             item_by_id[item.id] = item
             item_by_name[item.name] = item
+            items_by_category[item.category].append(item)
 
     return GameData(
         **tables,
         item_by_id=item_by_id,
         item_by_name=item_by_name,
+        items_by_category={category: tuple(items) for category, items in items_by_category.items()},
     )
