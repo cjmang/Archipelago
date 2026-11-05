@@ -322,7 +322,7 @@ class GSTLAWorld(World):
                 if loc.item.code is None:
                     continue
                 gsitem = cast('GSTLAItem', loc.item)
-                if gsitem.item_data.is_mimic:
+                if gsitem.item_data.type == ItemType.Mimic:
                     mimic_map[loc.item.player][i].append(loc)
                 elif loc.item.code in character_item_ids:
                     character_map[loc.item.player][i].append(gsitem)
@@ -408,6 +408,7 @@ class GSTLAWorld(World):
         return False
 
     def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912
+        game_data = load_game_data()
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
         debug_file.write('Version: 1\n')
 
@@ -472,16 +473,16 @@ class GSTLAWorld(World):
         debug_file.write('0xFFFFFFFF\n')
 
         for loc in djinn_locs:
-            item_data = item_table[loc.item.name]
+            djinn_data = game_data.djinn[item_table[loc.item.name].id]
             location_data = location_name_to_id[loc.name]
             rando_file.write(location_data.rando_flag.to_bytes(length=1, byteorder='little'))
-            rando_file.write(item_data.get_rando_flag().to_bytes(length=1, byteorder='little'))
+            rando_file.write(djinn_data.flag_index.to_bytes(length=1, byteorder='little'))
             loc_name = loc_names_by_id[location_data.ap_id]
             debug_file.write(
                 f'Djinn(Location): {loc_name}\n'
                 f'Djinn(Location) Flag: {hex(location_data.rando_flag)}\n'
-                f'Djinn(Item): {item_data.name}\n'
-                f'Djinn(Item) Flag: {hex(item_data.get_rando_flag())}\n\n'
+                f'Djinn(Item): {djinn_data.name}\n'
+                f'Djinn(Item) Flag: {hex(djinn_data.flag_index)}\n\n'
             )
 
         rando_file.write(0xFFFF.to_bytes(length=2, byteorder='little'))
