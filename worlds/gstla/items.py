@@ -1,14 +1,10 @@
 from typing import TYPE_CHECKING, TypeVar
 
 from BaseClasses import Item, ItemClassification
-from .gen.item_data import (
-    FillerType,
-    ItemData,
-    TrapType,
-)
+from .gen.item_data import FillerType, TrapType
 from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import loc_names_by_id
-from .gstla_types import ItemCategory, ItemData as NewItemData, ItemType
+from .gstla_types import ItemCategory, ItemData, ItemType
 from .names import ItemName, LocationName
 from .new_game_data.loader import load_game_data
 from .options import AddDummyItems, AddGs1Items
@@ -21,11 +17,11 @@ class GSTLAItem(Item):
     """The GSTLA version of an AP item"""
 
     game: str = 'Golden Sun The Lost Age'
-    item_data: NewItemData
+    item_data: ItemData
 
     def __init__(
         self,
-        item: NewItemData,
+        item: ItemData,
         player: int,
         event: bool = False,
         classification: ItemClassification | None = None,
@@ -38,21 +34,21 @@ class GSTLAItem(Item):
         self.item_data = item
 
 
-AP_USEFUL_PLACEHOLDER_ITEM = NewItemData(
+AP_USEFUL_PLACEHOLDER_ITEM = ItemData(
     id=0xA00,
     name='AP Useful Placeholder',
     category=ItemCategory.non_vanilla,
     classification=ItemClassification.useful,
     type=ItemType.Consumable,
 )
-AP_PROG_PLACEHOLDER_ITEM = NewItemData(
+AP_PROG_PLACEHOLDER_ITEM = ItemData(
     id=0xA0A,
     name='AP Progression Placeholder',
     category=ItemCategory.non_vanilla,
     classification=ItemClassification.progression,
     type=ItemType.Consumable,
 )
-AP_PLACEHOLDER_ITEM = NewItemData(
+AP_PLACEHOLDER_ITEM = ItemData(
     id=0xA0B,
     name='AP Placeholder',
     category=ItemCategory.non_vanilla,
@@ -99,7 +95,7 @@ def create_item(
 
 
 def create_item_direct(
-    item: NewItemData,
+    item: ItemData,
     player: int,
     event: bool = False,
     classification: ItemClassification | None = None,
@@ -111,7 +107,7 @@ def create_item_direct(
 filler_gear_types = {ItemType.Shield, ItemType.Armor, ItemType.Weapon, ItemType.Helm}
 
 
-def create_filler(world: 'GSTLAWorld', item: NewItemData):
+def create_filler(world: 'GSTLAWorld', item: ItemData):
     equipment = load_game_data().equipment
     if (
         world.options.artifacts_are_filler
@@ -324,9 +320,9 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     world.multiworld.itempool.extend(pool)
 
 
-def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> NewItemData:  # noqa: PLR0912
+def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:  # noqa: PLR0912
     game_data = load_game_data()
-    item: NewItemData | None = None
+    item: ItemData | None = None
     if includetraps and world.options.trap_chance > 0 and world.random.randint(1, 100) <= world.options.trap_chance:
         trap_pool_weights = create_trap_pool_weights(world)
         trap_type = world.random.choices(list(trap_pool_weights.keys()), list(trap_pool_weights.values()))[0]
