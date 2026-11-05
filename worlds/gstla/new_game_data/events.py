@@ -49,7 +49,7 @@ class Event(BaseItem):
     name: str
 
     @property
-    def in_pool(self) -> bool:
+    def shuffled(self) -> bool:
         # events have their own fixed location, see `items.create_events()`
         return False
 

@@ -20,7 +20,7 @@ class Summon(BaseItem):
         return 0xF00 + self.index
 
     @property
-    def in_pool(self) -> bool:
+    def shuffled(self) -> bool:
         # since we can only randomize the summon tablets,
         # we'll have to ignore the others here
         return self.index >= 16

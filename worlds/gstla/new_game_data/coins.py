@@ -25,7 +25,7 @@ class Coins(BaseItem):
         return f'Coins {self.amount}'
 
     @property
-    def in_pool(self) -> bool:
+    def shuffled(self) -> bool:
         return False  # only filler
 
     @classmethod
@@ -34,6 +34,7 @@ class Coins(BaseItem):
         #       since everything above 0x8000 just translates into any number of coins.
         #       We could also just hardcode the vanillaContents, since nobody would change it, anyway.
         #       Or: Just make a single item like "777 coins" and only that one gets filled?
+        #       Also: Could make this an option range
         chests = cls.read_json('data/item_locations.json')
         amounts: list[int] = []
         for chest_variants in chests.values():

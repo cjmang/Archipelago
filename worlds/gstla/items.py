@@ -56,6 +56,7 @@ AP_USEFUL_PLACEHOLDER_ITEM = ItemData(
     id=0xA00,
     name='AP Useful Placeholder',
     category=ItemCategory.non_vanilla,
+    shuffled=False,
     classification=ItemClassification.useful,
     type=ItemType.Consumable,
 )
@@ -63,6 +64,7 @@ AP_PROG_PLACEHOLDER_ITEM = ItemData(
     id=0xA0A,
     name='AP Progression Placeholder',
     category=ItemCategory.non_vanilla,
+    shuffled=False,
     classification=ItemClassification.progression,
     type=ItemType.Consumable,
 )
@@ -70,6 +72,7 @@ AP_PLACEHOLDER_ITEM = ItemData(
     id=0xA0B,
     name='AP Placeholder',
     category=ItemCategory.non_vanilla,
+    shuffled=False,
     classification=ItemClassification.filler,
     type=ItemType.Consumable,
 )
@@ -267,9 +270,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     unfilled = len(world.multiworld.get_unfilled_locations(player))
 
     for item in game_data.items_by_category[ItemCategory.psynergy_items]:
-        # Ignore cloak ball and halt gem, they are not required for anything
-        if item.name == ItemName.Cloak_Ball or item.name == ItemName.Halt_Gem:
-            # TODO: already handled in item.in_pool
+        if not item.shuffled:
             continue
 
         ap_item = create_item_direct(item, player)
@@ -281,9 +282,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     if 'Summon Hunt' in world.goal_conditions:
         summon_classification = ItemClassification.progression_deprioritized_skip_balancing
     for item in game_data.items_by_category[ItemCategory.summons]:
-        # Ignore summons that are obtained by gaining X djinn
-        if item.id < 3856:
-            # TODO: already handled in item.in_pool
+        if not item.shuffled:
             continue
         ap_item = create_item_direct(item, player, classification=summon_classification)
         pool.append(ap_item)

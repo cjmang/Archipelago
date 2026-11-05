@@ -53,7 +53,7 @@ class Djinn(BaseItem):
         return DJINN_MAPPING_TABLE_ADDR + (2 * self.rom_index)
 
     @property
-    def in_pool(self) -> bool:
+    def shuffled(self) -> bool:
         # Custom handling for now. Gotta randomize djinns with each other,
         # not the other stuff in the pool. See `create_items()`
         return False

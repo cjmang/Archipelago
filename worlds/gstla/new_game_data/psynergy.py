@@ -59,7 +59,7 @@ class PsynergyItem(BaseItem):
         return 0xE00 + self.ability_id
 
     @property
-    def in_pool(self) -> bool:
+    def shuffled(self) -> bool:
         return self.ability_id not in UNUSED_PSYNERGIES
 
     @property
