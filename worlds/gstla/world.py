@@ -28,7 +28,7 @@ from .items import (
     AP_PLACEHOLDER_ITEM,
     AP_PROG_PLACEHOLDER_ITEM,
     AP_USEFUL_PLACEHOLDER_ITEM,
-    FILLER_WEIGHT_OPTION_NAMES,
+    FILLER_WEIGHT_OPTIONS,
     GSTLAItem,
     create_events,
     create_filler_pool_weights,
@@ -195,7 +195,7 @@ class GSTLAWorld(World):
 
         # ensure that if all are set to 0 we force them all to 1,
         # otherwise we can not create filler and clearly they wanted all to be the same weight.
-        filler_weight_options = [getattr(self.options, name) for name in FILLER_WEIGHT_OPTION_NAMES.values()]
+        filler_weight_options = [getattr(self.options, opt.internal_name) for opt in FILLER_WEIGHT_OPTIONS.values()]
         if sum(option.value for option in filler_weight_options) == 0:
             for option in filler_weight_options:
                 option.value = 1
