@@ -31,6 +31,7 @@ from .gen.location_data import LocationType, location_type_to_data
 from .gen.location_names import loc_names_by_id
 from .gstla_types import ItemType
 from .names import ItemName, LocationName
+from .options import AddDummyItems, AddGs1Items
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld
@@ -62,6 +63,25 @@ AP_PROG_PLACEHOLDER_ITEM = ItemData(
 AP_PLACEHOLDER_ITEM = ItemData(
     InternalItemData(0xA0B, 'AP Placeholder', ItemClassification.filler, -1, ItemType.Consumable)
 )
+
+OPTION_BASED_ITEMS: dict[type[AddGs1Items | AddDummyItems], tuple[str, ...]] = {
+    AddGs1Items: (ItemName.Elven_Shirt, ItemName.Clerics_Ring),
+    AddDummyItems: (
+        ItemName.Casual_Shirt,
+        ItemName.Golden_Boots,
+        ItemName.Aroma_Ring,
+        ItemName.Golden_Shirt,
+        ItemName.Ninja_Sandals,
+        ItemName.Golden_Ring,
+        ItemName.Herbed_Shirt,
+        ItemName.Knights_Greave,
+        ItemName.Rainbow_Ring,
+        ItemName.Divine_Camisole,
+        ItemName.Silver_Greave,
+        ItemName.Soul_Ring,
+    ),
+}
+
 
 all_items = all_gen_items
 item_table: dict[str, ItemData] = {item.name: item for item in all_items}
@@ -279,29 +299,9 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         ap_item = create_filler(world, item)
         pool.append(ap_item)
 
-    if world.options.add_elvenshirt_clericsring == 1:
-        for item in [ItemName.Elven_Shirt, ItemName.Clerics_Ring]:
-            ap_item = create_item(item, player)
-            pool.append(ap_item)
-
-    if world.options.add_non_obtainable_items == 1:
-        non_obtainable_items = [
-            ItemName.Casual_Shirt,
-            ItemName.Golden_Boots,
-            ItemName.Aroma_Ring,
-            ItemName.Golden_Shirt,
-            ItemName.Ninja_Sandals,
-            ItemName.Golden_Ring,
-            ItemName.Herbed_Shirt,
-            ItemName.Knights_Greave,
-            ItemName.Rainbow_Ring,
-            ItemName.Divine_Camisole,
-            ItemName.Silver_Greave,
-            ItemName.Soul_Ring,
-        ]
-        for name in non_obtainable_items:
-            ap_item = create_item(name, player)
-            pool.append(ap_item)
+    for option_type, names in OPTION_BASED_ITEMS.items():
+        if getattr(world.options, option_type.internal_name):
+            pool.extend([create_item(name, player) for name in names])
 
     ap_item = create_item(ItemName.Laughing_Fungus, player)
     pool.append(ap_item)
