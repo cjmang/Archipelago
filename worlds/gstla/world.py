@@ -21,10 +21,9 @@ from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
-from .gen.item_data import mimics
 from .gen.location_data import LocationType
 from .gen.location_names import ids_by_loc_name, loc_names_by_id
-from .gstla_types import ItemType
+from .gstla_types import ItemCategory, ItemType
 from .items import (
     AP_PLACEHOLDER_ITEM,
     AP_PROG_PLACEHOLDER_ITEM,
@@ -38,7 +37,6 @@ from .items import (
     create_items,
     create_trap_pool_weights,
     get_filler_item,
-    item_table,
 )
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, location_name_to_id, remote_blacklist
@@ -362,6 +360,7 @@ class GSTLAWorld(World):
         Docstring made by someone other than the author, so take it with a grain of salt.
         """
         breakpoints = [(max_sphere + 1) / 7 * i for i in range(1, 8)]
+        mimics = load_game_data().items_by_category[ItemCategory.mimics]
 
         for sphere, mimic_locs in mimic_map.items():
             logger.info(f'{sphere=}, {mimic_locs=}')
@@ -414,7 +413,7 @@ class GSTLAWorld(World):
         # shouldn't make it this far, but just in case
         return False
 
-    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912
+    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912, PLR0915
         game_data = load_game_data()
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
         debug_file.write('Version: 1\n')
@@ -453,7 +452,7 @@ class GSTLAWorld(World):
                     else:
                         item_data = AP_PLACEHOLDER_ITEM
                 else:
-                    item_data = item_table[ap_item.name]
+                    item_data = game_data.item_by_name[ap_item.name]
 
                 if item_data.type == ItemType.Djinn:
                     djinn_locs.append(location)
@@ -480,7 +479,7 @@ class GSTLAWorld(World):
         debug_file.write('0xFFFFFFFF\n')
 
         for loc in djinn_locs:
-            djinn_data = game_data.djinn[item_table[loc.item.name].id]
+            djinn_data = game_data.djinn[game_data.item_by_name[loc.item.name].id]
             location_data = location_name_to_id[loc.name]
             rando_file.write(location_data.rando_flag.to_bytes(length=1, byteorder='little'))
             rando_file.write(djinn_data.flag_index.to_bytes(length=1, byteorder='little'))
