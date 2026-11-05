@@ -22,6 +22,7 @@ class BaseItem(ABC):
 
     TODO: rename in_pool? Split between in_pool and in_filler or something?
     """
+
     if TYPE_CHECKING:
 
         @property

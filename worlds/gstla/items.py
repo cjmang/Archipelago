@@ -69,15 +69,25 @@ items_by_id: dict[int, ItemData] = {item.id: item for item in all_items}
 
 coin_items: dict[int, ItemData] = {}
 
+"""
+TODO:
+Okay, the stuff below can be broken down into these parts:
+ - decide which items get put into the pool via the world options
+ - place locked items at specific locations (bspw djinns)
+ - DONE: change counter after every write (sum_locations -= 1)
+"""
+
 
 def create_item(
     name: str, player: int, event: bool = False, classification: ItemClassification | None = None
-) -> 'Item':
+) -> 'GSTLAItem':
     """Creates a GSTLAItem from data populated in this file
 
     Parameters:
         name (str): The AP name of the item
         player (int): The AP player to create the item for.
+        event (bool): Is this item an event?
+        classification (ItemClassification): The classification of the item (progression, filler, etc)
     Returns:
         The newly created item
     """
@@ -91,6 +101,7 @@ def create_item_direct(
     return GSTLAItem(item, player, event, classification)
 
 
+# TODO: Is the line below the reason for my missing boots? :')
 filler_gear_types = {ItemType.Shield, ItemType.Armor, ItemType.Weapon, ItemType.Helm}
 filler_forge_mats = {item.id for item in forge_materials}
 
@@ -143,7 +154,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     """Creates all the items for GSTLA that need to be shuffled into the multiworld, and
     adds them to the multiworld's item pool.
     """
-    sum_locations = len(world.multiworld.get_unfilled_locations(player))
+    pool: list[GSTLAItem] = []
 
     # djinn
     sorted_item_list = sorted(djinn_items, key=lambda item: item.id)
@@ -170,7 +181,6 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         ap_loc = world.get_location(loc_names_by_id[location.ap_id])
         ap_loc.address = None
         ap_loc.place_locked_item(ap_item)
-        sum_locations -= 1
 
     # char shuffle
     char_locs = {
@@ -195,7 +205,6 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         ap_location = world.get_location(LocationName.Idejima_Jenna)
         ap_location.place_locked_item(ap_item)
         char_locs.pop(LocationName.Idejima_Jenna)
-        sum_locations -= 1
 
         # if we are not starting with the ship and it is a vanilla shuffled character shuffle we have to enforce
         # piers in initial 3 chars to avoid soft lock. when vanilla piers is locked in kibombo on his vanilla
@@ -208,7 +217,6 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
             ap_item = create_item_direct(character, player)
             ap_location = world.get_location(starting_char_loc)
             ap_location.place_locked_item(ap_item)
-            sum_locations -= 1
 
     sorted_item_list = sorted(char_items.values(), key=lambda item: item.id)
     sorted_loc_list = sorted(char_locs.values(), key=lambda location: location.id)
@@ -219,7 +227,6 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
 
     for character in sorted_item_list:
         ap_item = create_item_direct(character, player)
-        sum_locations -= 1
 
         # Vanilla (Shuffled)
         if world.options.shuffle_characters < 2:
@@ -228,8 +235,10 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
             ap_loc.place_locked_item(ap_item)
 
         else:
-            # else: #Anywhere
-            world.multiworld.itempool.append(ap_item)
+            # Anywhere
+            pool.append(ap_item)
+
+    unfilled = len(world.multiworld.get_unfilled_locations(player))
 
     for item in psyenergy_as_item_list:
         # Ignore cloak ball and halt gem, they are not required for anything
@@ -237,12 +246,10 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
             continue
 
         ap_item = create_item_direct(item, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        pool.append(ap_item)
     for item in psyenergy_list:
         ap_item = create_item_direct(item, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        pool.append(ap_item)
     summon_classification = None
     if 'Summon Hunt' in world.goal_conditions:
         summon_classification = ItemClassification.progression_deprioritized_skip_balancing
@@ -251,84 +258,53 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         if item.id < 3856:
             continue
         ap_item = create_item_direct(item, player, classification=summon_classification)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        pool.append(ap_item)
 
     for item in other_progression:
         if world.options.lemurian_ship != 0 and item.name == ItemName.Black_Crystal:
             # The black crystal is unnecessary when the ship door is not closed
             continue
         ap_item = create_item_direct(item, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        pool.append(ap_item)
 
     if world.options.item_shuffle == 3:
         # Adding one progressive lucky medal
-        world.multiworld.itempool.append(
-            create_item_direct(items_by_id[229], player, False, ItemClassification.progression)
-        )
-        sum_locations -= 1
+        pool.append(create_item_direct(items_by_id[229], player, False, ItemClassification.progression))
 
     for item in class_change_items:
         ap_item = create_item_direct(item, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        pool.append(ap_item)
 
     for item in useful_remainder:
         ap_item = create_filler(world, item)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        pool.append(ap_item)
 
     if world.options.add_elvenshirt_clericsring == 1:
-        ap_item = create_item(ItemName.Elven_Shirt, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-
-        ap_item = create_item(ItemName.Clerics_Ring, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        for item in [ItemName.Elven_Shirt, ItemName.Clerics_Ring]:
+            ap_item = create_item(item, player)
+            pool.append(ap_item)
 
     if world.options.add_non_obtainable_items == 1:
-        ap_item = create_item(ItemName.Casual_Shirt, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Golden_Boots, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Aroma_Ring, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Golden_Shirt, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Ninja_Sandals, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Golden_Ring, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Herbed_Shirt, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Knights_Greave, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Rainbow_Ring, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Divine_Camisole, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Silver_Greave, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
-        ap_item = create_item(ItemName.Soul_Ring, player)
-        world.multiworld.itempool.append(ap_item)
-        sum_locations -= 1
+        non_obtainable_items = [
+            ItemName.Casual_Shirt,
+            ItemName.Golden_Boots,
+            ItemName.Aroma_Ring,
+            ItemName.Golden_Shirt,
+            ItemName.Ninja_Sandals,
+            ItemName.Golden_Ring,
+            ItemName.Herbed_Shirt,
+            ItemName.Knights_Greave,
+            ItemName.Rainbow_Ring,
+            ItemName.Divine_Camisole,
+            ItemName.Silver_Greave,
+            ItemName.Soul_Ring,
+        ]
+        for name in non_obtainable_items:
+            ap_item = create_item(name, player)
+            pool.append(ap_item)
 
     ap_item = create_item(ItemName.Laughing_Fungus, player)
-    world.multiworld.itempool.append(ap_item)
-    sum_locations -= 1
+    pool.append(ap_item)
 
     # We guarentee a number of filler items when item shuffle all is on, it adds a hefty amount of hidden locations
     # that do not support having a mimic and fail generation. On repeated generations it results into 65-70 mimics
@@ -338,20 +314,20 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         for _ in range(40):
             item = get_filler_item(world, False)
             ap_item = create_item_direct(item, player)
-            world.multiworld.itempool.append(ap_item)
-            sum_locations -= 1
+            pool.append(ap_item)
 
     if world.options.item_shuffle > 2 and world.options.trap_chance > 0 and world.options.mimic_trap_weight > 0:
         for _ in range(60):
             item = get_filler_item(world, False)
             ap_item = create_item_direct(item, player)
-            world.multiworld.itempool.append(ap_item)
-            sum_locations -= 1
+            pool.append(ap_item)
 
-    for _ in range(sum_locations):
+    for _ in range(unfilled - len(pool)):
         item = get_filler_item(world)
         ap_item = create_filler(world, item)
-        world.multiworld.itempool.append(ap_item)
+        pool.append(ap_item)
+
+    world.multiworld.itempool.extend(pool)
 
 
 def get_filler_item(world: 'GSTLAWorld', includetraps: bool = True) -> ItemData:  # noqa: PLR0912
