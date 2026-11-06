@@ -1,8 +1,9 @@
 import json
 import os
 from collections import defaultdict
-from enum import Enum, IntEnum, IntFlag, auto
 from typing import Any, NamedTuple
+
+from .gstla_types import ElementType, ItemType
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
@@ -18,18 +19,6 @@ num_words = {
     9: 'Nine',
     10: 'Ten',
 }
-
-mimic_names = [
-    'Milquetoast Mimic',
-    'Clumsy Mimic',
-    'Mimic',
-    'Journeyman Mimic',
-    'Advanced Mimic',
-    'Sacred Mimic',
-    'Royal Mimic',
-    'Imperial Mimic',
-    'Divine Mimic',
-]
 
 
 class LocationDatum(NamedTuple):
@@ -65,59 +54,6 @@ class EventDatum(NamedTuple):
     item_name: str
 
 
-class ItemType(int, Enum):
-    Consumable = 0  # is this the right name?
-    Weapon = 1
-    Armor = 2
-    Shield = 3
-    Helm = 4
-    Boots = 5
-    PsyenergyItem = 6
-    Trident = 7
-    Ring = 8
-    Shirt = 9
-    Class = 10
-    KeyItem = 11
-    Psyenergy = 12
-    Djinn = 13
-    Event = 14
-    Character = 15
-    Mimic = 16
-    Summon = 17
-
-
-class ItemFlags(IntFlag):
-    NONE = 0
-    Cursed = auto()  # 1 "Curses on pickup"
-    Sticky = auto()  # 2 "Unremovable"
-    Rare = auto()  # 4 "If dropped, can be bought back from shops"
-    Important = auto()  # 8 "Cannot be dropped"
-    Stackable = auto()  # 16 "Carry up to 30"
-    NoTransfer = auto()  # 32 "Cannot be transfered from GS1 to GS2"
-    UnusedOne = auto()
-    UnusedTwo = auto()
-
-
-class ItemDatum(NamedTuple):
-    # TODO: add more?
-    id: int
-    name: str
-    addr: int
-    item_type: ItemType
-    flags: ItemFlags
-    use_effect: int = 0
-    # TODO: event type is a property of locations, not of items
-    # event_type: int
-    is_mimic: bool = False
-
-
-class ElementType(IntEnum):
-    Earth = 0
-    Water = 1
-    Fire = 2
-    Air = 3
-
-
 class DjinnDatum(NamedTuple):
     ap_id: int
     id: int
@@ -130,27 +66,11 @@ class DjinnDatum(NamedTuple):
     item_type: ItemType = ItemType.Djinn
 
 
-class SummonDatum(NamedTuple):
-    # ap_id: int
-    id: int
-    name: str
-    addr: int
-    item_type: ItemType = ItemType.Summon
-
-
 class PsyDatum(NamedTuple):
     id: int
     name: str
     addr: int
-    item_type: ItemType = ItemType.Psyenergy
-
-
-class CharacterDatum(NamedTuple):
-    id: int
-    name: str
-    flag: int
-    addr: int
-    item_type: ItemType = ItemType.Character
+    item_type: ItemType = ItemType.Psynergy
 
 
 class LocationName(NamedTuple):
@@ -170,125 +90,19 @@ class LocationName(NamedTuple):
         return LocationName(loc.id, loc.flag, py_name + '_' + str_name, value)
 
 
-class ItemName(NamedTuple):
-    id: int
-    py_name: str
-    str_name: str
-
-    @classmethod
-    def from_item_data(cls, item: ItemDatum, suffix=''):
-        return ItemName(item.id, ItemName.setup_py_name(item.name, suffix), ItemName.setup_str_name(item.name, suffix))
-
-    @classmethod
-    def from_enemy_data(cls, enemy: EnemyDatum, event: bool = True):
-        return ItemName(
-            enemy.ap_id,
-            ItemName.setup_py_name(enemy.name, '_' + str(enemy.id) + (' Event' if event else '')),
-            ItemName.setup_str_name(enemy.name, ' ' + str(enemy.id) + (' Event' if event else '')),
-        )
-
-    @staticmethod
-    def setup_py_name(name: str, suffix=''):
-        return (name + suffix).replace(' ', '_').replace("'", '').replace('???', 'Empty')
-
-    @staticmethod
-    def setup_str_name(name: str, suffix=''):
-        return (name + suffix).replace('???', 'Empty')
-
-
-SPECIAL_NAMES = {
-    419: ItemName(419, 'Rusty_Sword_CorsairsEdge', "Rusty Sword - Corsair's Edge"),
-    417: ItemName(417, 'Rusty_Sword_RobbersBlade', "Rusty Sword - Robber's Blade"),
-    420: ItemName(420, 'Rusty_Sword_PiratesSabre', "Rusty Sword - Pirate's Sabre"),
-    418: ItemName(418, 'Rusty_Sword_SoulBrand', 'Rusty Sword - Soul Brand'),
-    421: ItemName(421, 'Rusty_Axe_CaptainsAxe', "Rusty Axe - Captain's Axe"),
-    422: ItemName(422, 'Rusty_Axe_VikingAxe', 'Rusty Axe - Viking Axe'),
-    424: ItemName(424, 'Rusty_Mace_HagboneMace', 'Rusty Mace - Hagbone Mace'),
-    423: ItemName(423, 'Rusty_Mace_DemonMace', 'Rusty Mace - Demon Mace'),
-    425: ItemName(425, 'Rusty_Staff_Dracomace', 'Rusty Staff - Dracomace'),
-    426: ItemName(426, 'Rusty_Staff_GlowerStaff', 'Rusty Staff - Glower Staff'),
-    427: ItemName(427, 'Rusty_Staff_GoblinsRod', "Rusty Staff - Goblin's Rod"),
-    123: ItemName(123, 'Dragon_Shield_GS', 'Dragon Shield GS'),
-    132: ItemName(132, 'Spirit_Gloves_GS', 'Spirit Gloves GS'),
-    222: ItemName(222, 'Mars_Star', 'Mars Star'),
-    223: ItemName(223, 'Mythril_Bag_Jupiter', 'Mythril Bag (Jupiter)'),
-    224: ItemName(224, 'Mythril_Bag_Empty', 'Mythril Bag (Empty)'),
-    245: ItemName(245, 'Mythril_Bag_Mars_Jupiter', 'Mythril Bag (Mars & Jupiter)'),
-}
-
-
 class GameData:
     def __init__(self):
         self.raw_location_data: list[LocationDatum] = []
-        self.raw_item_data: list[ItemDatum] = []
         self.raw_djinn_data: list[DjinnDatum] = []
-        self.raw_summon_data: list[SummonDatum] = []
         self.raw_psy_data: list[PsyDatum] = []
-        self.raw_character_data: list[CharacterDatum] = []
-        self.raw_enemy_data: list[EnemyDatum] = []
+        # self.raw_enemy_data: list[EnemyDatum] = []
         self.location_names: dict[int, LocationName] = {}
-        self.item_names: dict[int, ItemName] = {}
         self.events: dict[int, EventDatum] = {}
-        self.vanilla_item_ids: set[int] = set()
-        self.vanilla_shop_contents: set[int] = set()
-        self.forgeable_ids: set[int] = set()
-        self.lucky_medal_ids: set[int] = {
-            # 23, # Assassin Blade
-            # 37, # Burning Axe
-            # 48, # Grevious Mace
-            # 81, # Spirit Armor
-            # 97, # Kimono
-            # 108, # Cocktail Dress
-            # 124, # Earth Shield
-            # 133, # Battle Gloves
-            # 142, # Guardian Armlet
-            # 152, # Adept's Helm
-            # 160, # Ninja Hood
-            # 171, # Glittering Tiara
-            183,  # Potion
-            186,  # Psy Crystal
-            189,  # Water of Life
-            280,  # Hestia Blade
-            302,  # Mighty Axe
-            320,  # Fireman's Pole
-            327,  # Leda's Bracelet
-            335,  # Erebus Armor
-            341,  # Wild Coat
-            342,  # Floral Dress
-            359,  # Aegis Shield
-            364,  # Crafted Gloves
-            380,  # Minerva Helm
-            387,  # Crown of Glory
-            395,  # Brilliant Circlet
-        }
-        self.lucky_wheels_ids: set[int] = {
-            181,  # Nut
-            182,  # Vial
-            183,  # Potion
-            188,  # Elixer
-            186,  # Psy Crystal
-            189,  # Water of Life
-            258,  # Fur Boots
-            257,  # Quick Boots
-            256,  # Hyper Boots
-            252,  # Running Shirt
-            251,  # Silk Shirt
-            250,  # Mythril Shirt
-            264,  # Sleep Ring
-            263,  # War Ring
-            262,  # Adept Ring
-        }
         self._load_locations()
-        self._load_items()
-        self._load_shop_data()
         self._load_djinn()
-        self._load_summons()
-        self._load_forgeables()
         self._setup_events()
         self._setup_location_names()
-        self._setup_item_names()
         self._setup_psy_energies()
-        self._setup_characters()
 
     def _load_locations(self):
         with open(os.path.join(SCRIPT_DIR, 'data', 'item_locations.json'), 'r') as loc_file:
@@ -360,71 +174,6 @@ class GameData:
                 restriction_data,
             )
             self.raw_location_data.append(datum)
-            if datum.vanilla_name == 'Mimic':
-                self.raw_item_data.append(
-                    # Agreed upon rando id of 0xA00 + mimic id
-                    ItemDatum(
-                        0xA01 + datum.vanilla_contents,
-                        mimic_names[datum.vanilla_contents],
-                        datum.addr[0],
-                        ItemType.Mimic,
-                        ItemFlags.NONE,
-                        0,
-                        True,
-                    )
-                )
-            else:
-                self.vanilla_item_ids.add(datum.vanilla_contents)
-
-    def _load_shop_data(self):
-        with open(os.path.join(SCRIPT_DIR, 'data', 'shops.json'), 'r') as shop_file:
-            shop_data = json.load(shop_file)
-
-        for shop in shop_data:
-            for id in shop['items']:
-                if id != 0:
-                    self.vanilla_shop_contents.add(id)
-            for artifact in shop['artifacts']:
-                if artifact != 0:
-                    self.vanilla_shop_contents.add(artifact)
-
-    def _load_forgeables(self):
-        with open(os.path.join(SCRIPT_DIR, 'data', 'forgeables.json'), 'r') as forge_file:
-            forge_data = json.load(forge_file)
-
-        for forge in forge_data.values():
-            for result in forge['results']:
-                if result != 0:
-                    self.forgeable_ids.add(result)
-
-    def _load_items(self):
-        with open(os.path.join(SCRIPT_DIR, 'data', 'items.json'), 'r') as item_file:
-            item_data = json.load(item_file)
-        for item in item_data.values():
-            item_type = ItemType(item['itemType'])
-            self.raw_item_data.append(
-                ItemDatum(
-                    item['id'] if item_type != ItemType.PsyenergyItem else item['useEffect'] + 0xE00,
-                    item['name'],
-                    item['addr'],
-                    item_type,
-                    ItemFlags(item['flags']),
-                    item['useEffect'],
-                )
-            )
-        coins = {}
-        for loc in self.raw_location_data:
-            if loc.vanilla_contents > 0x8000:
-                # TODO: get the name in a better way?
-                coins[loc.vanilla_contents] = ItemDatum(
-                    loc.vanilla_contents,
-                    f'Coins {loc.vanilla_contents - 0x8000}',
-                    loc.addr[0],
-                    ItemType.Consumable,
-                    ItemFlags(0),
-                )
-        for coin in coins.values():
-            self.raw_item_data.append(coin)
 
     def _load_djinn(self):
         with open(os.path.join(SCRIPT_DIR, 'data', 'djinn.json'), 'r') as djinn_file:
@@ -433,29 +182,23 @@ class GameData:
             # Largest vanilla item id is 460
             self.raw_djinn_data.append(
                 DjinnDatum(
-                    djinn['addr'],
-                    djinn['vanillaId'],
-                    ElementType(djinn['vanillaElement']),
-                    djinn['vanillaName'],
-                    djinn['addr'],
+                    ap_id=djinn['addr'],
+                    id=djinn['vanillaId'],
+                    element=ElementType(djinn['vanillaElement']),
+                    name=djinn['vanillaName'],
+                    addr=djinn['addr'],
                     # From emo tracker pack
-                    djinn['statAddr'],
-                    djinn['stats'],
+                    stats_addr=djinn['statAddr'],
+                    stats=djinn['stats'],
                     # 0x30 is the start of the djinn flags; the game has flag slots for 20 djinn
                     # per element, even though there's only 18 per element, so some flags are just unused
-                    0x30 + (djinn['vanillaElement'] * 20) + djinn['vanillaId'],
+                    vanilla_flag=0x30 + (djinn['vanillaElement'] * 20) + djinn['vanillaId'],
                 )
             )
-        for djinn in self.raw_djinn_data:
-            self.item_names[djinn.ap_id] = ItemName(djinn.ap_id, djinn.name, djinn.name)
-
-    def _load_summons(self):
-        with open(os.path.join(SCRIPT_DIR, 'data', 'summons.json'), 'r') as summon_file:
-            summon_data = json.load(summon_file)
-            for summon in summon_data:
-                self.raw_summon_data.append(SummonDatum(summon['id'] + 0xF00, summon['name'], summon['addr']))
 
     def _load_enemies(self):
+        """
+        # TODO: Migrate to a dataclass in (new_)game_data/enemies.py
         # Function is unused, but leaving here in case we actually want to use it for some reason
         enemy_offset = 6000
         with open(os.path.join(SCRIPT_DIR, 'data', 'enemies.json'), 'r') as enemy_file:
@@ -476,6 +219,7 @@ class GameData:
             name = ItemName.from_enemy_data(enemy)
             self.item_names[enemy.ap_id] = name
             self.location_names[enemy.ap_id] = LocationName(enemy.ap_id, enemy.flag, name.py_name, name.str_name)
+        """
 
     def _recurse_tracker_data(
         self, tracker_name_data: dict[int, str], tracker_names: dict[str, int], node: dict[str, Any]
@@ -528,13 +272,6 @@ class GameData:
             assert loc_name.id not in self.location_names, f'{hex(loc_name.id)=}, {loc_name.str_name=}'
             self.location_names[loc_name.id] = loc_name
 
-    def _setup_item_names(self):
-        for item in self.raw_item_data:
-            item_id = item.id
-            item_name = SPECIAL_NAMES.get(item_id, ItemName.from_item_data(item))
-            assert item_name.id not in self.item_names, (item_name.id, item_name.str_name)
-            self.item_names[item_name.id] = item_name
-
     def _setup_psy_energies(self):
         self.raw_psy_data += [
             PsyDatum(3596, 'Growth', 3596),
@@ -545,27 +282,11 @@ class GameData:
             PsyDatum(3728, 'Reveal', 3728),
             PsyDatum(3738, 'Blaze', 3738),
         ]
-        for d in self.raw_psy_data:
-            self.item_names[d.id] = ItemName(d.id, d.name.replace(' ', '_'), d.name)
-
-    def _setup_characters(self):
-        self.raw_character_data += [
-            CharacterDatum(3328, 'Isaac', 3328, 16384384),
-            CharacterDatum(3329, 'Garet', 3329, 16384386),
-            CharacterDatum(3330, 'Ivan', 3330, 16384388),
-            CharacterDatum(3331, 'Mia', 3331, 16384390),
-            # Felix is 3332, but we don't do nutin with him
-            CharacterDatum(3333, 'Jenna', 3333, 16384392),
-            CharacterDatum(3334, 'Sheba', 3334, 16384394),
-            CharacterDatum(3335, 'Piers', 3335, 16384396),
-        ]
-        for c in self.raw_character_data:
-            self.item_names[c.id] = ItemName(c.id, c.name, c.name)
 
     def _setup_events(self):
         # Just some offset to avoid colliding with anything else; needs to avoid any location or item ids in AP
         event_offset = 5000
-        events = [
+        events = [  # TODO: move to game_data/events.py, dedup
             EventDatum(event_offset + 1, 0x778, 'Mars Lighthouse - Doom Dragon', 'Doom Dragon Defeated'),
             EventDatum(event_offset + 2, 0x8AB, 'Alhafra Briggs', 'Briggs defeated'),
             EventDatum(event_offset + 3, 0x97F, 'Alhafra Prison Briggs', 'Briggs escaped'),
@@ -601,8 +322,4 @@ class GameData:
                 event.flag,
                 event.location_name.replace(' ', '_').replace('-', '').replace('__', '_'),
                 event.location_name,
-            )
-        for event in self.events.values():
-            self.item_names[event.event_id] = ItemName(
-                event.event_id, event.item_name.replace('-', '').replace(' ', '_').replace('__', '_'), event.item_name
             )

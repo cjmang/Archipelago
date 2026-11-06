@@ -21,29 +21,25 @@ from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
-from .gen.item_data import characters, mimics
-from .gen.item_names import ItemName, item_id_by_name, name_by_item_id
 from .gen.location_data import LocationType
 from .gen.location_names import ids_by_loc_name, loc_names_by_id
+from .gstla_types import ItemCategory, ItemType
 from .items import (
     AP_PLACEHOLDER_ITEM,
     AP_PROG_PLACEHOLDER_ITEM,
     AP_USEFUL_PLACEHOLDER_ITEM,
-    FILLER_WEIGHT_OPTION_NAMES,
+    FILLER_WEIGHT_OPTIONS,
     GSTLAItem,
-    ItemType,
-    all_items,
     create_events,
-    create_filler_pool_weights,
     create_item,
     create_item_direct,
     create_items,
-    create_trap_pool_weights,
     get_filler_item,
-    item_table,
 )
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, location_name_to_id, remote_blacklist
+from .names import ItemName
+from .new_game_data.loader import load_game_data
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
@@ -115,17 +111,17 @@ class GSTLAWorld(World):
     location_flags_populated = set()
     settings: ClassVar[GSTLASettings]
 
-    item_name_to_id = item_id_by_name  # {item.itemName: itemfor item in all_items if item.type != ItemType.Event}
+    item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}
     location_name_to_id = (
         ids_by_loc_name  # {location: location_name_to_id[location].id for location in location_name_to_id}
     )
     web = GSTLAWeb()
 
     item_name_groups = {
-        ItemType.Djinn.name: {item.name for item in all_items if item.type == ItemType.Djinn},
-        ItemType.Character.name: {item.name for item in all_items if item.type == ItemType.Character},
-        ItemType.Summon.name: {item.name for item in all_items if item.type == ItemType.Summon},
-        'Mimics': {item.name for item in all_items if item.type == ItemType.Mimic},
+        ItemType.Djinn.name: {item.name for item in load_game_data().djinn.values()},
+        ItemType.Character.name: {item.name for item in load_game_data().characters.values()},
+        ItemType.Summon.name: {item.name for item in load_game_data().summons.values()},
+        'Mimics': {item.name for item in load_game_data().mimics.values()},
         'Lash': {ItemName.Lash_Pebble},
         'Pound': {ItemName.Pound_Cube},
         'Force': {ItemName.Orb_of_Force},
@@ -197,13 +193,10 @@ class GSTLAWorld(World):
 
         # ensure that if all are set to 0 we force them all to 1,
         # otherwise we can not create filler and clearly they wanted all to be the same weight.
-        filler_weight_options = [getattr(self.options, name) for name in FILLER_WEIGHT_OPTION_NAMES.values()]
+        filler_weight_options = [getattr(self.options, opt.internal_name) for opt in FILLER_WEIGHT_OPTIONS.values()]
         if sum(option.value for option in filler_weight_options) == 0:
             for option in filler_weight_options:
                 option.value = 1
-
-        create_filler_pool_weights(self)
-        create_trap_pool_weights(self)
 
     def create_regions(self) -> None:
         create_regions(self)
@@ -223,6 +216,7 @@ class GSTLAWorld(World):
         pre_fill = []
         for key, val in GSTLAWorld.item_name_groups.items():
             if key in [ItemType.Djinn.name, ItemType.Character.name, ItemType.Mimic.name]:
+                # TODO: Mimics are never matched here? ItemType.Mimic is "Mimic", item_name_groups has "Mimics"
                 pre_fill.extend([create_item(item, self.player) for item in val])
         return pre_fill
 
@@ -308,11 +302,12 @@ class GSTLAWorld(World):
 
     @classmethod
     def _handle_spheres(cls, multiworld: MultiWorld):
+        game_data = load_game_data()
         mimic_map: defaultdict[int, defaultdict[int, list[Location]]] = defaultdict(lambda: defaultdict(lambda: []))
         character_map: defaultdict[int, defaultdict[int, list[GSTLAItem]]] = defaultdict(
             lambda: defaultdict(lambda: [])
         )
-        toons = {c.id for c in characters}
+        character_item_ids = set(game_data.characters)
         spheres = multiworld.get_spheres()
         max_spheres: defaultdict[int, int] = defaultdict(lambda: -1)
         for i, sphere in enumerate(spheres):
@@ -327,9 +322,9 @@ class GSTLAWorld(World):
                 if loc.item.code is None:
                     continue
                 gsitem = cast('GSTLAItem', loc.item)
-                if gsitem.item_data.is_mimic:
+                if gsitem.item_data.type == ItemType.Mimic:
                     mimic_map[loc.item.player][i].append(loc)
-                elif loc.item.code in toons:
+                elif loc.item.code in character_item_ids:
                     character_map[loc.item.player][i].append(gsitem)
 
         for slot, max_sphere in max_spheres.items():
@@ -360,6 +355,7 @@ class GSTLAWorld(World):
         Docstring made by someone other than the author, so take it with a grain of salt.
         """
         breakpoints = [(max_sphere + 1) / 7 * i for i in range(1, 8)]
+        mimics = load_game_data().items_by_category[ItemCategory.mimics]
 
         for sphere, mimic_locs in mimic_map.items():
             logger.info(f'{sphere=}, {mimic_locs=}')
@@ -412,7 +408,8 @@ class GSTLAWorld(World):
         # shouldn't make it this far, but just in case
         return False
 
-    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912
+    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912, PLR0915
+        game_data = load_game_data()
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
         debug_file.write('Version: 1\n')
 
@@ -450,7 +447,7 @@ class GSTLAWorld(World):
                     else:
                         item_data = AP_PLACEHOLDER_ITEM
                 else:
-                    item_data = item_table[ap_item.name]
+                    item_data = game_data.item_by_name[ap_item.name]
 
                 if item_data.type == ItemType.Djinn:
                     djinn_locs.append(location)
@@ -477,16 +474,16 @@ class GSTLAWorld(World):
         debug_file.write('0xFFFFFFFF\n')
 
         for loc in djinn_locs:
-            item_data = item_table[loc.item.name]
+            djinn_data = game_data.djinn[game_data.item_by_name[loc.item.name].id]
             location_data = location_name_to_id[loc.name]
             rando_file.write(location_data.rando_flag.to_bytes(length=1, byteorder='little'))
-            rando_file.write(item_data.get_rando_flag().to_bytes(length=1, byteorder='little'))
+            rando_file.write(djinn_data.flag_index.to_bytes(length=1, byteorder='little'))
             loc_name = loc_names_by_id[location_data.ap_id]
             debug_file.write(
                 f'Djinn(Location): {loc_name}\n'
                 f'Djinn(Location) Flag: {hex(location_data.rando_flag)}\n'
-                f'Djinn(Item): {item_data.name}\n'
-                f'Djinn(Item) Flag: {hex(item_data.get_rando_flag())}\n\n'
+                f'Djinn(Item): {djinn_data.name}\n'
+                f'Djinn(Item) Flag: {hex(djinn_data.flag_index)}\n\n'
             )
 
         rando_file.write(0xFFFF.to_bytes(length=2, byteorder='little'))
@@ -499,7 +496,7 @@ class GSTLAWorld(World):
             for char, level in self._character_levels:
                 rando_file.write(char.to_bytes(length=1, byteorder='little'))
                 rando_file.write(level.to_bytes(length=1, byteorder='little'))
-                debug_file.write(f'{name_by_item_id[char + 0xD00]} has starting level {level}\n')
+                debug_file.write(f'{load_game_data().item_by_id[char + 0xD00].name} has starting level {level}\n')
 
     def _write_options_for_rando(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0915
         write_me = 0
