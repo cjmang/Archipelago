@@ -2,8 +2,9 @@ from dataclasses import dataclass
 from typing import Self
 
 from BaseClasses import ItemClassification
-from worlds.gstla.gstla_types import ElementType, ItemCategory, ItemType
-from .base import BaseItem, read_json
+from worlds.gstla.gstla_types import ElementType, ItemCategory, ItemType, LocationRestriction, LocationType
+from worlds.gstla.names import LocationName
+from .base import BaseItem, BaseLocation, read_json
 
 # TODO: merge the constants below with the stuff from somewhere else:
 #       _DataLocations.DJINN_FLAGS, client._load_djinn()
@@ -38,6 +39,10 @@ class Djinn(BaseItem):
     name: str
 
     @property
+    def ap_id(self) -> int:
+        return DJINN_MAPPING_TABLE_ADDR + (2 * self.rom_index)
+
+    @property
     def rom_index(self) -> int:
         # the index in the patched randomizer table in ROM (0-71)
         return self.element * DJINN_PER_ELEMENT + self.index
@@ -47,10 +52,6 @@ class Djinn(BaseItem):
         # the index/spot of the "obtained" flag in EWRAM incl. offset
         # also named "rando_flag" in other spots
         return DJINN_FLAG_START + self.element * DJINN_FLAGS_PER_ELEMENT + self.index
-
-    @property
-    def ap_id(self) -> int:
-        return DJINN_MAPPING_TABLE_ADDR + (2 * self.rom_index)
 
     @property
     def shuffled(self) -> bool:
@@ -64,3 +65,40 @@ class Djinn(BaseItem):
             cls(element=ElementType(djinn['vanillaElement']), index=djinn['vanillaId'], name=djinn['vanillaName'])
             for djinn in read_json('data/djinn.json')
         )
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class DjinnLocation(BaseLocation):
+    """
+    The AP id and the flag is the same as the djinn that is at that location in vanilla.
+
+    Same as EventLocation: Maybe merge these?
+    """
+
+    location_type = LocationType.Djinn
+    restrictions = LocationRestriction.NONE
+
+    djinn: Djinn
+
+    @property
+    def ap_id(self) -> int:
+        return self.djinn.ap_id
+
+    @property
+    def flag(self) -> int:
+        return self.djinn.flag_index
+
+    @property
+    def rando_flag(self) -> int:
+        return self.djinn.flag_index
+
+    @property
+    def name(self) -> str:
+        # Note: Item and Location names are a bit different:
+        # Item name: "Flint"
+        # Location name: "4th Party Member - Venus Djinni Flint" (from LocationName.Flint)
+        return getattr(LocationName, self.djinn.name)
+
+    @classmethod
+    def load(cls) -> tuple[Self, ...]:
+        return tuple(cls(djinn=djinn) for djinn in Djinn.load())
