@@ -3,7 +3,7 @@ from typing import Self
 
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ElementType, ItemCategory, ItemType
-from .base import BaseItem
+from .base import BaseItem, read_json
 
 # TODO: merge the constants below with the stuff from somewhere else:
 #       _DataLocations.DJINN_FLAGS, client._load_djinn()
@@ -62,5 +62,5 @@ class Djinn(BaseItem):
     def load(cls) -> tuple[Self, ...]:
         return tuple(
             cls(element=ElementType(djinn['vanillaElement']), index=djinn['vanillaId'], name=djinn['vanillaName'])
-            for djinn in cls.read_json('data/djinn.json')
+            for djinn in read_json('data/djinn.json')
         )

@@ -1,5 +1,5 @@
-import pkgutil
 from abc import ABC, abstractmethod
+from importlib.resources import files
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Self
 
@@ -9,6 +9,18 @@ from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType
 
 if TYPE_CHECKING:
     from BaseClasses import ItemClassification
+
+
+PKG_ROOT = files('worlds.gstla')
+
+
+def read_json(path: str | Path) -> Any:
+    return orjson.loads((PKG_ROOT / str(path)).read_bytes())
+
+
+def read_json_dir(path: str | Path) -> dict[str, Any]:
+    directory = PKG_ROOT / str(path)
+    return {file.name: orjson.loads(file.read_bytes()) for file in directory.iterdir() if file.name.endswith('.json')}
 
 
 class BaseItem(ABC):
@@ -69,9 +81,3 @@ class BaseItem(ABC):
     def load(cls, *args: Any, **kwargs: Any) -> tuple[Self, ...]:
         """Every subclass should be able to decide itself where it comes from. Most get filled by data/*.json files."""
 
-    @staticmethod
-    def read_json(path: str | Path) -> dict:
-        data_path = pkgutil.get_data('worlds.gstla', str(path))
-        if data_path is None:
-            raise ValueError(f'Could not find json file {path=}')
-        return orjson.loads(data_path)

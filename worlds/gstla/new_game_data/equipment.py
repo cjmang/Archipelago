@@ -4,7 +4,7 @@ from typing import Self
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemFlag, ItemType
 from worlds.gstla.names import ItemName
-from .base import BaseItem
+from .base import BaseItem, read_json
 from .item_sources import get_item_sources
 
 # TODO: I (draca) have a feeling that the balancing on these is off.
@@ -95,7 +95,7 @@ class EquipmentItem(BaseItem):
     def load(cls) -> tuple[Self, ...]:
         equipment_items = [
             item
-            for item in BaseItem.read_json('data/items.json').values()
+            for item in read_json('data/items.json').values()
             if item['id'] not in EXCLUDED_ITEMS and item['itemType'] in EQUIPMENT_TYPES
         ]
 

@@ -4,7 +4,7 @@ from typing import Self
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemType
 from worlds.gstla.names import ItemName
-from .base import BaseItem
+from .base import BaseItem, read_json
 from .item_sources import get_item_sources
 
 VANILLA_ITEM_TYPES = [
@@ -124,7 +124,7 @@ class VanillaItem(BaseItem):
     def load(cls) -> tuple[Self, ...]:
         vanilla_items = [
             item
-            for item in BaseItem.read_json('data/items.json').values()
+            for item in read_json('data/items.json').values()
             if item['id'] not in EXCLUDED_ITEMS and item['itemType'] in VANILLA_ITEM_TYPES
         ]
 

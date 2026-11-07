@@ -3,7 +3,7 @@ from typing import Self
 
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemType
-from .base import BaseItem
+from .base import BaseItem, read_json
 
 COIN_ID_OFFSET = 0x8000  # ROM stores coin items as 0x8000 + amount
 
@@ -35,7 +35,7 @@ class Coins(BaseItem):
         #       We could also just hardcode the vanillaContents, since nobody would change it, anyway.
         #       Or: Just make a single item like "777 coins" and only that one gets filled?
         #       Also: Could make this an option range
-        chests = cls.read_json('data/item_locations.json')
+        chests = read_json('data/item_locations.json')
         amounts: list[int] = []
         for chest_variants in chests.values():
             for chest in chest_variants:
