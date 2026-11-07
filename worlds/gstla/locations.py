@@ -28,12 +28,14 @@ class GSTLALocation(Location):
 
     @staticmethod
     def create_djinn_location(player: int, name: str, location: LocationData, region: Region) -> 'GSTLALocation':
+        # TODO: Replace with DjinnLocation.as_location()
         ret = GSTLALocation(player, name, location, region)
         ret.always_allow = allow_djinn
         return ret
 
     @staticmethod
     def create_event_location(player: int, name: str, location: LocationData, region: Region):
+        # TODO: Replace with EventLocation.as_location()
         ret = GSTLALocation(player, name, location, region)
         ret.address = None
         return ret
