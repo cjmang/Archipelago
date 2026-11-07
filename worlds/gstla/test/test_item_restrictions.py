@@ -1,4 +1,4 @@
-from worlds.gstla.gen.location_data import LocationRestriction
+from worlds.gstla.gstla_types import LocationRestriction
 from worlds.gstla.names import ItemName, LocationName
 from worlds.gstla.test import GSTestBase
 

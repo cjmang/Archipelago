@@ -7,7 +7,8 @@ from typing_extensions import Unpack
 
 import worlds.gstla.gen.internal_location_data as LocationLists  # noqa: N812
 from BaseClasses import MultiWorld
-from .internal_location_data import InternalLocationData, LocationRestriction, LocationType
+from worlds.gstla.gstla_types import LocationRestriction, LocationType
+from .internal_location_data import InternalLocationData
 from .location_names import loc_names_by_id
 
 if TYPE_CHECKING:

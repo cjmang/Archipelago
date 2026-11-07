@@ -87,6 +87,24 @@ class ItemType(IntEnum):
     Summon = 17
 
 
+class LocationType(StrEnum):
+    Item = 'Item'
+    Event = 'Event'
+    Djinn = 'Djinn'
+    Psyenergy = 'Psyenergy'
+    Hidden = 'Hidden'
+    Trade = 'Trade'
+    Character = 'Character'
+
+
+class LocationRestriction(IntFlag):
+    NONE = 0
+    NoEmpty = auto()
+    NoMimic = auto()
+    NoSummon = auto()
+    NoMoney = auto()
+
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ItemData:
     id: int  # AP item ID

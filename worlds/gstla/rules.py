@@ -2,8 +2,8 @@ import math
 from typing import TYPE_CHECKING, cast
 
 from worlds.generic.Rules import add_item_rule, add_rule
-from .gen.location_data import LocationRestriction, LocationType
 from .gen.location_names import loc_names_by_id
+from .gstla_types import LocationRestriction, LocationType
 from .items import ItemType
 from .locations import location_type_to_data
 from .names import EntranceName, ItemName, LocationName

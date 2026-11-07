@@ -2,8 +2,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from BaseClasses import Region
-from .gen.location_data import LocationType
-from .gstla_types import RegionData
+from .gstla_types import LocationType, RegionData
 from .locations import GSTLALocation, location_name_to_id
 from .names import EntranceName, LocationName, RegionName
 

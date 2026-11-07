@@ -1,27 +1,13 @@
 # This file was generated using jinja2 from a template. If this file needs
 # to be changed, either change the template, or the code leveraging the template.
 from typing import Callable, List, Dict, NamedTuple, Optional
-from enum import StrEnum, IntFlag, auto
 from BaseClasses import MultiWorld
+from worlds.gstla.gstla_types import LocationType, LocationRestriction
 
-class LocationType(StrEnum):
-   Item = "Item"
-   Event = "Event"
-   Djinn = "Djinn"
-   Psyenergy = "Psyenergy"
-   Hidden = "Hidden"
-   Trade = "Trade"
-   Character = "Character"
 
 def always_on(multiworld: MultiWorld, player: int) -> bool:
     return True
 
-class LocationRestriction(IntFlag):
-    NONE = 0
-    NoEmpty = auto()
-    NoMimic = auto()
-    NoSummon = auto()
-    NoMoney = auto()
 
 class InternalLocationData(NamedTuple):
     rando_flag: int

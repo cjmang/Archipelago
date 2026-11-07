@@ -20,8 +20,8 @@ import settings
 from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
+from worlds.gstla.gstla_types import LocationType
 from .connections import create_vanilla_connections
-from .gen.location_data import LocationType
 from .gen.location_names import ids_by_loc_name, loc_names_by_id
 from .gstla_types import ItemCategory, ItemType
 from .items import (

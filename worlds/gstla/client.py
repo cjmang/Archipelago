@@ -11,14 +11,13 @@ from NetUtils import ClientStatus, NetworkItem
 from worlds._bizhawk import display_message, read, write
 from worlds._bizhawk.client import BizHawkClient
 from .gen.location_data import (
-    LocationType,
     all_locations,
     djinn_locations,
     event_id_to_name,
     event_name_to_data,
 )
 from .gen.location_names import loc_names_by_id, option_name_to_goal_name
-from .gstla_types import ItemType
+from .gstla_types import ItemType, LocationType
 from .locations import remote_blacklist
 from .names import LocationName
 from .new_game_data.loader import load_game_data

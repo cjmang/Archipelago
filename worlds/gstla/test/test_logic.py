@@ -7,8 +7,8 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from BaseClasses import CollectionState, Item
-from worlds.gstla.gen.location_data import LocationType
 from worlds.gstla.gen.location_names import loc_names_by_id
+from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.locations import all_locations
 from worlds.gstla.names import ItemName
 from worlds.gstla.new_game_data.loader import load_game_data
