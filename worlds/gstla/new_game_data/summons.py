@@ -3,7 +3,7 @@ from typing import Self
 
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemType
-from .base import BaseItem
+from .base import BaseItem, read_json
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -27,4 +27,4 @@ class Summon(BaseItem):
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
-        return tuple(cls(index=summon['id'], name=summon['name']) for summon in cls.read_json('data/summons.json'))
+        return tuple(cls(index=summon['id'], name=summon['name']) for summon in read_json('data/summons.json'))

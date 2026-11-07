@@ -1,4 +1,4 @@
-from .base import BaseItem
+from .base import read_json
 
 
 def load_forge_mapping() -> dict[int, tuple[int, ...]]:
@@ -7,7 +7,7 @@ def load_forge_mapping() -> dict[int, tuple[int, ...]]:
         422 (Rusty Axe) -> (299 (Viking Axe),),
         437 (Orihalcon) -> (276 (Excalibur), 297 (Stellar Axe), ...),
     """
-    raw_forge_map = BaseItem.read_json('data/forgeables.json')
+    raw_forge_map = read_json('data/forgeables.json')
     forge_mapping: dict[int, tuple[int, ...]] = {}
 
     for material_id, forge in raw_forge_map.items():
