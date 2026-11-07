@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Self
 
 import orjson
 
-from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType
+from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType, LocationData, LocationRestriction, LocationType
 
 if TYPE_CHECKING:
     from BaseClasses import ItemClassification
@@ -81,3 +81,52 @@ class BaseItem(ABC):
     def load(cls, *args: Any, **kwargs: Any) -> tuple[Self, ...]:
         """Every subclass should be able to decide itself where it comes from. Most get filled by data/*.json files."""
 
+
+class BaseLocation(ABC):
+    """
+    Base class for all AP locations.
+
+    See `BaseItem` docstring for more details on how these work.
+    """
+
+    if TYPE_CHECKING:
+
+        @property
+        def ap_id(self) -> int: ...
+
+        @property
+        def name(self) -> str: ...
+
+        @property
+        def location_type(self) -> LocationType: ...
+
+        @property
+        def flag(self) -> int: ...
+
+        @property
+        def rando_flag(self) -> int: ...
+
+        @property
+        def restrictions(self) -> LocationRestriction: ...
+
+    def __init_subclass__(cls, **kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+        # TODO:
+        # for attr in []:
+        #     if not hasattr(cls, attr):
+        #         raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
+
+    def as_location(self) -> LocationData:
+        return LocationData(
+            id=self.ap_id,
+            name=self.name,
+            type=self.location_type,
+            flag=self.flag,
+            rando_flag=self.rando_flag,
+            restrictions=self.restrictions,
+        )
+
+    @classmethod
+    @abstractmethod
+    def load(cls, *args: Any, **kwargs: Any) -> tuple[Self, ...]:
+        """Every subclass should be able to decide itself where it comes from. Most get filled by data/*.json files."""

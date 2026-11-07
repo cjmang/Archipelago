@@ -98,7 +98,7 @@ class LocationType(StrEnum):
 
 
 class LocationRestriction(IntFlag):
-    NONE = 0
+    NONE = 0  # rename to "Unrestricted"
     NoEmpty = auto()
     NoMimic = auto()
     NoSummon = auto()
@@ -113,6 +113,16 @@ class ItemData:
     classification: ItemClassification
     category: ItemCategory
     shuffled: bool
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class LocationData:
+    id: int  # AP item ID
+    name: str  # (or enum?)
+    type: LocationType
+    flag: int  # EWRAM
+    rando_flag: int  # The flag/addr in karanum rando, seems like it can be an ID instead of a flag?
+    restrictions: LocationRestriction
 
 
 class ItemFlag(IntFlag):
