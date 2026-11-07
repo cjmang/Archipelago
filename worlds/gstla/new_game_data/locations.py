@@ -1,5 +1,6 @@
 from abc import ABC
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import NamedTuple
 
 from BaseClasses import MultiWorld
@@ -107,8 +108,39 @@ class BaseLocation(ABC):
         event=True,
     )
 
+
+    Gotta watch out for this one:
+    # A few locations use different flags than stated in the item_locations.json file
+    # E.g. character starting inventories
+    flag_overwrites = {
+        # address: CharacterIndex == hex(address)
+        16384202: 0x4,  # Shaman's Rod -> Felix == 0XFA00CA
+        16384204: 0x6,  # Mind Read -> Sheba == 0XFA00CC
+        16384206: 0x6,  # Whirlwind -> Sheba == 0XFA00CE
+        16384208: 0x4,  # Growth -> Felix == 0XFA00D0
+        16384210: 0x3,  # Carry Stone -> Mia == 0XFA00D2
+        16384212: 0x2,  # Lifting Gem -> Ivan == 0XFA00D4
+        16384214: 0x1,  # Orb of Force -> Garet == 0XFA00D6
+        16384216: 0x0,  # Catch Beads -> Isaac == 0XFA00D8
+        16384218: 0x7,  # Douse Drop -> Piers == 0XFA00DA
+        16384220: 0x7,  # Frost Jewel -> Piers == 0XFA00DC
+    }
+
+
     """
 
     # the index/spot of the "obtained" flag in EWRAM incl. offset
     # also named "rando_flag" in other spots
     rando_flag: int  # previously "rando_flag" (rename to flag_index?)
+
+    flag: int  # EWRAM
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class LocationData:
+    id: int  # AP item ID
+    name: str  # (or enum?)
+    type: LocationType
+    flag: int  # EWRAM
+    rando_flag: int  # The flag/addr in karanum rando, seems like it can be an ID instead of a flag?
+    restrictions: LocationRestriction
