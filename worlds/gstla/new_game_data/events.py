@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from typing import Self
 
 from BaseClasses import ItemClassification
-from worlds.gstla.gstla_types import ItemCategory, ItemType
+from worlds.gstla.gstla_types import ItemCategory, ItemType, LocationRestriction, LocationType
 from worlds.gstla.names import ItemName, LocationName
-from .base import BaseItem
+from .base import BaseItem, BaseLocation
 
 EVENTS: tuple[tuple[int, int, str, str], ...] = (
     # TODO: dedup the other events lists
@@ -58,4 +58,32 @@ class Event(BaseItem):
         return tuple(
             cls(ap_id=ap_id, flag_index=flag_index, location_name=location_name, name=name)
             for ap_id, flag_index, location_name, name in EVENTS
+        )
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class EventLocation(BaseLocation):
+    """
+    Everything here uses the exact same values as the Event item but uses .as_location().
+    Maybe we'll just merge these two in the future.
+    """
+    location_type = LocationType.Event
+
+    # TODO: Why LocationRestriction(7)? wasn't there a NoMoney when this was created?
+    #       see internal_location_data.py
+    restrictions = LocationRestriction.NoEmpty | LocationRestriction.NoMimic | LocationRestriction.NoSummon
+
+    ap_id: int
+    flag: int
+    name: str
+
+    @property
+    def rando_flag(self) -> int:
+        return self.flag
+
+    @classmethod
+    def load(cls) -> tuple[Self, ...]:
+        return tuple(
+            cls(ap_id=ap_id, flag=flag, name=location_name)
+            for ap_id, flag, location_name, _ in EVENTS
         )
