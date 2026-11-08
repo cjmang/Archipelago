@@ -91,7 +91,7 @@ class LocationType(StrEnum):
     Item = 'Item'
     Event = 'Event'
     Djinn = 'Djinn'
-    Psyenergy = 'Psyenergy'
+    Psynergy = 'Psynergy'
     Hidden = 'Hidden'
     Trade = 'Trade'
     Character = 'Character'

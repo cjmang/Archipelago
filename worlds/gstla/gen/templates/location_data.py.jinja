@@ -42,7 +42,7 @@ summon_tablets = [
 psyenergy_locations = [
     {% for psy in psyenergy_locations -%}
     InternalLocationData({{psy.rando_flag}}, {{psy.flag}}, {{psy.id}}, {{psy.addr[0]}}, {{psy.addr}},
-        {{psy.event_type}}, {{psy.vanilla_contents}}, {{psy.is_key_item}}, {{psy.is_major_item}}, LocationType.Psyenergy,
+        {{psy.event_type}}, {{psy.vanilla_contents}}, {{psy.is_key_item}}, {{psy.is_major_item}}, LocationType.Psynergy,
         LocationRestriction({{psy.restrictions}})), # {{psy.vanilla_name}}
     {% endfor %}
 ]
