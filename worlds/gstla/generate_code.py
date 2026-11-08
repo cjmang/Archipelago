@@ -117,6 +117,7 @@ def generate_location_data(env: Environment, data: GameData):
         for loc in remainder:
             if loc.is_hidden:
                 loc_type_lookup[loc.id] = 'Hidden'
+        print(f'{summons_loc=}\n{psy_locs=}\n{djinn_locs=}\n{remainder=}\n{data.events.values()=}\n{loc_type_lookup=}')
         outfile.write(
             template.render(
                 summon_locations=summons_loc,

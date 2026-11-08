@@ -3,6 +3,8 @@ from typing import Self
 
 from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType, TreasureType
 from worlds.gstla.new_game_data.base import BaseLocation, read_json, read_json_dir
+from worlds.gstla.new_game_data.characters import CHARACTER_ITEM_ID_OFFSET
+from worlds.gstla.new_game_data.psynergy import LEARNED_PSYNERGY_MAPPING, PSYNERGY_ITEM_ID_OFFSET
 
 RESTRICTIONS_MAP = {
     'no-empty': LocationRestriction.NoEmpty,
@@ -28,6 +30,14 @@ FLAG_OVERWRITES = {
 
 FREELY_RANDOMIZEABLE_TREASURE_TYPES = frozenset({TreasureType.CHEST, TreasureType.PICKUP})
 RANDO_SLOT_ADDRESS_START = 0xFA0000  # anything above this address are rando-only locations
+TRADE_ITEM_IDS = frozenset(
+    {
+        452,  # Pretty Stone
+        453,  # Red Cloth
+        454,  # Milk
+        455,  # Li'l Turtle
+    }
+)
 
 
 def _load_restrictions() -> dict[int, LocationRestriction]:
@@ -72,13 +82,24 @@ class ChestLocation(BaseLocation):
     is_hidden: bool
     is_key: bool
     is_major: bool
-    location_type: LocationType = LocationType.Item  # TODO: use the right one
     name: str  # TODO: LocationName?
     rando_flag: int
     restrictions: LocationRestriction
     treasure_type: TreasureType
     vanilla_item_id: int
     # there's more data in the data file, but we currently don't use those
+
+    @property
+    def location_type(self) -> LocationType:
+        if self.vanilla_item_id - PSYNERGY_ITEM_ID_OFFSET in LEARNED_PSYNERGY_MAPPING:
+            return LocationType.Psynergy
+        if self.is_hidden:
+            return LocationType.Hidden
+        if self.vanilla_item_id in TRADE_ITEM_IDS:
+            return LocationType.Trade
+        if CHARACTER_ITEM_ID_OFFSET <= self.vanilla_item_id < CHARACTER_ITEM_ID_OFFSET + len(CharacterIndex):
+            return LocationType.Character
+        return LocationType.Item
 
     @classmethod
     def _build_row(cls, entry: dict, explicit_restrictions: LocationRestriction) -> Self:
