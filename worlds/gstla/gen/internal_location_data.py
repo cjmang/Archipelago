@@ -217,25 +217,25 @@ summon_tablets = [
 
 psyenergy_locations = [
     InternalLocationData(2260, 2260, 2260, 16384190, [16384190],
-        132, 3728, True, True, LocationType.Psyenergy,
+        132, 3728, True, True, LocationType.Psynergy,
         LocationRestriction(11)), # Reveal
     InternalLocationData(2478, 2478, 2478, 16384192, [16384192],
-        132, 3722, True, True, LocationType.Psyenergy,
+        132, 3722, True, True, LocationType.Psynergy,
         LocationRestriction(11)), # Parch
     InternalLocationData(2490, 2490, 2490, 16384194, [16384194],
-        132, 3723, True, True, LocationType.Psyenergy,
+        132, 3723, True, True, LocationType.Psynergy,
         LocationRestriction(11)), # Sand
     InternalLocationData(2554, 2554, 2554, 16384196, [16384196],
-        132, 3738, True, True, LocationType.Psyenergy,
+        132, 3738, True, True, LocationType.Psynergy,
         LocationRestriction(11)), # Blaze
     InternalLocationData(2, 6, 2, 16384204, [16384204],
-        132, 3725, True, True, LocationType.Psyenergy,
+        132, 3725, True, True, LocationType.Psynergy,
         LocationRestriction(15)), # Mind Read
     InternalLocationData(3, 6, 3, 16384206, [16384206],
-        132, 3662, True, True, LocationType.Psyenergy,
+        132, 3662, True, True, LocationType.Psynergy,
         LocationRestriction(15)), # Whirlwind
     InternalLocationData(4, 4, 4, 16384208, [16384208],
-        132, 3596, True, True, LocationType.Psyenergy,
+        132, 3596, True, True, LocationType.Psynergy,
         LocationRestriction(15)), # Growth
     
 ]
