@@ -4,74 +4,6 @@ from typing import Self
 from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType, TreasureType
 from worlds.gstla.new_game_data.base import BaseLocation, read_json, read_json_dir
 
-"""
-Examples:
-# Djinn (Flint)
-InternalLocationData(
-    rando_flag=48,
-    flag=48,
-    id=16384000,
-    ap_id=16384000,
-    addresses=[16384000],
-    event_type=128,
-    vanilla_contents=0,
-    is_key=True,
-    is_major=True,
-    loc_type=LocationType.Djinn,
-    restrictions=LocationRestriction.NONE,
-    event=False,
-)
-
-# Summon tablet (Moloch)
-InternalLocationData(
-    rando_flag=19,
-    flag=19,
-    id=19,
-    ap_id=992068,
-    addresses=[992068],
-    event_type=132,
-    vanilla_contents=3859,
-    is_key=True,
-    is_major=True,
-    loc_type=LocationType.Item,
-    restrictions=LocationRestriction(0),
-    event=False,
-),
-
-# Psynergy (Reveal)
-InternalLocationData(
-    rando_flag=2260,
-    flag=2260,
-    id=2260,
-    ap_id=16384190,
-    addresses=[16384190],
-    event_type=132,
-    vanilla_contents=3728,
-    is_key=True,
-    is_major=True,
-    loc_type=LocationType.Psyenergy,
-    restrictions=LocationRestriction(11),
-    event=False,
-)
-
-# Mars Lighthouse - Doom Dragon Doom Dragon Defeated
-InternalLocationData(
-    rando_flag=1912,
-    flag=1912,
-    id=5001,
-    ap_id=5001,
-    addresses=[0],
-    event_type=0,
-    vanilla_contents=5001,
-    is_key=True,
-    is_major=True,
-    loc_type=LocationType.Event,
-    restrictions=LocationRestriction(7),
-    event=True,
-)
-
-"""
-
 RESTRICTIONS_MAP = {
     'no-empty': LocationRestriction.NoEmpty,
     'no-mimic': LocationRestriction.NoMimic,
@@ -79,8 +11,8 @@ RESTRICTIONS_MAP = {
     'no-money': LocationRestriction.NoMoney,
 }
 
-# A few locations use different flags than stated in the item_locations.json file
-# E.g. character starting inventories
+# Since some items/psynergies are normally obtained once you recruit a character,
+# we'll have to map some of those items to non-vanilla flags.
 FLAG_OVERWRITES = {
     0xFA00CA: CharacterIndex.FELIX,  # Shaman's Rod
     0xFA00CC: CharacterIndex.SHEBA,  # Mind Read
@@ -94,13 +26,31 @@ FLAG_OVERWRITES = {
     0xFA00DC: CharacterIndex.PIERS,  # Frost Jewel
 }
 
+FREELY_RANDOMIZEABLE_TREASURE_TYPES = frozenset({TreasureType.CHEST, TreasureType.PICKUP})
+RANDO_SLOT_ADDRESS_START = 0xFA0000  # anything above this address are rando-only locations
+
 
 def _load_restrictions() -> dict[int, LocationRestriction]:
     restrictions: dict[int, LocationRestriction] = {}
-    for area in read_json_dir('data/location_logic').values():
-        for loc in area:
+    for area_data in read_json_dir('data/location_logic').values():
+        for loc in area_data['Treasure']:
             rando_flag = int(loc['Addr'], 16)
-            restrictions[rando_flag] = LocationRestriction(sum(RESTRICTIONS_MAP[res] for res in loc['Restriction']))
+            restrictions[rando_flag] = LocationRestriction(
+                sum(RESTRICTIONS_MAP[res] for res in loc.get('Restriction', []))
+            )
+    return restrictions
+
+
+def _implicit_restrictions(ap_id: int, treasure_type: TreasureType) -> LocationRestriction:
+    restrictions = LocationRestriction.NONE
+    if treasure_type not in FREELY_RANDOMIZEABLE_TREASURE_TYPES:
+        restrictions |= LocationRestriction.NoEmpty | LocationRestriction.NoMimic
+    if ap_id > RANDO_SLOT_ADDRESS_START:
+        restrictions |= LocationRestriction.NoMoney
+    if ap_id in FLAG_OVERWRITES:
+        # TODO: I think the previous "loc['id'] < 0x10 or (loc['id'] | 0xF00) == 0x100" line before never fully worked?
+        #       Wouldn't (loc['id'] | 0xF00) always equal loc['id']?
+        restrictions |= LocationRestriction.NoEmpty | LocationRestriction.NoMimic | LocationRestriction.NoMoney
     return restrictions
 
 
@@ -117,8 +67,6 @@ class ChestLocation(BaseLocation):
         TODO: Maybe we should have some kind of constant values for these?
     """
 
-    restrictions = LocationRestriction.NoEmpty | LocationRestriction.NoMimic | LocationRestriction.NoSummon
-
     ap_id: int
     flag: int  # EWRAM
     is_hidden: bool
@@ -127,30 +75,36 @@ class ChestLocation(BaseLocation):
     location_type: LocationType = LocationType.Item  # TODO: use the right one
     name: str  # TODO: LocationName?
     rando_flag: int
+    restrictions: LocationRestriction
     treasure_type: TreasureType
     vanilla_item_id: int
     # there's more data in the data file, but we currently don't use those
 
     @classmethod
-    def _build_row(cls, entry: dict) -> Self:
+    def _build_row(cls, entry: dict, explicit_restrictions: LocationRestriction) -> Self:
+        ap_id = entry['addr']
+        rando_flag = entry['id']  # also matches the key of the item_locations.json entry
+        treasure_type = TreasureType(entry['eventType'])
         return cls(
-            ap_id=entry['addr'],
-            flag=FLAG_OVERWRITES.get(entry['addr'], entry['id']),
+            ap_id=ap_id,
+            flag=FLAG_OVERWRITES.get(ap_id, rando_flag),
             is_hidden=entry['isHidden'],
             is_key=entry['isKeyItem'],
             is_major=entry['isMajorItem'],
             name=entry['vanillaName'],
-            rando_flag=entry['id'],  # also matches the key of the item_locations.json entry
-            treasure_type=TreasureType(entry['eventType']),
+            rando_flag=rando_flag,
+            restrictions=explicit_restrictions | _implicit_restrictions(ap_id, treasure_type),
+            treasure_type=treasure_type,
             vanilla_item_id=entry['vanillaContents'],
         )
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
+        restrictions = _load_restrictions()
         rows = []
         for loc in read_json('data/item_locations.json').values():
             loc = loc[0]  # see docstring
-            row = cls._build_row(loc)
+            row = cls._build_row(loc, restrictions[loc['id']])
             rows.append(row)
 
         return tuple(rows)
