@@ -1,43 +1,8 @@
-from collections.abc import Callable
-from typing import NamedTuple
+from dataclasses import dataclass
+from typing import Self
 
-from BaseClasses import MultiWorld
-from worlds.gstla.gen.internal_location_data import always_on
 from worlds.gstla.gstla_types import LocationRestriction, LocationType
-
-
-class LocationDatum(NamedTuple):
-    flag: int
-    map_id: int
-    locked: bool
-    is_summon: bool
-    is_key_item: bool
-    is_major_item: bool
-    is_hidden: bool
-    addr: list[int]
-    event_type: int
-    location_id: int
-    id: int
-    vanilla_contents: int
-    vanilla_name: str
-    map_name: str
-    restrictions: int
-
-
-class InternalLocationData(NamedTuple):
-    flag: int
-    id: int | None
-    ap_id: int
-    addresses: list[int]
-    event_type: int
-    vanilla_contents: int
-    is_key: bool
-    is_major: bool
-    loc_type: LocationType = LocationType.Item
-    restrictions: LocationRestriction = LocationRestriction.NONE
-    event: bool = False
-    included: Callable[[MultiWorld, int], bool] = always_on
-
+from worlds.gstla.new_game_data.base import BaseLocation, read_json
 
 """
 Examples:
@@ -123,3 +88,62 @@ flag_overwrites = {
     16384220: 0x7,  # Frost Jewel -> Piers == 0XFA00DC
 }
 """
+
+RESTRICTIONS_MAP = {
+    'no-empty': LocationRestriction.NoEmpty,
+    'no-mimic': LocationRestriction.NoMimic,
+    'no-summon': LocationRestriction.NoSummon,
+    'no-money': LocationRestriction.NoMoney,
+}
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ChestLocation(BaseLocation):
+    """
+
+    Note:
+        There are some locations that have two entries in item_locations.json.
+        For example "0xf57", which is an "Oil Drop" in "Lemurian Ship".
+        These are just two different versions of the same chest. We can never open both.
+        We're only using the *first* entry. The ap_id is therefore that first entries' "addr".
+        If the rando ever decides to swap those values, it'll change the datapackage and break the PopTracker.
+        TODO: Maybe we should have some kind of constant values for these?
+    """
+
+    restrictions = LocationRestriction.NoEmpty | LocationRestriction.NoMimic | LocationRestriction.NoSummon
+
+    ap_id: int
+    event_type: int
+    flag: int  # EWRAM
+    is_hidden: bool
+    is_key: bool
+    is_major: bool
+    location_type: LocationType = LocationType.Item  # TODO: use the right one
+    name: str  # TODO: LocationName?
+    rando_flag: int
+    vanilla_item_id: int
+    # there's more data in the data file, but we currently don't use those
+
+    @classmethod
+    def _build_row(cls, entry: dict) -> Self:
+        return cls(
+            ap_id=entry['addr'],
+            event_type=entry['eventType'],
+            flag=entry['id'],  # TODO: Pretty sure we need to overwrite some of these
+            is_hidden=entry['isHidden'],
+            is_key=entry['isKeyItem'],
+            is_major=entry['isMajorItem'],
+            name=entry['vanillaName'],
+            rando_flag=entry['id'],  # also matches the key of the item_locations.json entry
+            vanilla_item_id=entry['vanillaContents'],
+        )
+
+    @classmethod
+    def load(cls) -> tuple[Self, ...]:
+        rows = []
+        for loc in read_json('data/item_locations.json').values():
+            loc = loc[0]  # see docstring
+            row = cls._build_row(loc)
+            rows.append(row)
+
+        return tuple(rows)
