@@ -26,6 +26,8 @@ UNUSED_PSYNERGIES = [
     PsynergyID.HALT,
 ]
 
+PSYNERGY_ITEM_ID_OFFSET = 0xE00
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LearnedPsynergy(BaseItem):
@@ -38,7 +40,7 @@ class LearnedPsynergy(BaseItem):
 
     @property
     def ap_id(self) -> int:
-        return 0xE00 + self.ability_id
+        return PSYNERGY_ITEM_ID_OFFSET + self.ability_id
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
@@ -56,7 +58,7 @@ class PsynergyItem(BaseItem):
 
     @property
     def ap_id(self) -> int:
-        return 0xE00 + self.ability_id
+        return PSYNERGY_ITEM_ID_OFFSET + self.ability_id
 
     @property
     def shuffled(self) -> bool:

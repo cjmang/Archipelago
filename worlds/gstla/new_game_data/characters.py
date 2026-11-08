@@ -5,6 +5,8 @@ from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import CharacterIndex, ItemCategory, ItemType
 from .base import BaseItem
 
+CHARACTER_ITEM_ID_OFFSET = 0xD00
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Character(BaseItem):
@@ -18,7 +20,7 @@ class Character(BaseItem):
 
     @property
     def ap_id(self) -> int:
-        return 0xD00 + self.index
+        return CHARACTER_ITEM_ID_OFFSET + self.index
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
