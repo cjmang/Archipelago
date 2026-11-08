@@ -179,6 +179,6 @@ class TreasureType(IntEnum):
     BOX = 0xD  # 13
     CHEST = 0x80  # 128
     MIMIC_CHEST = 0x81  # 129
-    BURIED = 0x83  # 131 (via scoop & cyclone)
+    FIELD_ITEM = 0x83  # 131 (via scoop, cyclone, on a pedestal like the "Center prong", ...)
     PICKUP = 0x84  # 132 (chars, summon tablets, psynergy)
     SUNKEN = 0x85  # 133 (rusty gear)
