@@ -4,6 +4,7 @@ from typing import Self
 from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType, TreasureType
 from worlds.gstla.new_game_data.base import BaseLocation, read_json, read_json_dir
 from worlds.gstla.new_game_data.characters import CHARACTER_ITEM_ID_OFFSET
+from worlds.gstla.new_game_data.location_names import loc_names_by_id
 from worlds.gstla.new_game_data.psynergy import LEARNED_PSYNERGY_MAPPING, PSYNERGY_ITEM_ID_OFFSET
 
 RESTRICTIONS_MAP = {
@@ -82,7 +83,7 @@ class ChestLocation(BaseLocation):
     is_hidden: bool
     is_key: bool
     is_major: bool
-    name: str  # TODO: LocationName?
+    name: str
     rando_flag: int
     restrictions: LocationRestriction
     treasure_type: TreasureType
@@ -112,7 +113,7 @@ class ChestLocation(BaseLocation):
             is_hidden=entry['isHidden'],
             is_key=entry['isKeyItem'],
             is_major=entry['isMajorItem'],
-            name=entry['vanillaName'],
+            name=loc_names_by_id[ap_id],
             rando_flag=rando_flag,
             restrictions=explicit_restrictions | _implicit_restrictions(ap_id, treasure_type),
             treasure_type=treasure_type,
