@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Self
 
-from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType
-from worlds.gstla.new_game_data.base import BaseLocation, read_json
+from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType, TreasureType
+from worlds.gstla.new_game_data.base import BaseLocation, read_json, read_json_dir
 
 """
 Examples:
@@ -95,6 +95,15 @@ FLAG_OVERWRITES = {
 }
 
 
+def _load_restrictions() -> dict[int, LocationRestriction]:
+    restrictions: dict[int, LocationRestriction] = {}
+    for area in read_json_dir('data/location_logic').values():
+        for loc in area:
+            rando_flag = int(loc['Addr'], 16)
+            restrictions[rando_flag] = LocationRestriction(sum(RESTRICTIONS_MAP[res] for res in loc['Restriction']))
+    return restrictions
+
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ChestLocation(BaseLocation):
     """
@@ -111,7 +120,6 @@ class ChestLocation(BaseLocation):
     restrictions = LocationRestriction.NoEmpty | LocationRestriction.NoMimic | LocationRestriction.NoSummon
 
     ap_id: int
-    event_type: int
     flag: int  # EWRAM
     is_hidden: bool
     is_key: bool
@@ -119,6 +127,7 @@ class ChestLocation(BaseLocation):
     location_type: LocationType = LocationType.Item  # TODO: use the right one
     name: str  # TODO: LocationName?
     rando_flag: int
+    treasure_type: TreasureType
     vanilla_item_id: int
     # there's more data in the data file, but we currently don't use those
 
@@ -126,13 +135,13 @@ class ChestLocation(BaseLocation):
     def _build_row(cls, entry: dict) -> Self:
         return cls(
             ap_id=entry['addr'],
-            event_type=entry['eventType'],
             flag=FLAG_OVERWRITES.get(entry['addr'], entry['id']),
             is_hidden=entry['isHidden'],
             is_key=entry['isKeyItem'],
             is_major=entry['isMajorItem'],
             name=entry['vanillaName'],
             rando_flag=entry['id'],  # also matches the key of the item_locations.json entry
+            treasure_type=TreasureType(entry['eventType']),
             vanilla_item_id=entry['vanillaContents'],
         )
 
