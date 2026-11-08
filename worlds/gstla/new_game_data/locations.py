@@ -81,8 +81,6 @@ class ChestLocation(BaseLocation):
     ap_id: int
     flag: int  # EWRAM
     is_hidden: bool
-    is_key: bool
-    is_major: bool
     name: str
     rando_flag: int
     restrictions: LocationRestriction
@@ -111,8 +109,6 @@ class ChestLocation(BaseLocation):
             ap_id=ap_id,
             flag=FLAG_OVERWRITES.get(ap_id, rando_flag),
             is_hidden=entry['isHidden'],
-            is_key=entry['isKeyItem'],
-            is_major=entry['isMajorItem'],
             name=loc_names_by_id[ap_id],
             rando_flag=rando_flag,
             restrictions=explicit_restrictions | _implicit_restrictions(ap_id, treasure_type),
