@@ -169,3 +169,16 @@ class ElementType(IntEnum):
     Water = 1
     Fire = 2
     Air = 3
+
+
+class TreasureType(IntEnum):
+    # matches the eventType in item_locations.json
+    JAR = 0x2  # 2
+    BARREL = 0x3  # 3
+    GRAVE = 0x8  # 8
+    BOX = 0xD  # 13
+    CHEST = 0x80  # 128
+    MIMIC_CHEST = 0x81  # 129
+    BURIED = 0x83  # 131 (via scoop & cyclone)
+    PICKUP = 0x84  # 132 (chars, summon tablets, psynergy)
+    SUNKEN = 0x85  # 133 (rusty gear)
