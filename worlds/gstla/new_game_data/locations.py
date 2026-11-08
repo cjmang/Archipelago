@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Self
 
-from worlds.gstla.gstla_types import LocationRestriction, LocationType
+from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType
 from worlds.gstla.new_game_data.base import BaseLocation, read_json
 
 """
@@ -70,23 +70,6 @@ InternalLocationData(
     event=True,
 )
 
-
-Gotta watch out for this one:
-# A few locations use different flags than stated in the item_locations.json file
-# E.g. character starting inventories
-flag_overwrites = {
-    # address: CharacterIndex == hex(address)
-    16384202: 0x4,  # Shaman's Rod -> Felix == 0XFA00CA
-    16384204: 0x6,  # Mind Read -> Sheba == 0XFA00CC
-    16384206: 0x6,  # Whirlwind -> Sheba == 0XFA00CE
-    16384208: 0x4,  # Growth -> Felix == 0XFA00D0
-    16384210: 0x3,  # Carry Stone -> Mia == 0XFA00D2
-    16384212: 0x2,  # Lifting Gem -> Ivan == 0XFA00D4
-    16384214: 0x1,  # Orb of Force -> Garet == 0XFA00D6
-    16384216: 0x0,  # Catch Beads -> Isaac == 0XFA00D8
-    16384218: 0x7,  # Douse Drop -> Piers == 0XFA00DA
-    16384220: 0x7,  # Frost Jewel -> Piers == 0XFA00DC
-}
 """
 
 RESTRICTIONS_MAP = {
@@ -94,6 +77,21 @@ RESTRICTIONS_MAP = {
     'no-mimic': LocationRestriction.NoMimic,
     'no-summon': LocationRestriction.NoSummon,
     'no-money': LocationRestriction.NoMoney,
+}
+
+# A few locations use different flags than stated in the item_locations.json file
+# E.g. character starting inventories
+FLAG_OVERWRITES = {
+    0xFA00CA: CharacterIndex.FELIX,  # Shaman's Rod
+    0xFA00CC: CharacterIndex.SHEBA,  # Mind Read
+    0xFA00CE: CharacterIndex.SHEBA,  # Whirlwind
+    0xFA00D0: CharacterIndex.FELIX,  # Growth
+    0xFA00D2: CharacterIndex.MIA,  # Carry Stone
+    0xFA00D4: CharacterIndex.IVAN,  # Lifting Gem
+    0xFA00D6: CharacterIndex.GARET,  # Orb of Force
+    0xFA00D8: CharacterIndex.ISAAC,  # Catch Beads
+    0xFA00DA: CharacterIndex.PIERS,  # Douse Drop
+    0xFA00DC: CharacterIndex.PIERS,  # Frost Jewel
 }
 
 
@@ -129,7 +127,7 @@ class ChestLocation(BaseLocation):
         return cls(
             ap_id=entry['addr'],
             event_type=entry['eventType'],
-            flag=entry['id'],  # TODO: Pretty sure we need to overwrite some of these
+            flag=FLAG_OVERWRITES.get(entry['addr'], entry['id']),
             is_hidden=entry['isHidden'],
             is_key=entry['isKeyItem'],
             is_major=entry['isMajorItem'],
