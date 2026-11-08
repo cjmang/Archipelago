@@ -3,8 +3,8 @@ from typing import Self
 
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ElementType, ItemCategory, ItemType, LocationRestriction, LocationType
-from worlds.gstla.names import LocationName
 from .base import BaseItem, BaseLocation, read_json
+from .location_names import loc_names_by_id
 
 # TODO: merge the constants below with the stuff from somewhere else:
 #       _DataLocations.DJINN_FLAGS, client._load_djinn()
@@ -97,7 +97,7 @@ class DjinnLocation(BaseLocation):
         # Note: Item and Location names are a bit different:
         # Item name: "Flint"
         # Location name: "4th Party Member - Venus Djinni Flint" (from LocationName.Flint)
-        return getattr(LocationName, self.djinn.name)
+        return loc_names_by_id[self.ap_id]
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
