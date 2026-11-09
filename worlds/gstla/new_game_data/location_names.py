@@ -445,6 +445,3 @@ loc_names_by_id: dict[int, str] = {
     16384140: LocationName.Lull,
     16384142: LocationName.Gale,
 }
-
-ids_by_loc_name: dict[str, int] = {name: ap_id for ap_id, name in loc_names_by_id.items()}
-assert len(ids_by_loc_name) == len(loc_names_by_id), 'two AP ids share a location name'
