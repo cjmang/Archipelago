@@ -18,7 +18,7 @@ from .gen.location_data import (
 )
 from .gen.location_names import loc_names_by_id, option_name_to_goal_name
 from .gstla_types import ItemType, LocationType
-from .locations import remote_blacklist
+from .locations import get_remote_blacklist
 from .names import LocationName
 from .new_game_data.loader import load_game_data
 
@@ -308,7 +308,7 @@ class GSTLAClient(BizHawkClient):
         # self.starting_items: StartingItemHandler = StartingItemHandler(dict())
         self.was_in_game: bool = False
         self.coop: int = 0
-        self.remote_blacklist: set[int] = remote_blacklist
+        self.remote_blacklist: set[int] = get_remote_blacklist()
         self.goals = GoalManager()
         self.last_map: int = 0
         self.last_entrance: int = 0
