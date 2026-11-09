@@ -2,6 +2,7 @@
 # to be changed, either change the template, or the code leveraging the template.
 from typing import Dict
 class InternalLocationName:
+    # TODO: obsolete. delete.
     ##hiddenItems
     Daila_Herb = "Daila - North-East Jar"
     Daila_Smoke_Bomb = "Daila - South-West Barrel"

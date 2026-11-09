@@ -1,15 +1,10 @@
-# TODO: Is this obsolete? It's never used anywhere. Only .gen.item_names is.
-
-
 class ItemName:
-    ##KeyItem
-    Empty = '???'
+    # Consumable
+    Empty = 'Empty'
     Herb = 'Herb'
     Nut = 'Nut'
     Vial = 'Vial'
     Potion = 'Potion'
-    Hermes_Water = "Hermes' Water"
-    Empty_Bottle = 'Empty Bottle'
     Psy_Crystal = 'Psy Crystal'
     Antidote = 'Antidote'
     Elixir = 'Elixir'
@@ -21,19 +16,13 @@ class ItemName:
     Hard_Nut = 'Hard Nut'
     Mint = 'Mint'
     Lucky_Pepper = 'Lucky Pepper'
-    Small_Jewel = 'Small Jewel'
     Smoke_Bomb = 'Smoke Bomb'
     Sleep_Bomb = 'Sleep Bomb'
     Game_Ticket = 'Game Ticket'
     Lucky_Medal = 'Lucky Medal'
-    Dragons_Eye = "Dragon's Eye"
     Bone = 'Bone'
-    Anchor_Charm = 'Anchor Charm'
     Corn = 'Corn'
-    Cell_Key = 'Cell Key'
-    Boat_Ticket = 'Boat Ticket'
     Sacred_Feather = 'Sacred Feather'
-    Mystic_Draught = 'Mystic Draught'
     Oil_Drop = 'Oil Drop'
     Weasels_Claw = "Weasel's Claw"
     Bramble_Seed = 'Bramble Seed'
@@ -55,19 +44,36 @@ class ItemName:
     Center_Prong = 'Center Prong'
     Healing_Fungus = 'Healing Fungus'
     Laughing_Fungus = 'Laughing Fungus'
-    Signal_Whistle = 'Signal Whistle'
     Dancing_Idol = 'Dancing Idol'
     Pretty_Stone = 'Pretty Stone'
     Red_Cloth = 'Red Cloth'
     Milk = 'Milk'
     Lil_Turtle = "Li'l Turtle"
     Aquarius_Stone = 'Aquarius Stone'
-    Large_Bread = 'Large Bread'
     Sea_Gods_Tear = "Sea God's Tear"
     Ruin_Key = 'Ruin Key'
     Magma_Ball = 'Magma Ball'
+    Coins_3 = 'Coins 3'
+    Coins_12 = 'Coins 12'
+    Coins_15 = 'Coins 15'
+    Coins_315 = 'Coins 315'
+    Coins_32 = 'Coins 32'
+    Coins_123 = 'Coins 123'
+    Coins_777 = 'Coins 777'
+    Coins_82 = 'Coins 82'
+    Coins_666 = 'Coins 666'
+    Coins_18 = 'Coins 18'
+    Coins_16 = 'Coins 16'
+    Coins_182 = 'Coins 182'
+    Coins_210 = 'Coins 210'
+    Coins_365 = 'Coins 365'
+    Coins_166 = 'Coins 166'
+    Coins_161 = 'Coins 161'
+    Coins_911 = 'Coins 911'
+    Coins_306 = 'Coins 306'
+    Coins_383 = 'Coins 383'
 
-    ##Weapon
+    # Weapon
     Long_Sword = 'Long Sword'
     Broad_Sword = 'Broad Sword'
     Claymore = 'Claymore'
@@ -168,19 +174,19 @@ class ItemName:
     Lachesis_Rule = "Lachesis' Rule"
     Clothos_Distaff = "Clotho's Distaff"
     Staff_of_Anubis = 'Staff of Anubis'
-    Rusty_Sword_CorsairsEdge = "Rusty Sword - Corsair's Edge"
     Rusty_Sword_RobbersBlade = "Rusty Sword - Robber's Blade"
-    Rusty_Sword_PiratesSabre = "Rusty Sword - Pirate's Sabre"
     Rusty_Sword_SoulBrand = 'Rusty Sword - Soul Brand'
+    Rusty_Sword_CorsairsEdge = "Rusty Sword - Corsair's Edge"
+    Rusty_Sword_PiratesSabre = "Rusty Sword - Pirate's Sabre"
     Rusty_Axe_CaptainsAxe = "Rusty Axe - Captain's Axe"
     Rusty_Axe_VikingAxe = 'Rusty Axe - Viking Axe'
-    Rusty_Mace_HagboneMace = 'Rusty Mace - Hagbone Mace'
     Rusty_Mace_DemonMace = 'Rusty Mace - Demon Mace'
+    Rusty_Mace_HagboneMace = 'Rusty Mace - Hagbone Mace'
     Rusty_Staff_Dracomace = 'Rusty Staff - Dracomace'
     Rusty_Staff_GlowerStaff = 'Rusty Staff - Glower Staff'
     Rusty_Staff_GoblinsRod = "Rusty Staff - Goblin's Rod"
 
-    ##Armor
+    # Armor
     Leather_Armor = 'Leather Armor'
     Psynergy_Armor = 'Psynergy Armor'
     Chain_Mail = 'Chain Mail'
@@ -236,20 +242,20 @@ class ItemName:
     Aeolian_Cassock = 'Aeolian Cassock'
     Iris_Robe = 'Iris Robe'
 
-    ##Shield
+    # Shield
     Wooden_Shield = 'Wooden Shield'
     Bronze_Shield = 'Bronze Shield'
     Iron_Shield = 'Iron Shield'
     Knights_Shield = "Knight's Shield"
     Mirrored_Shield = 'Mirrored Shield'
-    Dragon_Shield = 'Dragon Shield'
+    Dragon_Shield_GS = 'Dragon Shield GS'
     Earth_Shield = 'Earth Shield'
     Padded_Gloves = 'Padded Gloves'
     Leather_Gloves = 'Leather Gloves'
     Gauntlets = 'Gauntlets'
     Vambrace = 'Vambrace'
     War_Gloves = 'War Gloves'
-    Spirit_Gloves = 'Spirit Gloves'
+    Spirit_Gloves_GS = 'Spirit Gloves GS'
     Battle_Gloves = 'Battle Gloves'
     Aura_Gloves = 'Aura Gloves'
     Leather_Armlet = 'Leather Armlet'
@@ -278,7 +284,7 @@ class ItemName:
     Jesters_Armlet = "Jester's Armlet"
     Ledas_Bracelet = "Leda's Bracelet"
 
-    ##Helm
+    # Helm
     Open_Helm = 'Open Helm'
     Bronze_Helm = 'Bronze Helm'
     Iron_Helm = 'Iron Helm'
@@ -324,7 +330,20 @@ class ItemName:
     Brilliant_Circlet = 'Brilliant Circlet'
     Berserker_Band = 'Berserker Band'
 
-    ##PsyenergyItem
+    # Boots
+    Hyper_Boots = 'Hyper Boots'
+    Quick_Boots = 'Quick Boots'
+    Fur_Boots = 'Fur Boots'
+    Turtle_Boots = 'Turtle Boots'
+    Leather_Boots = 'Leather Boots'
+    Dragon_Boots = 'Dragon Boots'
+    Safety_Boots = 'Safety Boots'
+    Knights_Greave = "Knight's Greave"
+    Silver_Greave = 'Silver Greave'
+    Ninja_Sandals = 'Ninja Sandals'
+    Golden_Boots = 'Golden Boots'
+
+    # PsyenergyItem
     Lash_Pebble = 'Lash Pebble'
     Pound_Cube = 'Pound Cube'
     Orb_of_Force = 'Orb of Force'
@@ -343,36 +362,10 @@ class ItemName:
     Hover_Jade = 'Hover Jade'
     Teleport_Lapis = 'Teleport Lapis'
 
-    ##ElementalStar
-    Venus_Star = 'Venus Star'
-    Mercury_Star = 'Mercury Star'
-    Mythril_Bag = 'Mythril Bag'
-    Jupiter_Star = 'Jupiter Star'
-    Mars_Star = 'Mars Star'
+    # Trident
+    Trident = 'Trident'
 
-    ##Shirt
-    Mythril_Shirt = 'Mythril Shirt'
-    Silk_Shirt = 'Silk Shirt'
-    Running_Shirt = 'Running Shirt'
-    Divine_Camisole = 'Divine Camisole'
-    Herbed_Shirt = 'Herbed Shirt'
-    Golden_Shirt = 'Golden Shirt'
-    Casual_Shirt = 'Casual Shirt'
-
-    ##Boots
-    Hyper_Boots = 'Hyper Boots'
-    Quick_Boots = 'Quick Boots'
-    Fur_Boots = 'Fur Boots'
-    Turtle_Boots = 'Turtle Boots'
-    Leather_Boots = 'Leather Boots'
-    Dragon_Boots = 'Dragon Boots'
-    Safety_Boots = 'Safety Boots'
-    Knights_Greave = "Knight's Greave"
-    Silver_Greave = 'Silver Greave'
-    Ninja_Sandals = 'Ninja Sandals'
-    Golden_Boots = 'Golden Boots'
-
-    ##Ring
+    # Ring
     Adept_Ring = 'Adept Ring'
     War_Ring = 'War Ring'
     Sleep_Ring = 'Sleep Ring'
@@ -388,15 +381,66 @@ class ItemName:
     Guardian_Ring = 'Guardian Ring'
     Golden_Ring = 'Golden Ring'
 
-    ##Trident
-    Trident = 'Trident'
+    # Shirt
+    Mythril_Shirt = 'Mythril Shirt'
+    Silk_Shirt = 'Silk Shirt'
+    Running_Shirt = 'Running Shirt'
+    Divine_Camisole = 'Divine Camisole'
+    Herbed_Shirt = 'Herbed Shirt'
+    Golden_Shirt = 'Golden Shirt'
+    Casual_Shirt = 'Casual Shirt'
 
-    ##ClassItem
+    # Class
     Mysterious_Card = 'Mysterious Card'
     Trainers_Whip = "Trainer's Whip"
     Tomegathericon = 'Tomegathericon'
 
-    ##psyenergy
+    # KeyItem
+    Mars_Star = 'Mars Star'
+
+    # Mimic
+    Milquetoast_Mimic = 'Milquetoast Mimic'
+    Clumsy_Mimic = 'Clumsy Mimic'
+    Mimic = 'Mimic'
+    Journeyman_Mimic = 'Journeyman Mimic'
+    Advanced_Mimic = 'Advanced Mimic'
+    Sacred_Mimic = 'Sacred Mimic'
+    Royal_Mimic = 'Royal Mimic'
+    Imperial_Mimic = 'Imperial Mimic'
+    Divine_Mimic = 'Divine Mimic'
+
+    # Summons
+    Venus = 'Venus'
+    Mercury = 'Mercury'
+    Mars = 'Mars'
+    Jupiter = 'Jupiter'
+    Ramses = 'Ramses'
+    Nereid = 'Nereid'
+    Kirin = 'Kirin'
+    Atalanta = 'Atalanta'
+    Cybele = 'Cybele'
+    Neptune = 'Neptune'
+    Tiamat = 'Tiamat'
+    Procne = 'Procne'
+    Judgment = 'Judgment'
+    Boreas = 'Boreas'
+    Meteor = 'Meteor'
+    Thor = 'Thor'
+    Zagan = 'Zagan'
+    Megaera = 'Megaera'
+    Flora = 'Flora'
+    Moloch = 'Moloch'
+    Ulysses = 'Ulysses'
+    Haures = 'Haures'
+    Eclipse = 'Eclipse'
+    Coatlique = 'Coatlique'
+    Daedalus = 'Daedalus'
+    Azul = 'Azul'
+    Catastrophe = 'Catastrophe'
+    Charon = 'Charon'
+    Iris = 'Iris'
+
+    # Psynergy
     Growth = 'Growth'
     Whirlwind = 'Whirlwind'
     Parch = 'Parch'
@@ -405,18 +449,7 @@ class ItemName:
     Reveal = 'Reveal'
     Blaze = 'Blaze'
 
-    Ship = 'Ship'
-    Victory = 'Victory'
-    Gabombo_Statue_Completed = 'Gabombo Statue Completed'
-    Briggs_defeated = 'Briggs defeated'
-    Briggs_escaped = 'Briggs escaped'
-    Serpent_defeated = 'Serpent defeated'
-    Poseidon_defeated = 'Poseidon defeated'
-    Aqua_Hydra_defeated = 'Aqua Hydra defeated'
-    Moapa_defeated = 'Moapa defeated'
-    Jupiter_Beacon_Lit = 'Jupiter Beacon Lit'
-    Flamedragons_defeated = 'Flame Dragons - defeated'
-
+    # Djinn
     Flint = 'Flint'
     Granite = 'Granite'
     Quartz = 'Quartz'
@@ -435,7 +468,6 @@ class ItemName:
     Geode = 'Geode'
     Mold = 'Mold'
     Crystal = 'Crystal'
-
     Fizz = 'Fizz'
     Sleet = 'Sleet'
     Mist = 'Mist'
@@ -454,7 +486,6 @@ class ItemName:
     Eddy = 'Eddy'
     Balm = 'Balm'
     Serac = 'Serac'
-
     Forge = 'Forge'
     Fever = 'Fever'
     Corona = 'Corona'
@@ -473,7 +504,6 @@ class ItemName:
     Shine = 'Shine'
     Fury = 'Fury'
     Fugue = 'Fugue'
-
     Gust = 'Gust'
     Breeze = 'Breeze'
     Zephyr = 'Zephyr'
@@ -493,16 +523,36 @@ class ItemName:
     Lull = 'Lull'
     Gale = 'Gale'
 
-    Moloch = 'Moloch'
-    Daedalus = 'Daedalus'
-    Flora = 'Flora'
-    Ulysses = 'Ulysses'
-    Azul = 'Azul'
-    Zagan = 'Zagan'
-    Megaera = 'Megaera'
-    Haures = 'Haures'
-    Coatlicue = 'Coatlicue'
-    Catastrophe = 'Catastrophe'
-    Charon = 'Charon'
-    Iris = 'Iris'
-    Eclipse = 'Eclipse'
+    # Events
+    Doom_Dragon_Defeated = 'Doom Dragon Defeated'
+    Briggs_defeated = 'Briggs defeated'
+    Briggs_escaped = 'Briggs escaped'
+    Gabomba_Statue_Completed = 'Gabomba Statue Completed'
+    Serpent_defeated = 'Serpent defeated'
+    Poseidon_defeated = 'Poseidon defeated'
+    Aqua_Hydra_defeated = 'Aqua Hydra defeated'
+    Moapa_defeated = 'Moapa defeated'
+    Jupiter_Beacon_Lit = 'Jupiter Beacon Lit'
+    Flame_Dragons_defeated = 'Flame Dragons - defeated'
+    Ship = 'Ship'
+    Wings_of_Anemos = 'Wings of Anemos'
+    Chestbeaters_defeated = 'Chestbeaters defeated'
+    King_Scorpion_defeated = 'King Scorpion defeated'
+    Avimander_defeated = 'Avimander defeated'
+    Star_Magician_defeated = 'Star Magician defeated'
+    Sentinel_defeated = 'Sentinel defeated'
+    Valukar_defeated = 'Valukar defeated'
+    Dullahan_defeated = 'Dullahan defeated'
+    Reunion = 'Reunion'
+    Victory = 'Victory'
+    Ship_Cannon = 'Ship Cannon'
+    Mars_Lighthouse_Heated = 'Mars Lighthouse Heated'
+
+    # Characters
+    Isaac = 'Isaac'
+    Garet = 'Garet'
+    Ivan = 'Ivan'
+    Mia = 'Mia'
+    Jenna = 'Jenna'
+    Sheba = 'Sheba'
+    Piers = 'Piers'
