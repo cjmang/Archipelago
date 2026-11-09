@@ -7,9 +7,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from BaseClasses import CollectionState, Item
-from worlds.gstla.gen.location_names import loc_names_by_id
 from worlds.gstla.gstla_types import LocationType
-from worlds.gstla.locations import all_locations
 from worlds.gstla.names import ItemName
 from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.test import GSTestBase
@@ -327,13 +325,13 @@ class TestTreasureLogic(GSTestBase):
 
     def setUp(self) -> None:
         super().setUp()
-        world = self.get_world()
         game_data = load_game_data()
+        world = self.get_world()
 
         self.locations_by_flag: dict[int, GSTLALocation] = {
-            x.rando_flag: world.get_location(loc_names_by_id[x.ap_id])
-            for x in all_locations
-            if x.loc_type != LocationType.Event and x.loc_type != LocationType.Djinn
+            x.rando_flag: world.get_location(x.name)
+            for x in game_data.location_by_id.values()
+            if x.type != LocationType.Djinn
         }
         self.test_state = CollectionState(self.multiworld)
         self.event_items: dict[str, Event] = {}
