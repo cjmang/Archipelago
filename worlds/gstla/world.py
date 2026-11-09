@@ -142,6 +142,7 @@ class GSTLAWorld(World):
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
         self._character_levels: list[tuple[int, int]] = []
+        self._remote_blacklist = get_remote_blacklist()
         self.goal_conditions: set[str] = set()
 
     def generate_early(self) -> None:
@@ -391,7 +392,7 @@ class GSTLAWorld(World):
         if coop_opt == 0:
             # off
             return False
-        if location.address in get_remote_blacklist():
+        if location.address in self._remote_blacklist:
             return False
         if coop_opt == 3:
             # all
