@@ -31,6 +31,7 @@ class EntranceData:
 
 
 class ItemCategory(StrEnum):
+    # TODO: Capitalize while replacing the auto()
     djinn = auto()
     summons = auto()
     learned_psynergy = auto()
