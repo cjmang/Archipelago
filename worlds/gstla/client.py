@@ -10,13 +10,6 @@ from BaseClasses import ItemClassification
 from NetUtils import ClientStatus, NetworkItem
 from worlds._bizhawk import display_message, read, write
 from worlds._bizhawk.client import BizHawkClient
-from .gen.location_data import (
-    all_locations,
-    djinn_locations,
-    event_id_to_name,
-    event_name_to_data,
-)
-from .gen.location_names import loc_names_by_id, option_name_to_goal_name
 from .gstla_types import ItemType, LocationType
 from .locations import get_remote_blacklist
 from .names import LocationName
@@ -31,6 +24,24 @@ FLAG_START = 0x40
 FORCE_ENCOUNTER_ADDR = 0x30164
 PREVENT_FLEEING_ADDR = 0x48B
 IN_BATTLE_ADDR = 0x60
+
+OPTION_NAME_TO_GOAL_NAME: dict[str, str] = {
+    'Chestbeaters': LocationName.Kandorean_Temple_Chestbeaters,
+    'King Scorpion': LocationName.Yampi_Desert_King_Scorpion,
+    'Briggs': LocationName.Alhafra_Briggs,
+    'Aqua Hydra': LocationName.Lemurian_Ship_Aqua_Hydra,
+    'Poseidon': LocationName.Sea_of_Time_Poseidon,
+    'Serpent': LocationName.Gaia_Rock_Serpent,
+    'Avimander': LocationName.Champa_Avimander,
+    'Moapa': LocationName.Shaman_Village_Moapa,
+    'Reunion': LocationName.Contigo_Reunion,
+    'Flame Dragons': LocationName.Mars_Lighthouse_Flame_Dragons,
+    'Doom Dragon': LocationName.Mars_Lighthouse_Doom_Dragon,
+    'Star Magician': LocationName.Treasure_Isle_Star_Magician,
+    'Sentinel': LocationName.Islet_Cave_Sentinel,
+    'Valukar': LocationName.Yampi_Desert_Cave_Valukar,
+    'Dullahan': LocationName.Anemos_Inner_Sanctum_Dullahan,
+}
 
 
 class _MemDomain(StrEnum):
@@ -74,29 +85,12 @@ class _DataLocations(IntEnum):
 
 
 class GoalManager:
-    supported_flags: dict[str, int] = {
-        x: event_name_to_data[x].flag
-        for x in [
-            LocationName.Kandorean_Temple_Chestbeaters,
-            LocationName.Yampi_Desert_King_Scorpion,
-            LocationName.Alhafra_Briggs,
-            LocationName.Lemurian_Ship_Aqua_Hydra,
-            LocationName.Sea_of_Time_Poseidon,
-            LocationName.Gaia_Rock_Serpent,
-            LocationName.Champa_Avimander,
-            LocationName.Shaman_Village_Moapa,
-            LocationName.Contigo_Reunion,
-            LocationName.Mars_Lighthouse_Flame_Dragons,
-            LocationName.Mars_Lighthouse_Doom_Dragon,
-            LocationName.Treasure_Isle_Star_Magician,
-            LocationName.Islet_Cave_Sentinel,
-            LocationName.Yampi_Desert_Cave_Valukar,
-            LocationName.Anemos_Inner_Sanctum_Dullahan,
-        ]
-    }
-    flag_to_name: dict[int, str] = {v: k for k, v in supported_flags.items()}
-
     def __init__(self):
+        self.game_data = load_game_data()
+        self.supported_flags: dict[str, int] = {
+            name: self.game_data.event_by_name[name].flag for name in OPTION_NAME_TO_GOAL_NAME.values()
+        }
+        self.flag_to_name: dict[int, str] = {v: k for k, v in self.supported_flags.items()}
         self.flag_requirements: set[str] = set()
         self.count_requirements: dict[str, int] = {}
         self.desired_flags: dict[int, int] = {}
@@ -104,9 +98,7 @@ class GoalManager:
         self.initialized = False
 
     def init_reqs_from_slotdata(self, slot_data: dict[str, Any]) -> None:
-        reqs: dict[str, Any] = slot_data['goal']
-        if reqs is None:
-            reqs = {}
+        reqs: dict[str, Any] = slot_data['goal'] or {}
 
         if 'flags' in reqs:
             self.flag_requirements: set[str] = reqs['flags']
@@ -117,10 +109,9 @@ class GoalManager:
             self.flag_requirements.add('Doom Dragon')
 
         for key in self.flag_requirements:
-            location_name = option_name_to_goal_name[key]
-            enemy_flag = GoalManager.supported_flags[location_name]
-            location_data = event_name_to_data[location_name]
-            self.desired_flags[enemy_flag] = location_data.ap_id
+            location_name = OPTION_NAME_TO_GOAL_NAME[key]
+            enemy_flag = self.supported_flags[location_name]
+            self.desired_flags[enemy_flag] = self.game_data.event_by_name[location_name].id
         # logger.info(f"Desired flags: {self.desired_flags}")
         # logger.info(f"Desired counts: {self.count_requirements}")
 
@@ -132,7 +123,7 @@ class GoalManager:
         for flag, is_set in client.goal_map.items():
             ap_id = self.desired_flags.get(flag, None)
             if ap_id is not None and is_set and ap_id not in server_flags:
-                await display_message(ctx.bizhawk_ctx, GoalManager.flag_to_name.get(flag, 'Unknown') + ' Completed')
+                await display_message(ctx.bizhawk_ctx, self.flag_to_name.get(flag, 'Unknown') + ' Completed')
                 updated_flags.add(ap_id)
 
         server_djinn = ctx.stored_data.get(client.get_djinn_location_key(ctx), [])
@@ -208,10 +199,9 @@ def cmd_unchecked_djinn(self: BizHawkClientCommandProcessor) -> None:
     client = _handle_common_cmd(self)
     if client is None:
         return
-    for djinn in djinn_locations:
-        djinn_name = loc_names_by_id[djinn.id]
+    for djinn in client.game_data.locations_by_type[LocationType.Djinn]:
         if djinn.flag not in client.checked_djinn:
-            logger.info(djinn_name)
+            logger.info(djinn.name)
 
 
 def cmd_checked_djinn(self: BizHawkClientCommandProcessor) -> None:
@@ -220,8 +210,8 @@ def cmd_checked_djinn(self: BizHawkClientCommandProcessor) -> None:
     if client is None:
         return
     for djinn_id in client.checked_djinn:
-        djinn = loc_names_by_id[client.djinn_flag_to_loc_id[djinn_id]]
-        logger.info(djinn)
+        djinn = client.game_data.location_by_id[client.djinn_flag_to_loc_id[djinn_id]]
+        logger.info(djinn.name)
 
 
 def cmd_print_goals(self: BizHawkClientCommandProcessor) -> None:
@@ -250,8 +240,7 @@ def cmd_print_progress(self: BizHawkClientCommandProcessor) -> None:
     if flags is not None and len(flags) != 0:
         logger.info('Objectives Completed: ')
         for ap_id in flags:
-            event_name = event_id_to_name[ap_id]
-            logger.info(event_name)
+            logger.info(client.game_data.event_locations[ap_id].name)
 
     djinn_count: list[int] = self.ctx.stored_data.get(client.get_djinn_location_key(self.ctx))
     if 'djinn' in client.goals.count_requirements and djinn_count is not None:
@@ -279,7 +268,7 @@ class GSTLAClient(BizHawkClient):
 
     def __init__(self):
         super().__init__()
-        game_data = load_game_data()
+        self.game_data = load_game_data()
 
         self.slot_name = ''
         self.flag_map: defaultdict[int, set[int]] = defaultdict(lambda: set())
@@ -287,20 +276,20 @@ class GSTLAClient(BizHawkClient):
         self.goal_map: dict[int, bool] = {}
         self.djinn_ram_to_rom: dict[int, int] = {}
         self.djinn_flag_map: dict[int, str] = {}
-        self.djinn_flag_to_loc_id: dict[int, int] = {d.flag: d.id for d in djinn_locations}
+        self.djinn_flag_to_loc_id: dict[int, int] = {
+            d.flag: d.id for d in self.game_data.locations_by_type[LocationType.Djinn]
+        }
         self.checked_djinn: set[int] = set()
         self.possessed_djinn: set[int] = set()
         self.djinn_last_count: int = 0
-        self.mimics = game_data.mimics  # TODO: unused, remove or what?
         self.summons: set[int] = set()
         self.summon_item_index: int = 0
-        for loc in all_locations:
-            if loc.loc_type == LocationType.Event:
-                self.event_flag_map[loc.flag].add(loc.ap_id)
-                continue
-            self.flag_map[loc.flag].add(loc.ap_id)
-            if loc.loc_type == LocationType.Djinn:
-                self.djinn_flag_map[loc.flag] = loc_names_by_id[loc.addresses[0]]
+        for event in self.game_data.event_by_name.values():
+            self.event_flag_map[event.flag].add(event.id)
+        for loc in self.game_data.location_by_id.values():
+            self.flag_map[loc.flag].add(loc.id)
+            if loc.type == LocationType.Djinn:
+                self.djinn_flag_map[loc.flag] = loc.name
         self.temp_locs: set[int] = set()
         self.temp_events: set[int] = set()
         self.local_events: set[int] = set()
@@ -385,13 +374,12 @@ class GSTLAClient(BizHawkClient):
         return f'gstla_map_info_{ctx.slot}_{ctx.team}'
 
     def check_summon_count(self, ctx: BizHawkClientContext) -> None:
-        game_data = load_game_data()
         if self.summon_item_index >= len(ctx.items_received):
             return
         end = len(ctx.items_received)
         for i in range(self.summon_item_index, end):
             item = ctx.items_received[i]
-            itemdata = game_data.item_by_id[item.item]
+            itemdata = self.game_data.item_by_id[item.item]
             if itemdata.type == ItemType.Summon:
                 self.summons.add(itemdata.id)
         self.summon_item_index = end
@@ -512,7 +500,7 @@ class GSTLAClient(BizHawkClient):
 
     def _should_give_to_player(self, ctx: BizHawkClientContext, item: NetworkItem) -> bool:
         logger.debug('item: %s flags: %s location: %s coop: %s', item.item, item.flags, item.location, self.coop)
-        if item.item in event_id_to_name:
+        if item.item in self.game_data.event_locations:
             return False
         if ctx.slot != item.player:
             return True
