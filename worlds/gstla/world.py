@@ -21,8 +21,6 @@ from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
-from .gen.location_data import LocationType
-from .gen.location_names import ids_by_loc_name, loc_names_by_id
 from .gstla_types import ItemCategory, ItemType
 from .items import (
     AP_PLACEHOLDER_ITEM,
@@ -37,7 +35,7 @@ from .items import (
     get_filler_item,
 )
 from .location_groups import goldensuntla_location_groups
-from .locations import GSTLALocation, location_name_to_id, remote_blacklist
+from .locations import GSTLALocation, get_remote_blacklist
 from .names import ItemName
 from .new_game_data.loader import load_game_data
 from .options import GSTLAOptions
@@ -112,9 +110,7 @@ class GSTLAWorld(World):
     settings: ClassVar[GSTLASettings]
 
     item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}
-    location_name_to_id = (
-        ids_by_loc_name  # {location: location_name_to_id[location].id for location in location_name_to_id}
-    )
+    location_name_to_id = {name: location.id for name, location in load_game_data().location_by_name.items()}
     web = GSTLAWeb()
 
     item_name_groups = {
@@ -146,6 +142,7 @@ class GSTLAWorld(World):
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
         self._character_levels: list[tuple[int, int]] = []
+        self._remote_blacklist = get_remote_blacklist()
         self.goal_conditions: set[str] = set()
 
     def generate_early(self) -> None:
@@ -395,7 +392,7 @@ class GSTLAWorld(World):
         if coop_opt == 0:
             # off
             return False
-        if location.address in remote_blacklist:
+        if location.address in self._remote_blacklist:
             return False
         if coop_opt == 3:
             # all
@@ -408,7 +405,7 @@ class GSTLAWorld(World):
         # shouldn't make it this far, but just in case
         return False
 
-    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912, PLR0915
+    def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912
         game_data = load_game_data()
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
         debug_file.write('Version: 1\n')
@@ -430,10 +427,10 @@ class GSTLAWorld(World):
         index = 0
         for region in self.multiworld.get_regions(self.player):
             for location in region.locations:
-                location_data = location_name_to_id.get(location.name, None)
-
-                if location_data is None or location_data.loc_type == LocationType.Event:
+                location_data = game_data.location_by_name.get(location.name)
+                if location_data is None:
                     continue
+
                 ap_item = location.item
                 if ap_item is None:
                     # TODO: need to fill with something else
@@ -475,13 +472,12 @@ class GSTLAWorld(World):
 
         for loc in djinn_locs:
             djinn_data = game_data.djinn[game_data.item_by_name[loc.item.name].id]
-            location_data = location_name_to_id[loc.name]
-            rando_file.write(location_data.rando_flag.to_bytes(length=1, byteorder='little'))
+            rando_flag = loc.location_data.rando_flag
+            rando_file.write(rando_flag.to_bytes(length=1, byteorder='little'))
             rando_file.write(djinn_data.flag_index.to_bytes(length=1, byteorder='little'))
-            loc_name = loc_names_by_id[location_data.ap_id]
             debug_file.write(
-                f'Djinn(Location): {loc_name}\n'
-                f'Djinn(Location) Flag: {hex(location_data.rando_flag)}\n'
+                f'Djinn(Location): {loc.name}\n'
+                f'Djinn(Location) Flag: {hex(rando_flag)}\n'
                 f'Djinn(Item): {djinn_data.name}\n'
                 f'Djinn(Item) Flag: {hex(djinn_data.flag_index)}\n\n'
             )

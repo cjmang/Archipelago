@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING, Protocol
 
 from BaseClasses import Item, ItemClassification
-from .gen.location_data import LocationType, location_type_to_data
-from .gen.location_names import loc_names_by_id
-from .gstla_types import ItemCategory, ItemData, ItemType
+from .gstla_types import ItemCategory, ItemData, ItemType, LocationType
 from .names import ItemName, LocationName
 from .new_game_data.loader import load_game_data
 from .options import (
@@ -187,7 +185,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
 
     # djinn
     sorted_djinns = sorted(game_data.items_by_category[ItemCategory.djinn], key=lambda djinn: djinn.id)
-    sorted_djinn_locs = sorted(location_type_to_data[LocationType.Djinn], key=lambda loc: loc.id)
+    sorted_djinn_locs = sorted(game_data.locations_by_type[LocationType.Djinn], key=lambda loc: loc.id)
 
     if world.options.shuffle_djinn == 1:
         for i in range(0, 4):
@@ -207,14 +205,12 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     for item in sorted_djinns:
         ap_item = create_item_direct(item, player, True)
         location = sorted_djinn_locs.pop(0)
-        ap_loc = world.get_location(loc_names_by_id[location.ap_id])
+        ap_loc = world.get_location(location.name)
         ap_loc.address = None
         ap_loc.place_locked_item(ap_item)
 
     # char shuffle
-    char_locs = {
-        loc_names_by_id[char_lock.ap_id]: char_lock for char_lock in location_type_to_data[LocationType.Character]
-    }
+    char_locs = {char_loc.name: char_loc for char_loc in game_data.locations_by_type[LocationType.Character]}
     char_items = {char.name: char for char in game_data.items_by_category[ItemCategory.characters]}
 
     # if not vanilla character shuffle we can do special things
@@ -260,7 +256,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         # Vanilla (Shuffled)
         if world.options.shuffle_characters < 2:
             location = sorted_char_locs.pop(0)
-            ap_loc = world.get_location(loc_names_by_id[location.ap_id])
+            ap_loc = world.get_location(location.name)
             ap_loc.place_locked_item(ap_item)
 
         else:

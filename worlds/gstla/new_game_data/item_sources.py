@@ -1,7 +1,7 @@
 from functools import cache
 from typing import NamedTuple
 
-from .base import BaseItem
+from .base import read_json
 from .forgeables import load_forge_mapping
 
 LUCKY_MEDAL_IDS: set[int] = {
@@ -68,7 +68,7 @@ def get_item_sources() -> ItemSources:
     # mainly used for equipment and normal items
     chests = {
         location['vanillaContents']
-        for locations in BaseItem.read_json('data/item_locations.json').values()
+        for locations in read_json('data/item_locations.json').values()
         for location in locations
         if location['vanillaName'] != 'Mimic'
     }
@@ -76,7 +76,7 @@ def get_item_sources() -> ItemSources:
 
     shops = {
         item_id
-        for shop in BaseItem.read_json('data/shops.json')
+        for shop in read_json('data/shops.json')
         for item_id in shop['items'] + shop['artifacts']
         if item_id != 0
     }

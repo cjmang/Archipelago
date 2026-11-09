@@ -31,6 +31,7 @@ class EntranceData:
 
 
 class ItemCategory(StrEnum):
+    # TODO: Capitalize while replacing the auto()
     djinn = auto()
     summons = auto()
     learned_psynergy = auto()
@@ -87,6 +88,24 @@ class ItemType(IntEnum):
     Summon = 17
 
 
+class LocationType(StrEnum):
+    Item = 'Item'
+    Event = 'Event'
+    Djinn = 'Djinn'
+    Psynergy = 'Psynergy'
+    Hidden = 'Hidden'
+    Trade = 'Trade'
+    Character = 'Character'
+
+
+class LocationRestriction(IntFlag):
+    NONE = 0  # rename to "Unrestricted"
+    NoEmpty = auto()
+    NoMimic = auto()
+    NoSummon = auto()
+    NoMoney = auto()
+
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ItemData:
     id: int  # AP item ID
@@ -95,6 +114,16 @@ class ItemData:
     classification: ItemClassification
     category: ItemCategory
     shuffled: bool
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class LocationData:
+    id: int  # AP item ID
+    name: str  # (or enum?)
+    type: LocationType
+    flag: int  # EWRAM
+    rando_flag: int  # The flag/addr in karanum rando, seems like it can be an ID instead of a flag?
+    restrictions: LocationRestriction
 
 
 class ItemFlag(IntFlag):
@@ -141,3 +170,16 @@ class ElementType(IntEnum):
     Water = 1
     Fire = 2
     Air = 3
+
+
+class TreasureType(IntEnum):
+    # matches the eventType in item_locations.json
+    JAR = 0x2  # 2
+    BARREL = 0x3  # 3
+    GRAVE = 0x8  # 8
+    BOX = 0xD  # 13
+    CHEST = 0x80  # 128
+    MIMIC_CHEST = 0x81  # 129
+    FIELD_ITEM = 0x83  # 131 (via scoop, cyclone, on a pedestal like the "Center prong", ...)
+    PICKUP = 0x84  # 132 (chars, summon tablets, psynergy)
+    SUNKEN = 0x85  # 133 (rusty gear)

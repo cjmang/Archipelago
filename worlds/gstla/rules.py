@@ -2,10 +2,8 @@ import math
 from typing import TYPE_CHECKING, cast
 
 from worlds.generic.Rules import add_item_rule, add_rule
-from .gen.location_data import LocationRestriction, LocationType
-from .gen.location_names import loc_names_by_id
+from .gstla_types import LocationRestriction, LocationType, TreasureType
 from .items import ItemType
-from .locations import location_type_to_data
 from .names import EntranceName, ItemName, LocationName
 from .new_game_data.coins import COIN_ID_OFFSET
 from .new_game_data.loader import load_game_data
@@ -209,6 +207,7 @@ def set_entrance_rules(world: 'GSTLAWorld'):
 
 
 def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
+    game_data = load_game_data()
     player = world.player
     # Goal
     goal_conditions = world.goal_conditions
@@ -1533,20 +1532,21 @@ def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
         )
 
         if world.options.reveal_hidden_item == 1:
-            for loc in location_type_to_data[LocationType.Hidden]:
-                loc_name = loc_names_by_id[loc.ap_id]
-                # for all hidden items that are not eventype 131 (these are scoopable or cyclone places),
-                # we require reveal
-                if (
-                    loc.event_type != 131
-                    or loc_name == LocationName.Daila_Psy_Crystal
-                    or loc_name == LocationName.Loho_Mythril_Silver
-                    or loc_name == LocationName.Lemuria_Lucky_Medal
-                    or loc_name == LocationName.Lemuria_Rusty_Sword
-                    or loc_name == LocationName.Lemuria_Bone
-                    or loc_name == LocationName.Lemuria_Star_Dust
-                ):
-                    add_rule(world.get_location(loc_name), lambda state: state.has(ItemName.Reveal, player))
+            # for all hidden items that are not eventType 131 (TreasureType.FIELD_ITEM)
+            # (these include scoopable or cyclone places), we require reveal
+            reveal_required_locs = [
+                LocationName.Daila_Psy_Crystal,
+                LocationName.Loho_Mythril_Silver,
+                LocationName.Lemuria_Lucky_Medal,
+                LocationName.Lemuria_Rusty_Sword,
+                LocationName.Lemuria_Bone,
+                LocationName.Lemuria_Star_Dust,
+            ]
+
+            for loc in game_data.locations_by_type[LocationType.Hidden]:
+                item_treasure_type = game_data.chest_locations[loc.id].treasure_type
+                if item_treasure_type != TreasureType.FIELD_ITEM or loc.name in reveal_required_locs:
+                    add_rule(world.get_location(loc.name), lambda state: state.has(ItemName.Reveal, player))
 
 
 class _RestrictionRule:
@@ -1582,15 +1582,13 @@ def set_item_rules(world: 'GSTLAWorld'):
     characters: set[str] = {item.name for item in game_data.characters.values()}
     djinn: set[str] = {item.name for item in game_data.djinn.values()}
 
-    for loc in location_type_to_data[LocationType.Djinn]:
-        add_item_rule(
-            world.get_location(loc_names_by_id[loc.ap_id]), lambda item: item.player == player and item.name in djinn
-        )
+    for loc in game_data.locations_by_type[LocationType.Djinn]:
+        add_item_rule(world.get_location(loc.name), lambda item: item.player == player and item.name in djinn)
 
     if world.options.shuffle_characters < 2:
-        for loc in location_type_to_data[LocationType.Character]:
+        for loc in game_data.locations_by_type[LocationType.Character]:
             add_item_rule(
-                world.get_location(loc_names_by_id[loc.ap_id]),
+                world.get_location(loc.name),
                 lambda item: item.player == player and item.name in characters,
             )
     else:
@@ -1613,8 +1611,8 @@ def set_item_rules(world: 'GSTLAWorld'):
 
     for loc in [
         x.location_data
-        for x in cast('Iterable[GSTLALocation]', world.multiworld.get_locations(world.player))
-        if x.location_data.loc_type != LocationType.Event
+        for x in world.multiworld.get_locations(world.player)
+        if x.location_data.type != LocationType.Event
     ]:
         if loc.restrictions > 0:
-            add_item_rule(world.get_location(loc_names_by_id[loc.ap_id]), _RestrictionRule(player, loc.restrictions))
+            add_item_rule(world.get_location(loc.name), _RestrictionRule(player, loc.restrictions))

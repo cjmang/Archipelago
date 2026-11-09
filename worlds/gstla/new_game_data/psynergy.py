@@ -3,7 +3,7 @@ from typing import Self
 
 from BaseClasses import ItemClassification
 from worlds.gstla.gstla_types import ItemCategory, ItemType, PsynergyID
-from .base import BaseItem
+from .base import BaseItem, read_json
 
 # we don't have an easy 1:1 mapping in the data files from
 # item name to psynergy, so this is just static in code for now.
@@ -26,6 +26,8 @@ UNUSED_PSYNERGIES = [
     PsynergyID.HALT,
 ]
 
+PSYNERGY_ITEM_ID_OFFSET = 0xE00
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class LearnedPsynergy(BaseItem):
@@ -38,7 +40,7 @@ class LearnedPsynergy(BaseItem):
 
     @property
     def ap_id(self) -> int:
-        return 0xE00 + self.ability_id
+        return PSYNERGY_ITEM_ID_OFFSET + self.ability_id
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
@@ -56,7 +58,7 @@ class PsynergyItem(BaseItem):
 
     @property
     def ap_id(self) -> int:
-        return 0xE00 + self.ability_id
+        return PSYNERGY_ITEM_ID_OFFSET + self.ability_id
 
     @property
     def shuffled(self) -> bool:
@@ -70,7 +72,7 @@ class PsynergyItem(BaseItem):
 
     @classmethod
     def load(cls) -> tuple[Self, ...]:
-        items = cls.read_json('data/items.json').values()
+        items = read_json('data/items.json').values()
         return tuple(
             cls(item_id=item['id'], name=item['name'], ability_id=PsynergyID(item['useEffect']))
             for item in items

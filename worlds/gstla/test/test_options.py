@@ -2,11 +2,10 @@ import base64
 from io import BytesIO, StringIO
 
 from BaseClasses import ItemClassification
-from worlds.gstla.gen.location_data import LocationType
-from worlds.gstla.gen.location_names import loc_names_by_id
+from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.items import ItemType, create_item
-from worlds.gstla.locations import location_type_to_data
 from worlds.gstla.names import ItemName, LocationName
+from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.test import GSTestBase
 
 OPTION_OFFSET = 17
@@ -56,8 +55,8 @@ class TestRandoFormat(TestFormatBase):
         loc_count = 0
         djinn_count = 0
         for loc in world.multiworld.get_locations(world.player):
-            if loc.item is not None and loc.location_data.loc_type != LocationType.Event:
-                if loc.location_data.loc_type == LocationType.Djinn:
+            if loc.item is not None and loc.location_data.type != LocationType.Event:
+                if loc.location_data.type == LocationType.Djinn:
                     djinn_count += 1
                 else:
                     loc_count += 1
@@ -1049,14 +1048,15 @@ class VanillaPCShuffle(TestFormatBase):
         self.assertEqual(0x2, 0x3 & data)
 
     def test_ensure_vanilla_placement(self):
+        game_data = load_game_data()
         world = self.get_world()
-        for char in location_type_to_data[LocationType.Character]:
-            self.assertEqual(LocationType.Character, char.loc_type)
-            name = loc_names_by_id[char.ap_id]
-            ap_loc = world.get_location(name)
+        for char in game_data.locations_by_type[LocationType.Character]:
+            self.assertEqual(LocationType.Character, char.type)
+            ap_loc = world.get_location(char.name)
             ap_item = ap_loc.item
             self.assertEqual(ItemType.Character, ap_item.item_data.type)
-            self.assertEqual(ap_loc.location_data.vanilla_contents, ap_item.item_data.id)
+            vanilla_item_id = game_data.chest_locations[ap_loc.location_data.id].vanilla_item_id
+            self.assertEqual(vanilla_item_id, ap_item.item_data.id)
 
 
 class PCShuffleInVanilla(TestFormatBase):
@@ -1066,11 +1066,11 @@ class PCShuffleInVanilla(TestFormatBase):
         self.assertEqual(0x2, 0x3 & data)
 
     def test_ensure_placement_within_vanilla(self):
+        game_data = load_game_data()
         world = self.get_world()
-        for char in location_type_to_data[LocationType.Character]:
-            self.assertEqual(LocationType.Character, char.loc_type)
-            name = loc_names_by_id[char.ap_id]
-            ap_loc = world.get_location(name)
+        for char in game_data.locations_by_type[LocationType.Character]:
+            self.assertEqual(LocationType.Character, char.type)
+            ap_loc = world.get_location(char.name)
             ap_item = ap_loc.item
             self.assertEqual(ItemType.Character, ap_item.item_data.type)
             # self.assertEqual(ap_loc.location_data.vanilla_contents, ap_item.item_data.id)

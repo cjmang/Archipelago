@@ -2,6 +2,12 @@
 .ap/
 external/
 
+# see `just setup-pycharm`
+worlds/AutoWorld.py
+worlds/Files.py
+worlds/_bizhawk
+worlds/generic
+
 *.egg-info/
 .venv/
 __pycache__/

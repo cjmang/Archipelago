@@ -18,6 +18,7 @@ export SKIP_REQUIREMENTS_UPDATE := "1"
 export AP_TEST_WORLDS := "gstla"  # 0.6.8 only
 
 build_dir := justfile_directory() / "build"
+pycharm_linked_entries := "AutoWorld.py Files.py _bizhawk generic"
 
 
 [unix]
@@ -33,6 +34,17 @@ setup:
     New-Item -ItemType Junction -Path "{{archipelago}}" -Target "{{archipelago_root}}" | Out-Null
     if (Test-Path -LiteralPath "{{archipelago}}/worlds/gstla") { (Get-Item -LiteralPath "{{archipelago}}/worlds/gstla").Delete() }
     New-Item -ItemType Junction -Path "{{archipelago}}/worlds/gstla" -Target "{{justfile_directory()}}/worlds/gstla" | Out-Null
+
+# Everything's a bit horrible in PyCharm 2026.3+:
+# Previously, we could just add the archipelago checkout to our interpreter paths,
+# but starting with 2026.3, it tries to do "smart" things and so it doesn't properly
+# work anymore. This results in us having to do another round of symlinks for the
+# AP modules we actually want to use. So sorry about this, but until there's a better way,
+# this'll have to do. Also Unix-only for now. We need symlinks on Windows which require admin perms.
+# (If you are using the pyrefly type engine instead of the built-in one, you can just ignore this problem.)
+[unix]
+setup-pycharm: setup
+    for entry in {{pycharm_linked_entries}}; do ln -sfn "{{archipelago}}/worlds/$entry" "{{justfile_directory()}}/worlds/$entry"; done
 
 
 [working-directory: 'external/archipelago']

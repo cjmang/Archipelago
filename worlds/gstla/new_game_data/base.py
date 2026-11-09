@@ -1,14 +1,26 @@
-import pkgutil
 from abc import ABC, abstractmethod
+from importlib.resources import files
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Self
 
 import orjson
 
-from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType
+from worlds.gstla.gstla_types import ItemCategory, ItemData, ItemType, LocationData, LocationRestriction, LocationType
 
 if TYPE_CHECKING:
     from BaseClasses import ItemClassification
+
+
+PKG_ROOT = files('worlds.gstla')
+
+
+def read_json(path: str | Path) -> Any:
+    return orjson.loads((PKG_ROOT / str(path)).read_bytes())
+
+
+def read_json_dir(path: str | Path) -> dict[str, Any]:
+    directory = PKG_ROOT / str(path)
+    return {file.name: orjson.loads(file.read_bytes()) for file in directory.iterdir() if file.name.endswith('.json')}
 
 
 class BaseItem(ABC):
@@ -69,9 +81,52 @@ class BaseItem(ABC):
     def load(cls, *args: Any, **kwargs: Any) -> tuple[Self, ...]:
         """Every subclass should be able to decide itself where it comes from. Most get filled by data/*.json files."""
 
-    @staticmethod
-    def read_json(path: str | Path) -> dict:
-        data_path = pkgutil.get_data('worlds.gstla', str(path))
-        if data_path is None:
-            raise ValueError(f'Could not find json file {path=}')
-        return orjson.loads(data_path)
+
+class BaseLocation(ABC):
+    """
+    Base class for all AP locations.
+
+    See `BaseItem` docstring for more details on how these work.
+    """
+
+    if TYPE_CHECKING:
+
+        @property
+        def ap_id(self) -> int: ...
+
+        @property
+        def name(self) -> str: ...
+
+        @property
+        def location_type(self) -> LocationType: ...
+
+        @property
+        def flag(self) -> int: ...
+
+        @property
+        def rando_flag(self) -> int: ...
+
+        @property
+        def restrictions(self) -> LocationRestriction: ...
+
+    def __init_subclass__(cls, **kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+        # TODO:
+        # for attr in []:
+        #     if not hasattr(cls, attr):
+        #         raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
+
+    def as_location(self) -> LocationData:
+        return LocationData(
+            id=self.ap_id,
+            name=self.name,
+            type=self.location_type,
+            flag=self.flag,
+            rando_flag=self.rando_flag,
+            restrictions=self.restrictions,
+        )
+
+    @classmethod
+    @abstractmethod
+    def load(cls, *args: Any, **kwargs: Any) -> tuple[Self, ...]:
+        """Every subclass should be able to decide itself where it comes from. Most get filled by data/*.json files."""
