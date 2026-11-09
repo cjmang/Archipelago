@@ -2,8 +2,9 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from BaseClasses import Region
+from worlds.gstla.new_game_data.loader import load_game_data
 from .gstla_types import LocationType, RegionData
-from .locations import GSTLALocation, location_name_to_id
+from .locations import GSTLALocation
 from .names import EntranceName, LocationName, RegionName
 
 if TYPE_CHECKING:
@@ -11,16 +12,17 @@ if TYPE_CHECKING:
 
 
 def create_region(world: 'GSTLAWorld', region_data: RegionData):
+    game_data = load_game_data()
     region = Region(region_data.name, world.player, world.multiworld)
     gs_locations: dict[str, int | None] = {}
     for location in region_data.locations:
-        location_data = location_name_to_id[location]
+        location_data = game_data.location_by_name[location]
         # logging.error(region.name + ' ' + location)
-        if world.options.item_shuffle < 3 and location_data.loc_type == LocationType.Hidden:
+        if world.options.item_shuffle < 3 and location_data.type == LocationType.Hidden:
             continue
-        if location_data.loc_type == LocationType.Djinn:
+        if location_data.type == LocationType.Djinn:
             loc = GSTLALocation.create_djinn_location(world.player, location, location_data, region)
-        elif location_data.loc_type == LocationType.Event:
+        elif location_data.type == LocationType.Event:
             loc = GSTLALocation.create_event_location(world.player, location, location_data, region)
         else:
             loc = GSTLALocation(world.player, location, location_data, region)
