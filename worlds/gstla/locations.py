@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from BaseClasses import Location, Region
 from worlds.gstla.names import LocationName
-from worlds.gstla.new_game_data.location_names import ids_by_loc_name
+from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.new_game_data.locations import FLAG_OVERWRITES
 from .gstla_types import ItemType, LocationData
 
@@ -41,4 +41,6 @@ class GSTLALocation(Location):
 
 # Locations that cannot have remote items
 # TODO: Understand and document the logic behind this remote_blacklist
-remote_blacklist: set[int] = set(FLAG_OVERWRITES) | {ids_by_loc_name[LocationName.Idejima_Jenna]}
+def get_remote_blacklist() -> set[int]:
+    game_data = load_game_data()
+    return set(FLAG_OVERWRITES) | {game_data.location_by_name[LocationName.Idejima_Jenna].id}
