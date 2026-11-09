@@ -44,7 +44,7 @@ setup:
 # (If you are using the pyrefly type engine instead of the built-in one, you can just ignore this problem.)
 [unix]
 setup-pycharm: setup
-    for entry in {{pycharm_linked_worlds_entries}}; do ln -sfn "{{archipelago}}/worlds/$entry" "{{justfile_directory()}}/worlds/$entry"; done
+    for entry in {{pycharm_linked_entries}}; do ln -sfn "{{archipelago}}/worlds/$entry" "{{justfile_directory()}}/worlds/$entry"; done
 
 
 [working-directory: 'external/archipelago']
