@@ -307,20 +307,20 @@ class GSTLAWorld(World):
         max_spheres: defaultdict[int, int] = defaultdict(lambda: -1)
         for i, sphere in enumerate(spheres):
             for loc in sphere:
-                if loc.item.game != GSTLAWorld.game:
+                item = loc.item
+                if not isinstance(item, GSTLAItem):
                     continue
-                # if loc.item.player != self.player:
+                # if item.player != self.player:
                 #     continue
-                if loc.item.name == ItemName.Victory:
-                    max_spheres[loc.item.player] = i
+                if item.name == ItemName.Victory:
+                    max_spheres[item.player] = i
                     continue
-                if loc.item.code is None:
+                if item.code is None:
                     continue
-                gsitem = cast('GSTLAItem', loc.item)
-                if gsitem.item_data.type == ItemType.Mimic:
-                    mimic_map[loc.item.player][i].append(loc)
-                elif loc.item.code in character_item_ids:
-                    character_map[loc.item.player][i].append(gsitem)
+                if item.item_data.type == ItemType.Mimic:
+                    mimic_map[item.player][i].append(loc)
+                elif item.code in character_item_ids:
+                    character_map[item.player][i].append(item)
 
         for slot, max_sphere in max_spheres.items():
             world: GSTLAWorld = cast('GSTLAWorld', multiworld.worlds[slot])
@@ -361,7 +361,8 @@ class GSTLAWorld(World):
                     # Guess someone really wanted this mimic here
                     continue
                 current_item = mimic_loc.item
-                current_item.location = None
+                if current_item is not None:
+                    current_item.location = None
                 new_mimic = create_item_direct(self.random.choice(mimic_list), self.player)
                 # logger.info(
                 #     "Replacing mimic %s with mimic %s in sphere %d", current_item.name, new_mimic.name, sphere
@@ -378,7 +379,7 @@ class GSTLAWorld(World):
                     max(floor((max_level - starting_level) * sphere / max_sphere + starting_level), starting_level),
                     max_level,
                 )
-                self._character_levels.append((char.code - 0xD00, level))
+                self._character_levels.append((char.item_data.id - 0xD00, level))
 
     def _should_be_remote(self, location: GSTLALocation, ap_item: Item) -> bool:
         if ap_item.player != self.player:
@@ -402,12 +403,18 @@ class GSTLAWorld(World):
         # shouldn't make it this far, but just in case
         return False
 
+    def _get_seed(self) -> int:
+        if self.multiworld.seed is None:
+            # should never happen, but it makes pyrefly happy
+            raise RuntimeError('The multiworld has no seed')
+        return self.multiworld.seed
+
     def _generate_rando_data(self, rando_file: BinaryIO, debug_file: TextIO):  # noqa: PLR0912
         game_data = load_game_data()
         rando_file.write(0x1.to_bytes(length=1, byteorder='little'))
         debug_file.write('Version: 1\n')
 
-        rando_file.write(self.multiworld.seed.to_bytes(length=16, byteorder='little'))
+        rando_file.write(self._get_seed().to_bytes(length=16, byteorder='little'))
         debug_file.write(f'Seed: {self.multiworld.seed}\n')
 
         self._write_options_for_rando(rando_file, debug_file)
