@@ -59,8 +59,6 @@ def _implicit_restrictions(ap_id: int, treasure_type: TreasureType) -> LocationR
     if ap_id > RANDO_SLOT_ADDRESS_START:
         restrictions |= LocationRestriction.NoMoney
     if ap_id in FLAG_OVERWRITES:
-        # TODO: I think the previous "loc['id'] < 0x10 or (loc['id'] | 0xF00) == 0x100" line before never fully worked?
-        #       Wouldn't (loc['id'] | 0xF00) always equal loc['id']?
         restrictions |= LocationRestriction.NoEmpty | LocationRestriction.NoMimic | LocationRestriction.NoMoney
     return restrictions
 
