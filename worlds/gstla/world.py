@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import base64
-import hashlib
 import os
 from bisect import bisect
 from collections import defaultdict
@@ -61,35 +60,8 @@ class GSTLASettings(settings.Group):
         """File name of the GS TLA UE Rom"""
 
         description = 'Golden Sun The Lost Age Rom File'
-        copy_to: str | None = 'Golden Sun - The Lost Age (UE) [!].gba'
-
-        def browse(
-            self: settings.T, filetypes: Sequence[tuple[str, Sequence[str]]] | None = None, **kwargs: Any
-        ) -> settings.T | None:
-            if not filetypes:
-                file_types = [('GBA', ['.gba'])]
-                return super().browse(file_types, **kwargs)
-            return super().browse(filetypes, **kwargs)
-
-        @classmethod
-        def validate(cls, path: str) -> None:
-            """Try to open and validate file against hashes"""
-            with open(path, 'rb', buffering=0) as f:
-                try:
-                    # cls._validate_stream_hashes(f)
-                    base_rom_bytes = f.read()
-                    basemd5 = hashlib.md5()
-                    basemd5.update(base_rom_bytes)
-                    if basemd5.hexdigest() == CHECKSUM_GSTLA:
-                        # we need special behavior here
-                        cls.copy_to = None
-                    else:
-                        raise ValueError(
-                            'Supplied Base Rom does not match UE GBA Golden Sun TLA Version.'
-                            'Please provide the correct ROM version'
-                        )
-                except ValueError as e:
-                    raise ValueError(f'File hash does not match for {path}') from e
+        copy_to = 'Golden Sun - The Lost Age (UE) [!].gba'
+        md5s = [CHECKSUM_GSTLA]
 
     rom_file: RomFile = RomFile(RomFile.copy_to)
 
