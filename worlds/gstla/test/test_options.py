@@ -5,6 +5,7 @@ from BaseClasses import ItemClassification
 from worlds.gstla.game_data.loader import load_game_data
 from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.items import GSTLAItem, ItemType, create_item
+from worlds.gstla.locations import GSTLALocation
 from worlds.gstla.names import ItemName, LocationName
 from worlds.gstla.options import CharacterShuffle, SecondStartingCharacter, StartWithShip
 from worlds.gstla.test import GSTestBase
@@ -56,6 +57,7 @@ class TestRandoFormat(TestFormatBase):
         loc_count = 0
         djinn_count = 0
         for loc in world.multiworld.get_locations(world.player):
+            self.assertIsInstance(loc, GSTLALocation)
             if loc.item is not None and loc.location_data.type != LocationType.Event:
                 if loc.location_data.type == LocationType.Djinn:
                     djinn_count += 1

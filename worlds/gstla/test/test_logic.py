@@ -15,6 +15,8 @@ from worlds.gstla.test import GSTestBase
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from worlds.gstla.game_data.events import Event
     from worlds.gstla.locations import GSTLALocation
 
@@ -86,7 +88,22 @@ class AccessRequirements:
         return f'reqs: {self.requirements} has_skip: {self.has_skips}'
 
 
-def filter_set_dupes(a: typing.Sized | typing.Iterable[AccessRequirements]):
+class LocationRequirements:
+    def __init__(self, flag: int, access_reqs: AccessRequirements | None, requirements: typing.Iterable[str]):
+        self.flag = flag
+        self.requirements: set[str] = set(requirements)
+        if access_reqs is not None:
+            self.requirements |= access_reqs.requirements
+        self.has_skips = len([x for x in self.requirements if x in skips]) > 0
+
+    def __repr__(self):
+        return f'flag: {hex(self.flag)} reqs: {self.requirements} skips: {self.has_skips}'
+
+
+Requirements = typing.TypeVar('Requirements', 'AccessRequirements', 'LocationRequirements')
+
+
+def filter_set_dupes(a: Sequence[Requirements]) -> list[Requirements]:
     result = []
     remove_list: list[bool] = [False for _ in range(len(a))]
     for i, first in enumerate(a):
@@ -98,18 +115,6 @@ def filter_set_dupes(a: typing.Sized | typing.Iterable[AccessRequirements]):
             remove_list[i] |= first.requirements.issuperset(second.requirements)
     result += [x for i, x in enumerate(a) if not remove_list[i]]
     return result
-
-
-class LocationRequirements:
-    def __init__(self, flag: int, access_reqs: AccessRequirements | None, requirements: typing.Iterable[str]):
-        self.flag = flag
-        self.requirements: set[str] = set(requirements)
-        if access_reqs is not None:
-            self.requirements |= access_reqs.requirements
-        self.has_skips = len([x for x in self.requirements if x in skips]) > 0
-
-    def __repr__(self):
-        return f'flag: {hex(self.flag)} reqs: {self.requirements} skips: {self.has_skips}'
 
 
 class FlagData:
@@ -280,9 +285,9 @@ class LocationLogic:
         # self.location_reqs = [loc for loc in self.location_reqs if loc.flag == 0xf54]
 
     def filter_other(self):
-        self.location_reqs = {
+        self.location_reqs = [
             x for x in self.location_reqs if not x.requirements.intersection(LocationLogic.other_exclusions)
-        }
+        ]
         for data in self.flag_data.values():
             data.reqs = [x for x in data.reqs if not x.requirements.intersection(LocationLogic.other_exclusions)]
             # for access_req in data.reqs:
@@ -359,7 +364,7 @@ class TestTreasureLogic(GSTestBase):
 
     def tearDown(self) -> None:
         self.locations_by_flag.clear()
-        self.test_state = None
+        del self.test_state
         super().tearDown()
 
     def test_treasure_logic(self):
@@ -496,7 +501,8 @@ class TestTreasureLogic(GSTestBase):
                 items.append(self.world.create_item(item_name))
         return items
 
-    def verify_item_length(self, ap_items, rando_items) -> None:
+    @staticmethod
+    def verify_item_length(ap_items, rando_items) -> None:
         if len(ap_items) == len(rando_items):
             return
 
