@@ -371,7 +371,7 @@ class ClassPsynergy(Choice):
     """
 
     internal_name = 'class_psynergy'
-    display_name = 'Character Element Shuffle'
+    display_name = 'Class Psynergy'
     option_vanilla = 0
     option_randomize_by_classline = 1
     option_randomize_by_psynergy_group = 2
@@ -389,7 +389,7 @@ class ClassPsynergyLevels(Choice):
     """
 
     internal_name = 'psynergy_levels'
-    display_name = 'Character Element Shuffle'
+    display_name = 'Class Psynergy Levels'
     option_vanilla = 0
     option_adjust_learning_levels = 1
     option_randomize_learning_levels = 2
