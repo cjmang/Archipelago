@@ -260,10 +260,10 @@ def cmd_toggle_death_link(self: BizHawkClientCommandProcessor) -> None:
     if client is None:
         return
 
-    ctx = cast("BizHawkClientContext", self.ctx)  # should preferably changed somewhere up the tree
+    ctx = cast('BizHawkClientContext', self.ctx)  # should preferably changed somewhere up the tree
     client.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
     state_after_toggle = not client.death_link_enabled
-    async_start(client.set_death_link(ctx, state_after_toggle), name="GSTLA death link toggle")
+    async_start(client.set_death_link(ctx, state_after_toggle), name='GSTLA death link toggle')
 
 
 def cmd_test_death_link(self: BizHawkClientCommandProcessor) -> None:
@@ -273,19 +273,19 @@ def cmd_test_death_link(self: BizHawkClientCommandProcessor) -> None:
         return
 
     if not client.death_link_enabled:
-        logger.warning("DeathLink is disabled. Turn it on with /deathlink first")
+        logger.warning('DeathLink is disabled. Turn it on with /deathlink first')
         return
 
     if not client.was_in_game:
-        logger.warning("Not in game. Load a savefile first")
+        logger.warning('Not in game. Load a savefile first')
         return
 
     if client.death_deliverer.is_delivering:
-        logger.warning("A death is already in progress")
+        logger.warning('A death is already in progress')
         return
 
     client.death_deliverer.queue_death()
-    logger.info("Local death has been queued")
+    logger.info('Local death has been queued')
 
 
 commands = [
@@ -293,8 +293,8 @@ commands = [
     ('djinn', cmd_checked_djinn),
     ('goals', cmd_print_goals),
     ('goals_completed', cmd_print_progress),
-    ("deathlink", cmd_toggle_death_link),
-    ("deathlink_test", cmd_test_death_link),
+    ('deathlink', cmd_toggle_death_link),
+    ('deathlink_test', cmd_test_death_link),
 ]
 
 
@@ -384,7 +384,7 @@ class GSTLAClient(BizHawkClient):
         await ctx.update_death_link(enabled)
 
     def on_package(self, ctx: BizHawkClientContext, cmd: str, args: dict) -> None:
-        if cmd == "Connected" and self.death_link_initialized_for != (ctx.server_seed_name, args.get("slot")):
+        if cmd == 'Connected' and self.death_link_initialized_for != (ctx.server_seed_name, args.get('slot')):
             # reset deathlink when either the server or slot changes.
             self.death_link_initialized_for = None
 
@@ -630,12 +630,12 @@ class GSTLAClient(BizHawkClient):
             )
             if not delivered:
                 self.death_deliverer.retry_delivery()
-                logger.debug("DeathLink writes rejected by a guard. Retrying on next tick.")
+                logger.debug('DeathLink writes rejected by a guard. Retrying on next tick.')
         elif instruction.send_death:
             await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party has been defeated.")
             self.previous_death_link = ctx.last_death_link
 
-    async def game_watcher(self, ctx: BizHawkClientContext) -> None:
+    async def game_watcher(self, ctx: BizHawkClientContext) -> None:  # noqa: PLR0915
         if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
             logger.debug('Not connected to server...')
             return
@@ -644,9 +644,11 @@ class GSTLAClient(BizHawkClient):
             # initializing here already before in-game check because we *could* do a "/deathlink"
             # on the title screen, which would then be overwritten once the stuff below initializes
             # with the YAML options
-            await self.set_death_link(ctx, bool(ctx.slot_data.get("options", {}).get("death_link", False)))
+            await self.set_death_link(ctx, bool(ctx.slot_data.get('options', {}).get('death_link', False)))
             self.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
-            logger.debug(f"DeathLink enabled: {bool(self.death_link_enabled)} with {ctx.server_seed_name=}, {ctx.slot=}")
+            logger.debug(
+                f'DeathLink enabled: {bool(self.death_link_enabled)} with {ctx.server_seed_name=}, {ctx.slot=}'
+            )
 
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
         if not self._is_in_game(result):
