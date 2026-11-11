@@ -104,9 +104,6 @@ class GSTLAWorld(World):
     settings_key = 'gstla_options'
     options_dataclass: ClassVar[type[PerGameCommonOptions]] = GSTLAOptions
     options: GSTLAOptions
-    data_version = 1
-    items_ids_populated = set()
-    location_flags_populated = set()
     settings: ClassVar[GSTLASettings]
 
     item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}

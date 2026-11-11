@@ -7,8 +7,6 @@ import settings
 import Utils
 from worlds.Files import APPatchExtension, APProcedurePatch, APTokenMixin
 
-SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
-
 CHECKSUM_GSTLA = '8efe8b2aaed97149e897570cd123ff6e'
 
 
