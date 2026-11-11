@@ -103,7 +103,7 @@ class GSTLAWorld(World):
     game = 'Golden Sun The Lost Age'
     settings_key = 'gstla_options'
     options_dataclass: ClassVar[type[PerGameCommonOptions]] = GSTLAOptions
-    options: GSTLAOptions
+    options: GSTLAOptions  # pyrefly: ignore[bad-override-mutable-attribute] - would need proper typing in upstream
     settings: ClassVar[GSTLASettings]
 
     item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}
