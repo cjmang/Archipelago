@@ -317,7 +317,8 @@ class TestTreasureLogic(GSTestBase):
         'item_shuffle': 3,
         'reveal_hidden_item': 0,
         'djinn_logic': 1,
-        'character_shuffle': 2,
+        'second_starting_character': 0,
+        'shuffle_characters': 2,
         'lemurian_ship': 0,
     }
 
@@ -367,13 +368,6 @@ class TestTreasureLogic(GSTestBase):
         logic = LocationLogic()
         dir_name = os.path.join(SCRIPT_DIR, '..', 'data', 'location_logic')
 
-        filled_locs = self.multiworld.get_filled_locations(self.player)
-        for loc in filled_locs:
-            if loc.item.name == ItemName.Piers:
-                loc.item.location = None
-                loc.item = None
-                loc.locked = False
-                break
         # with open(os.path.join(dir_name, 'MagmaRock.json')) as infile:
         # with open(os.path.join(dir_name, 'MarsLighthouse.json')) as infile:
         #         json_data = json.load(infile)
@@ -499,8 +493,6 @@ class TestTreasureLogic(GSTestBase):
         items = self.get_items_by_name(item_names)
         for item_name in item_names:
             if item_name in self.event_items:
-                items.append(self.world.create_item(item_name))
-            if item_name == ItemName.Piers:
                 items.append(self.world.create_item(item_name))
         return items
 
