@@ -183,7 +183,7 @@ class GSTLAWorld(World):
             self.options.trap_chance.value = 0
 
         if self.options.max_scaled_level < self.options.starting_levels:
-            self.options.max_scaled_level = self.options.starting_levels
+            self.options.max_scaled_level.value = self.options.starting_levels.value
 
         # ensure that if all are set to 0 we force them all to 1,
         # otherwise we can not create filler and clearly they wanted all to be the same weight.
