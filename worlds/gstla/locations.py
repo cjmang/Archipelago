@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
 
 from BaseClasses import Location, Region
+from worlds.gstla.game_data.loader import load_game_data
+from worlds.gstla.game_data.locations import FLAG_OVERWRITES
 from worlds.gstla.names import LocationName
-from worlds.gstla.new_game_data.loader import load_game_data
-from worlds.gstla.new_game_data.locations import FLAG_OVERWRITES
 from .gstla_types import ItemType, LocationData
 
 if TYPE_CHECKING:

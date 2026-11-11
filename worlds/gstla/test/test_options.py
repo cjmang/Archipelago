@@ -2,10 +2,10 @@ import base64
 from io import BytesIO, StringIO
 
 from BaseClasses import ItemClassification
+from worlds.gstla.game_data.loader import load_game_data
 from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.items import ItemType, create_item
 from worlds.gstla.names import ItemName, LocationName
-from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.test import GSTestBase
 
 OPTION_OFFSET = 17
@@ -1169,7 +1169,7 @@ class TestVanillaMagmaRock(TestFormatBase):
 
 
 class TestDeathLinkEnabled(GSTestBase):
-    options = {"death_link": 1}  # noqa: RUF012
+    options = {"death_link": 1}
 
     def test_deathlink_enabled(self):
         world = self.get_world()

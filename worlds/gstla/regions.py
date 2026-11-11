@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from BaseClasses import Region
-from worlds.gstla.new_game_data.loader import load_game_data
+from worlds.gstla.game_data.loader import load_game_data
 from .gstla_types import LocationType, RegionData
 from .locations import GSTLALocation
 from .names import EntranceName, LocationName, RegionName

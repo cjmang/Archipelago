@@ -21,6 +21,7 @@ from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
 from .connections import create_vanilla_connections
+from .game_data.loader import load_game_data
 from .gstla_types import ItemCategory, ItemType
 from .items import (
     AP_PLACEHOLDER_ITEM,
@@ -37,7 +38,6 @@ from .items import (
 from .location_groups import goldensuntla_location_groups
 from .locations import GSTLALocation, get_remote_blacklist
 from .names import ItemName
-from .new_game_data.loader import load_game_data
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch

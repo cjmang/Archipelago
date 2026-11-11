@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Protocol
 
 from BaseClasses import Item, ItemClassification
+from .game_data.loader import load_game_data
 from .gstla_types import ItemCategory, ItemData, ItemType, LocationType
 from .names import ItemName, LocationName
-from .new_game_data.loader import load_game_data
 from .options import (
     AddDummyItems,
     AddGs1Items,

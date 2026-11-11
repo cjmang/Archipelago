@@ -7,16 +7,16 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from BaseClasses import CollectionState, Item
+from worlds.gstla.game_data.loader import load_game_data
 from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.names import ItemName
-from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.test import GSTestBase
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__))
 
 if TYPE_CHECKING:
+    from worlds.gstla.game_data.events import Event
     from worlds.gstla.locations import GSTLALocation
-    from worlds.gstla.new_game_data.events import Event
 
 requirement_map = {
     # "Ship": ItemName.Ship,

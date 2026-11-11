@@ -1,7 +1,7 @@
 import unittest
 
-from worlds.gstla.new_game_data.loader import load_game_data
-from worlds.gstla.new_game_data.location_names import loc_names_by_id
+from worlds.gstla.game_data.loader import load_game_data
+from worlds.gstla.game_data.location_names import loc_names_by_id
 
 
 class TestLocationNames(unittest.TestCase):

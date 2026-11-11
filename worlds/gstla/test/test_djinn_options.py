@@ -1,6 +1,6 @@
+from worlds.gstla.game_data.loader import load_game_data
 from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.items import ItemType
-from worlds.gstla.new_game_data.loader import load_game_data
 from worlds.gstla.test import GSTestBase
 
 

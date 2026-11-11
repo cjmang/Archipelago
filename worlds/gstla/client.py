@@ -12,10 +12,10 @@ from Utils import async_start
 from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
 from .deathlink import GAME_STATE_READS, DeathDeliverer, GameState
+from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
 from .locations import get_remote_blacklist
 from .names import LocationName
-from .new_game_data.loader import load_game_data
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientCommandProcessor, BizHawkClientContext
@@ -635,7 +635,7 @@ class GSTLAClient(BizHawkClient):
             await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party has been defeated.")
             self.previous_death_link = ctx.last_death_link
 
-    async def game_watcher(self, ctx: BizHawkClientContext) -> None:  # noqa: PLR0912
+    async def game_watcher(self, ctx: BizHawkClientContext) -> None:
         if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
             logger.debug('Not connected to server...')
             return

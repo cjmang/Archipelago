@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import Self
 
+from worlds.gstla.game_data.base import BaseLocation, read_json, read_json_dir
+from worlds.gstla.game_data.characters import CHARACTER_ITEM_ID_OFFSET
+from worlds.gstla.game_data.location_names import loc_names_by_id
+from worlds.gstla.game_data.psynergy import LEARNED_PSYNERGY_MAPPING, PSYNERGY_ITEM_ID_OFFSET
 from worlds.gstla.gstla_types import CharacterIndex, LocationRestriction, LocationType, TreasureType
-from worlds.gstla.new_game_data.base import BaseLocation, read_json, read_json_dir
-from worlds.gstla.new_game_data.characters import CHARACTER_ITEM_ID_OFFSET
-from worlds.gstla.new_game_data.location_names import loc_names_by_id
-from worlds.gstla.new_game_data.psynergy import LEARNED_PSYNERGY_MAPPING, PSYNERGY_ITEM_ID_OFFSET
 
 RESTRICTIONS_MAP = {
     'no-empty': LocationRestriction.NoEmpty,

@@ -1,18 +1,16 @@
 import math
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from worlds.generic.Rules import add_item_rule, add_rule
+from .game_data.coins import COIN_ID_OFFSET
+from .game_data.loader import load_game_data
 from .gstla_types import LocationRestriction, LocationType, TreasureType
 from .items import ItemType
 from .names import EntranceName, ItemName, LocationName
-from .new_game_data.coins import COIN_ID_OFFSET
-from .new_game_data.loader import load_game_data
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
 
     from .items import GSTLAItem
-    from .locations import GSTLALocation
     from .world import GSTLAWorld
 
 
