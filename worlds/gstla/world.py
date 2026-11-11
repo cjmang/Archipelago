@@ -380,11 +380,10 @@ class GSTLAWorld(World):
                 )
                 self._character_levels.append((char.code - 0xD00, level))
 
-    def _should_be_remote(self, location: GSTLALocation) -> bool:
-        ap_item = location.item
+    def _should_be_remote(self, location: GSTLALocation, ap_item: Item) -> bool:
         if ap_item.player != self.player:
             return True
-        if ap_item.item_data.type == ItemType.Djinn:
+        if isinstance(ap_item, GSTLAItem) and ap_item.item_data.type == ItemType.Djinn:
             return False
         coop_opt = self.options.coop.value
         if coop_opt == 0:
@@ -421,7 +420,7 @@ class GSTLAWorld(World):
 
         # locations = [x for x in all_locations if x.loc_type not in {LocationType.Event, LocationType.Djinn}]
 
-        djinn_locs: list[GSTLALocation] = []
+        djinn_locs: list[tuple[GSTLALocation, int]] = []
         index = 0
         for region in self.multiworld.get_regions(self.player):
             for location in region.locations:
@@ -434,7 +433,7 @@ class GSTLAWorld(World):
                     # TODO: need to fill with something else
                     continue
 
-                if self._should_be_remote(location):
+                if self._should_be_remote(location, ap_item):
                     if ap_item.classification & (ItemClassification.progression | ItemClassification.trap) > 0:
                         item_data = AP_PROG_PLACEHOLDER_ITEM
                     elif ap_item.classification & ItemClassification.useful > 0:
@@ -445,7 +444,7 @@ class GSTLAWorld(World):
                     item_data = game_data.item_by_name[ap_item.name]
 
                 if item_data.type == ItemType.Djinn:
-                    djinn_locs.append(location)
+                    djinn_locs.append((location, item_data.id))
                 else:
                     item_id = item_data.id
                     rando_file.write(location_data.rando_flag.to_bytes(length=2, byteorder='little'))
@@ -468,8 +467,8 @@ class GSTLAWorld(World):
         rando_file.write(0xFFFFFFFF.to_bytes(length=4, byteorder='little'))
         debug_file.write('0xFFFFFFFF\n')
 
-        for loc in djinn_locs:
-            djinn_data = game_data.djinn[game_data.item_by_name[loc.item.name].id]
+        for loc, djinn_id in djinn_locs:
+            djinn_data = game_data.djinn[djinn_id]
             rando_flag = loc.location_data.rando_flag
             rando_file.write(rando_flag.to_bytes(length=1, byteorder='little'))
             rando_file.write(djinn_data.flag_index.to_bytes(length=1, byteorder='little'))

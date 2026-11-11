@@ -16,19 +16,13 @@ def create_region(world: 'GSTLAWorld', region_data: RegionData):
     region = Region(region_data.name, world.player, world.multiworld)
     for location in region_data.locations:
         if location in game_data.event_by_name:
-            region.locations.append(
-                GSTLALocation.create_event_location(world.player, location, game_data.event_by_name[location], region)
-            )
+            region.locations.append(GSTLALocation(world.player, location, game_data.event_by_name[location], region))
             continue
 
         location_data = game_data.location_by_name[location]
         if world.options.item_shuffle < 3 and location_data.type == LocationType.Hidden:
             continue
-        if location_data.type == LocationType.Djinn:
-            loc = GSTLALocation.create_djinn_location(world.player, location, location_data, region)
-        else:
-            loc = GSTLALocation(world.player, location, location_data, region)
-        region.locations.append(loc)
+        region.locations.append(GSTLALocation(world.player, location, location_data, region))
 
     for region_exit in region_data.exits:
         region.create_exit(region_exit)

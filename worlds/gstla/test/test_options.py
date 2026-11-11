@@ -4,7 +4,7 @@ from io import BytesIO, StringIO
 from BaseClasses import ItemClassification
 from worlds.gstla.game_data.loader import load_game_data
 from worlds.gstla.gstla_types import LocationType
-from worlds.gstla.items import ItemType, create_item
+from worlds.gstla.items import GSTLAItem, ItemType, create_item
 from worlds.gstla.names import ItemName, LocationName
 from worlds.gstla.options import CharacterShuffle, SecondStartingCharacter, StartWithShip
 from worlds.gstla.test import GSTestBase
@@ -1040,7 +1040,7 @@ class AnemosAccessOpen(TestFormatBase):
         self.assertEqual(0x8, 0xC & data)
 
 
-class VanillaPCShuffle(TestFormatBase):
+class TestVanillaPCShuffle(TestFormatBase):
     options = {'shuffle_characters': 0}
 
     def test_vanilla_placement(self):
@@ -1055,12 +1055,13 @@ class VanillaPCShuffle(TestFormatBase):
             self.assertEqual(LocationType.Character, char.type)
             ap_loc = world.get_location(char.name)
             ap_item = ap_loc.item
+            self.assertIsInstance(ap_item, GSTLAItem)
             self.assertEqual(ItemType.Character, ap_item.item_data.type)
             vanilla_item_id = game_data.chest_locations[ap_loc.location_data.id].vanilla_item_id
             self.assertEqual(vanilla_item_id, ap_item.item_data.id)
 
 
-class PCShuffleInVanilla(TestFormatBase):
+class TestPCShuffleInVanilla(TestFormatBase):
     options = {'shuffle_characters': CharacterShuffle.option_vanilla_shuffled}
 
     def test_vanilla_shuffle(self):
@@ -1075,11 +1076,12 @@ class PCShuffleInVanilla(TestFormatBase):
             self.assertEqual(LocationType.Character, char.type)
             ap_loc = world.get_location(char.name)
             ap_item = ap_loc.item
+            self.assertIsInstance(ap_item, GSTLAItem)
             self.assertEqual(ItemType.Character, ap_item.item_data.type)
             # self.assertEqual(ap_loc.location_data.vanilla_contents, ap_item.item_data.id)
 
 
-class PCShuffleInVanillaPiers(GSTestBase):
+class TestPCShuffleInVanillaPiers(GSTestBase):
     auto_construct = False
     options = {
         'shuffle_characters': CharacterShuffle.option_vanilla_shuffled,
@@ -1121,7 +1123,9 @@ class TestFullPCShuffle(TestFormatBase):
     def test_ensure_jenna_is_char(self):
         world = self.get_world()
         jenna_loc = world.get_location(LocationName.Idejima_Jenna)
-        self.assertEqual(ItemType.Character, jenna_loc.item.item_data.type)
+        jenna_item = jenna_loc.item
+        self.assertIsInstance(jenna_item, GSTLAItem)
+        self.assertEqual(ItemType.Character, jenna_item.item_data.type)
 
 
 class TestShortcutMarsLighthouse(TestFormatBase):
