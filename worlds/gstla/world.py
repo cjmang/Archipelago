@@ -44,7 +44,7 @@ from .rules import set_access_rules, set_entrance_rules, set_item_rules
 from .web_world import GSTLAWeb
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Mapping
 
     from BaseClasses import MultiWorld
 
@@ -145,13 +145,13 @@ class GSTLAWorld(World):
         if self.options.shuffle_characters < 2:
             self.options.non_local_items.value -= self.item_name_groups[ItemType.Character.name]
 
-        if self.options.lemurian_ship == 2:
+        if self.options.lemurian_ship.value == 2:
             self.multiworld.push_precollected(create_item(ItemName.Ship, self.player))
-        if self.options.start_with_wings_of_anemos == 1:
+        if self.options.start_with_wings_of_anemos.value == 1:
             self.multiworld.push_precollected(create_item(ItemName.Wings_of_Anemos, self.player))
 
         # When we add more traps and none are enabled we should force trap_chance to off
-        if self.options.mimic_trap_weight == 0:
+        if self.options.mimic_trap_weight.value == 0:
             self.options.trap_chance.value = 0
 
         if self.options.max_scaled_level < self.options.starting_levels:
@@ -179,7 +179,7 @@ class GSTLAWorld(World):
         self.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.Victory, self.player)
 
     def get_pre_fill_items(self) -> list[Item]:
-        pre_fill = []
+        pre_fill: list[Item] = []
         for key, val in GSTLAWorld.item_name_groups.items():
             if key in [ItemType.Djinn.name, ItemType.Character.name, ItemType.Mimic.name]:
                 # TODO: Mimics are never matched here? ItemType.Mimic is "Mimic", item_name_groups has "Mimics"
@@ -197,7 +197,7 @@ class GSTLAWorld(World):
         return filler_item.name
 
     def fill_slot_data(self) -> Mapping[str, Any]:
-        ret = {
+        ret: dict[str, Any] = {
             'options': {
                 'item_shuffle': self.options.item_shuffle.value,
                 'reveal_hidden_item': self.options.reveal_hidden_item.value,
@@ -218,7 +218,7 @@ class GSTLAWorld(World):
                 'death_link': self.options.death_link.value,
             }
         }
-        goal_dict = {}
+        goal_dict: dict[str, Any] = {}
         flags = set()
         counts = {}
         for goal in self.goal_conditions:
@@ -239,7 +239,7 @@ class GSTLAWorld(World):
         should_scale = False
 
         for world in multiworld.get_game_worlds(GSTLAWorld.game):
-            if world.options.scale_mimics or world.options.scale_characters:
+            if isinstance(world, GSTLAWorld) and (world.options.scale_mimics or world.options.scale_characters):
                 should_scale = True
 
         if should_scale:
@@ -560,7 +560,7 @@ class GSTLAWorld(World):
         debug_file.write('Skips Save and Quit: false\n')
         # write_me += 0 << 3 #skips-maze, require logic changes
         debug_file.write('Skips Maze: false\n')
-        if self.options.djinn_logic == 0:
+        if self.options.djinn_logic.value == 0:
             write_me += 1 << 2  # boss-logic, when we have no djinn logic we disable boss logic in base rando
             debug_file.write('Disable Boss Logic: true\n')
         write_me += self.options.free_avoid << 1  # free-avoid
@@ -629,10 +629,10 @@ class GSTLAWorld(World):
         debug_file.write('Major Minor Split: false\n')
         write_me += self.options.easier_bosses << 4  # easier-bosses
         debug_file.write('Easier Bosses: ' + self.options.easier_bosses.current_key + '\n')
-        if self.options.name_puzzles == 2:
+        if self.options.name_puzzles.value == 2:
             write_me += 1 << 3  # random-puzzles
             debug_file.write('Name puzzles: ' + self.options.name_puzzles.current_key + '\n')
-        elif self.options.name_puzzles == 1:
+        elif self.options.name_puzzles.value == 1:
             write_me += 1 << 2  # fixed-puzzles
             debug_file.write('Name puzzles: ' + self.options.name_puzzles.current_key + '\n')
         write_me += self.options.manual_retreat_glitch << 1  # manual-rg
