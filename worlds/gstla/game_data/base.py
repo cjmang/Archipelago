@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from importlib.resources import files
+from inspect import get_annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Self
 
@@ -23,6 +24,12 @@ def read_json_dir(path: str | Path) -> dict[str, Any]:
     return {file.name: orjson.loads(file.read_bytes()) for file in directory.iterdir() if file.name.endswith('.json')}
 
 
+def _check_required_fields(cls: 'type[BaseItem | BaseLocation]') -> None:
+    for attr in getattr(cls, '_required_fields', []):
+        if not hasattr(cls, attr) and not any(attr in get_annotations(base) for base in cls.__mro__):
+            raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
+
+
 class BaseItem(ABC):
     """
     Base class for all AP items.
@@ -32,6 +39,8 @@ class BaseItem(ABC):
     this is probably pretty good. Only drawback: Can't use super() calls in those subclasses.
     But the tradeoff's worth it, I think.
     """
+
+    _required_fields = ['ap_id', 'name', 'item_type', 'classification', 'category']
 
     if TYPE_CHECKING:
 
@@ -52,9 +61,7 @@ class BaseItem(ABC):
 
     def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
-        for attr in ['item_type', 'classification', 'category']:
-            if not hasattr(cls, attr):
-                raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
+        _check_required_fields(cls)
 
     @property
     def shuffled(self) -> bool:
@@ -89,6 +96,8 @@ class BaseLocation(ABC):
     See `BaseItem` docstring for more details on how these work.
     """
 
+    _required_fields = ['ap_id', 'name', 'location_type', 'flag', 'rando_flag', 'restrictions']
+
     if TYPE_CHECKING:
 
         @property
@@ -111,10 +120,7 @@ class BaseLocation(ABC):
 
     def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
-        # TODO:
-        # for attr in []:
-        #     if not hasattr(cls, attr):
-        #         raise TypeError(f'{cls.__name__} must set {attr} as a field or as a property')
+        _check_required_fields(cls)
 
     def as_location(self) -> LocationData:
         return LocationData(

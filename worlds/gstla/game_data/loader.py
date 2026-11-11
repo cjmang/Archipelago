@@ -1,5 +1,3 @@
-# TODO: rename to loader.py/game_loader.py/game_data.py/data_loader.py/main.py/index.py?
-
 from __future__ import annotations
 
 from collections import defaultdict
@@ -134,7 +132,6 @@ def load_game_data() -> GameData:
         locations_by_type[location.type].append(location)
 
     return GameData(
-        # TODO: actually use the now registered locations
         **tables,
         item_by_id=item_by_id,
         item_by_name=item_by_name,
