@@ -6,6 +6,7 @@ from worlds.gstla.game_data.loader import load_game_data
 from worlds.gstla.gstla_types import LocationType
 from worlds.gstla.items import ItemType, create_item
 from worlds.gstla.names import ItemName, LocationName
+from worlds.gstla.options import CharacterShuffle, SecondStartingCharacter, StartWithShip
 from worlds.gstla.test import GSTestBase
 
 OPTION_OFFSET = 17
@@ -1060,6 +1061,8 @@ class VanillaPCShuffle(TestFormatBase):
 
 
 class PCShuffleInVanilla(TestFormatBase):
+    options = {'shuffle_characters': CharacterShuffle.option_vanilla_shuffled}
+
     def test_vanilla_shuffle(self):
         data = self._get_option_byte(11)
         # Yes, 2 is correct; rando doesn't have this option
@@ -1074,6 +1077,38 @@ class PCShuffleInVanilla(TestFormatBase):
             ap_item = ap_loc.item
             self.assertEqual(ItemType.Character, ap_item.item_data.type)
             # self.assertEqual(ap_loc.location_data.vanilla_contents, ap_item.item_data.id)
+
+
+class PCShuffleInVanillaPiers(GSTestBase):
+    auto_construct = False
+    options = {
+        'shuffle_characters': CharacterShuffle.option_vanilla_shuffled,
+        'second_starting_character': SecondStartingCharacter.option_jenna,
+    }
+
+    # We need Piers to be somewhere close to the start, otherwise we get softlocked.
+    # Also see `items.create_items()`.
+    early_piers_locations = {LocationName.Idejima_Sheba, LocationName.Kibombo_Piers}
+
+    def test_piers_is_early_without_ship(self):
+        for ship_option in (StartWithShip.option_vanilla, StartWithShip.option_ship_door_unlocked):
+            self.options = {**self.options, 'lemurian_ship': ship_option}
+            for seed in range(20):  # we could probably skip this if we'd split the invididual items.py sections
+                with self.subTest(lemurian_ship=ship_option, seed=seed):
+                    self.world_setup(seed)
+                    piers_location = self.multiworld.find_item(ItemName.Piers, self.player)
+                    self.assertIn(piers_location.name, self.early_piers_locations)
+
+    def test_piers_not_forced_to_be_early_with_ship(self):
+        self.options = {**self.options, 'lemurian_ship': StartWithShip.option_available_from_start}
+        piers_locations = set()
+        for seed in range(20):
+            self.world_setup(seed)
+            piers_location = self.multiworld.find_item(ItemName.Piers, self.player)
+            piers_locations.add(piers_location.name)
+        self.assertTrue(
+            piers_locations - self.early_piers_locations, f'Piers was only placed at {piers_locations=}'
+        )
 
 
 class TestFullPCShuffle(TestFormatBase):
@@ -1169,11 +1204,11 @@ class TestVanillaMagmaRock(TestFormatBase):
 
 
 class TestDeathLinkEnabled(GSTestBase):
-    options = {"death_link": 1}
+    options = {'death_link': 1}
 
     def test_deathlink_enabled(self):
         world = self.get_world()
-        self.assertEqual(1, world.fill_slot_data()["options"]["death_link"])
+        self.assertEqual(1, world.fill_slot_data()['options']['death_link'])
 
 
 class TestDeathLinkDoesNotAffectRandoData(GSTestBase):
@@ -1186,12 +1221,12 @@ class TestDeathLinkDoesNotAffectRandoData(GSTestBase):
     auto_construct = False
 
     def test_rom_bytes_unchanged(self):
-        self.options = {"death_link": 0}
+        self.options = {'death_link': 0}
         self.world_setup(seed=1)
         rando_off = BytesIO()
         self.get_world()._generate_rando_data(rando_off, StringIO())
 
-        self.options = {"death_link": 1}
+        self.options = {'death_link': 1}
         self.world_setup(seed=1)
         rando_on = BytesIO()
         self.get_world()._generate_rando_data(rando_on, StringIO())
