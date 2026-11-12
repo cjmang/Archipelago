@@ -56,7 +56,6 @@ class ItemCategory(StrEnum):
 
 
 class CharacterIndex(IntEnum):
-    # TODO: Merge with deathlink.CharacterIndex after deathlink merge
     ISAAC = 0
     GARET = 1
     IVAN = 2

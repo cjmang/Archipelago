@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from enum import Enum, IntEnum, auto
+from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple
+
+from worlds.gstla.gstla_types import CharacterIndex
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -29,17 +31,6 @@ MAX_PP_RATIO_OFFSET = 0x16
 MAX_PP_OFFSET = 0x36
 CURRENT_PP_OFFSET = 0x3A
 CHARACTER_STATUS_BYTE_OFFSET = 0x131  # 0 = none, 1 = poison, 2 = venom, ...
-
-
-class CharacterIndex(IntEnum):
-    ISAAC = 0
-    GARET = 1
-    IVAN = 2
-    MIA = 3
-    FELIX = 4
-    JENNA = 5
-    SHEBA = 6
-    PIERS = 7
 
 
 def get_character_block_address(character: CharacterIndex) -> int:
