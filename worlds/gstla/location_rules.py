@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 from typing import TYPE_CHECKING
 
 from rule_builder.options import OptionFilter
@@ -464,7 +463,30 @@ AREA_RULES: dict[str, Rule] = {
     ),
 }
 
-LOCATION_RULES: dict[str, Rule] = {**PARTY_DJINN_RULES, **CHARACTER_RULES, **AREA_RULES}
+HAS_FULL_PARTY = HasGroup(ItemType.Character.name, 7)
+HAS_FULL_PARTY_AND_64_DJINN = And(HAS_FULL_PARTY, (has_djinn(64)))
+HAS_FULL_PARTY_AND_ALL_DJINN = And(HAS_FULL_PARTY, (has_djinn(72)))
+
+BOSS_RULES: dict[str, Rule] = {
+    # Optional Super Boss content
+    # We don't need omit_locations handling here, because it's already done in regions.py
+    LocationName.Yampi_Desert_Cave_Valukar: And(HAS_FULL_PARTY_AND_64_DJINN, Has(ItemName.Pound_Cube)),
+    LocationName.Islet_Cave_Sentinel: And(HAS_FULL_PARTY_AND_64_DJINN, Has(ItemName.Teleport_Lapis)),
+    LocationName.Treasure_Isle_Star_Magician: HAS_FULL_PARTY_AND_64_DJINN,
+    LocationName.Yampi_Desert_Cave_Daedalus: Has(ItemName.Valukar_defeated),
+    LocationName.Islet_Cave_Catastrophe: Has(ItemName.Sentinel_defeated),
+    LocationName.Treasure_Isle_Azul: Has(ItemName.Star_Magician_defeated),
+    # Anemos Inner Sanctum
+    LocationName.Anemos_Inner_Sanctum_Dullahan: And(
+        HAS_FULL_PARTY_AND_ALL_DJINN,
+        HasAll(ItemName.Lifting_Gem, ItemName.Sand, ItemName.Hover_Jade),
+    ),
+    LocationName.Anemos_Inner_Sanctum_Iris: Has(ItemName.Dullahan_defeated),
+    LocationName.Anemos_Inner_Sanctum_Orihalcon: Has(ItemName.Lifting_Gem),
+}
+
+
+LOCATION_RULES: dict[str, Rule] = {**PARTY_DJINN_RULES, **CHARACTER_RULES, **AREA_RULES, **BOSS_RULES}
 
 
 def set_location_rules(world: GSTLAWorld) -> None:
@@ -480,83 +502,6 @@ def set_location_rules(world: GSTLAWorld) -> None:
 def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
     game_data = load_game_data()
     player = world.player
-
-    # Optional Super Boss content
-    if world.options.omit_locations < 2:
-        add_rule(
-            world.get_location(LocationName.Yampi_Desert_Cave_Valukar),
-            lambda state: (
-                state.count_group(ItemType.Character.name, player) >= 7 and state.has(ItemName.Pound_Cube, player)
-            ),
-        )
-        add_rule(
-            world.get_location(LocationName.Islet_Cave_Sentinel),
-            lambda state: (
-                state.count_group(ItemType.Character.name, player) >= 7 and state.has(ItemName.Teleport_Lapis, player)
-            ),
-        )
-        add_rule(
-            world.get_location(LocationName.Treasure_Isle_Star_Magician),
-            lambda state: state.count_group(ItemType.Character.name, player) >= 7,
-        )
-
-        add_rule(
-            world.get_location(LocationName.Yampi_Desert_Cave_Daedalus),
-            lambda state: state.has(ItemName.Valukar_defeated, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Islet_Cave_Catastrophe),
-            lambda state: state.has(ItemName.Sentinel_defeated, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Treasure_Isle_Azul),
-            lambda state: state.has(ItemName.Star_Magician_defeated, player),
-        )
-        if world.options.djinn_logic.value > 0:
-            add_rule(
-                world.get_location(LocationName.Yampi_Desert_Cave_Valukar),
-                lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage),
-            )
-
-            add_rule(
-                world.get_location(LocationName.Islet_Cave_Sentinel),
-                lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage),
-            )
-
-            add_rule(
-                world.get_location(LocationName.Treasure_Isle_Star_Magician),
-                lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(64 * djinn_percentage),
-            )
-
-    if world.options.omit_locations < 1:
-        # Anemos Inner Sanctum
-        add_rule(
-            world.get_location(LocationName.Anemos_Inner_Sanctum_Dullahan),
-            lambda state: (
-                state.count_group(ItemType.Character.name, player) >= 7
-                and state.has(ItemName.Lifting_Gem, player)
-                and state.has(ItemName.Sand, player)
-                and state.has(ItemName.Hover_Jade, player)
-            ),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Anemos_Inner_Sanctum_Iris),
-            lambda state: state.has(ItemName.Dullahan_defeated, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Anemos_Inner_Sanctum_Orihalcon),
-            lambda state: state.has(ItemName.Lifting_Gem, player),
-        )
-
-        if world.options.djinn_logic.value > 0:
-            add_rule(
-                world.get_location(LocationName.Anemos_Inner_Sanctum_Dullahan),
-                lambda state: state.count_group(ItemType.Djinn.name, player) >= math.ceil(72 * djinn_percentage),
-            )
 
     # Hidden Items
     if world.options.item_shuffle > 2:
