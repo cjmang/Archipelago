@@ -4,7 +4,7 @@ class RegionName:
     WesternSea = 'Western Sea'
     Idejima = 'Idejima'
     Daila = 'Daila'
-    KandoreamTemple = 'Kandoream Temple'
+    KandoreanTemple = 'Kandorean Temple'
     DehkanPlateau = 'Dehkan Plateau'
     Madra = 'Madra'
     MadraCatacombs = 'Madra Catacombs'

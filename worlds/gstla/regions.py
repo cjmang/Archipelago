@@ -127,8 +127,8 @@ regions: dict[str, RegionData] = {
         ],
         [EntranceName.DailaToShrineOfTheSeaGod, EntranceName.DailaToKandoreanTemple, EntranceName.DailaToDehkanPlateau],
     ),
-    RegionName.KandoreamTemple: RegionData(
-        RegionName.KandoreamTemple,
+    RegionName.KandoreanTemple: RegionData(
+        RegionName.KandoreanTemple,
         [
             LocationName.Kandorean_Temple_Mimic,
             LocationName.Kandorean_Temple_Lash_Pebble,

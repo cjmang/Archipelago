@@ -6,7 +6,7 @@ vanilla_connections: list[EntranceData] = [
     EntranceData(EntranceName.Menu_StartGame, RegionName.Idejima),
     EntranceData(EntranceName.IdejimaToDaila, RegionName.Daila),
     EntranceData(EntranceName.AnywhereToJoinedPartyMembers, RegionName.PartyMembers),
-    EntranceData(EntranceName.DailaToKandoreanTemple, RegionName.KandoreamTemple),
+    EntranceData(EntranceName.DailaToKandoreanTemple, RegionName.KandoreanTemple),
     EntranceData(EntranceName.DailaToShrineOfTheSeaGod, RegionName.ShrineOfTheSeaGod),
     EntranceData(EntranceName.DailaToDehkanPlateau, RegionName.DehkanPlateau),
     EntranceData(EntranceName.DehkanPlateauToMadra, RegionName.Madra),
