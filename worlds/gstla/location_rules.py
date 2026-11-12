@@ -49,7 +49,7 @@ def set_goal_rules(world: GSTLAWorld) -> None:
     if not goal_conditions:
         required_events.add(ItemName.Doom_Dragon_Defeated)
 
-    required_events.update([GOAL_EVENTS[goal] for goal in goal_conditions])
+    required_events.update([GOAL_EVENTS[goal] for goal in goal_conditions if goal in GOAL_EVENTS])
     djinn_needed = world.options.djinn_hunt_count.value if 'Djinn Hunt' in goal_conditions else 0
     summons_needed = world.options.summon_hunt_count.value if 'Summon Hunt' in goal_conditions else 0
 
