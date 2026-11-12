@@ -647,7 +647,7 @@ class GSTLAClient(BizHawkClient):
             await self.set_death_link(ctx, bool(ctx.slot_data.get('options', {}).get('death_link', False)))
             self.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
             logger.debug(
-                f'DeathLink enabled: {bool(self.death_link_enabled)} with {ctx.server_seed_name=}, {ctx.slot=}'
+                f'DeathLink enabled: {self.death_link_enabled} with {ctx.server_seed_name=}, {ctx.slot=}'
             )
 
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
