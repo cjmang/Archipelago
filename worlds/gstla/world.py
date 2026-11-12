@@ -19,7 +19,6 @@ import settings
 from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
-from .connections import create_vanilla_connections
 from .game_data.loader import load_game_data
 from .gstla_types import ItemCategory, ItemType
 from .items import (
@@ -40,7 +39,7 @@ from .names import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
-from .rules import set_entrance_rules
+from .rules import create_entrances
 from .rules_legacy import set_access_rules, set_item_rules
 from .web_world import GSTLAWeb
 
@@ -167,14 +166,13 @@ class GSTLAWorld(World):
 
     def create_regions(self) -> None:
         create_regions(self)
-        create_vanilla_connections(self.multiworld, self.player)
+        create_entrances(self)
 
     def create_items(self) -> None:
         create_events(self)
         create_items(self, self.player)
 
     def set_rules(self) -> None:
-        set_entrance_rules(self)
         set_item_rules(self)
         set_access_rules(self)
         self.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.Victory, self.player)

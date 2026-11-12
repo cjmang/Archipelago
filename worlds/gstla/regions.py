@@ -5,7 +5,7 @@ from BaseClasses import Region
 from worlds.gstla.game_data.loader import load_game_data
 from .gstla_types import LocationType, RegionData
 from .locations import GSTLALocation
-from .names import EntranceName, LocationName, RegionName
+from .names import LocationName, RegionName
 
 if TYPE_CHECKING:
     from .world import GSTLAWorld
@@ -23,9 +23,6 @@ def create_region(world: 'GSTLAWorld', region_data: RegionData):
         if world.options.item_shuffle < 3 and location_data.type == LocationType.Hidden:
             continue
         region.locations.append(GSTLALocation(world.player, location, location_data, region))
-
-    for region_exit in region_data.exits:
-        region.create_exit(region_exit)
 
     world.multiworld.regions.append(region)
 
@@ -61,7 +58,7 @@ def create_regions(world: 'GSTLAWorld'):
 
 
 regions: dict[str, RegionData] = {
-    RegionName.Menu: RegionData(RegionName.Menu, None, [EntranceName.Menu_StartGame]),
+    RegionName.Menu: RegionData(RegionName.Menu, None),
     RegionName.Idejima: RegionData(
         RegionName.Idejima,
         [
@@ -71,7 +68,6 @@ regions: dict[str, RegionData] = {
             LocationName.Idejima_Sheba,
             LocationName.Victory_Event,
         ],
-        [EntranceName.IdejimaToDaila, EntranceName.AnywhereToJoinedPartyMembers],
     ),
     RegionName.PartyMembers: RegionData(
         RegionName.PartyMembers,
@@ -111,7 +107,6 @@ regions: dict[str, RegionData] = {
             LocationName.Kite,
             LocationName.Squall,
         ],
-        [],
     ),
     RegionName.Daila: RegionData(
         RegionName.Daila,
@@ -125,7 +120,6 @@ regions: dict[str, RegionData] = {
             LocationName.Daila_Smoke_Bomb,
             LocationName.Echo,
         ],
-        [EntranceName.DailaToShrineOfTheSeaGod, EntranceName.DailaToKandoreanTemple, EntranceName.DailaToDehkanPlateau],
     ),
     RegionName.KandoreanTemple: RegionData(
         RegionName.KandoreanTemple,
@@ -156,7 +150,6 @@ regions: dict[str, RegionData] = {
             LocationName.Dehkan_Plateau_Nut,
             LocationName.Cannon,
         ],
-        [EntranceName.DehkanPlateauToMadra],
     ),
     RegionName.IndraCavern: RegionData(RegionName.IndraCavern, [LocationName.Indra_Cavern_Zagan]),
     RegionName.Madra: RegionData(
@@ -172,14 +165,6 @@ regions: dict[str, RegionData] = {
             LocationName.Iron,
             LocationName.Char,
         ],
-        [
-            EntranceName.MadraToIndraCavern,
-            EntranceName.MadraToMadraCatacombs,
-            EntranceName.MadraToOseniaCliffs,
-            EntranceName.MadraToGondowanCliffs,
-            EntranceName.MadraToEasternSea,
-            EntranceName.MadraToLemurianShip,
-        ],
     ),
     RegionName.MadraCatacombs: RegionData(
         RegionName.MadraCatacombs,
@@ -193,7 +178,7 @@ regions: dict[str, RegionData] = {
         ],
     ),
     RegionName.OseniaCliffs: RegionData(
-        RegionName.OseniaCliffs, [LocationName.Osenia_Cliffs_Pirates_Sword], [EntranceName.OseniaCliffsToMikasalla]
+        RegionName.OseniaCliffs, [LocationName.Osenia_Cliffs_Pirates_Sword]
     ),
     RegionName.YampiDesertFront: RegionData(
         RegionName.YampiDesertFront,
@@ -204,7 +189,6 @@ regions: dict[str, RegionData] = {
             LocationName.Yampi_Desert_King_Scorpion,
             LocationName.Blitz,
         ],
-        [EntranceName.YampiDesertFrontToYampiDesertBack],
     ),
     RegionName.YampiDesertBack: RegionData(
         RegionName.YampiDesertBack,
@@ -216,7 +200,6 @@ regions: dict[str, RegionData] = {
             LocationName.Yampi_Desert_315_coins,
             LocationName.Yampi_Desert_Cave_Water_of_Life,
         ],
-        [EntranceName.YampiDesertBackToAlhafra, EntranceName.YampiDesertBackToYampiDesertCave],
     ),
     RegionName.YampiDesertCave: RegionData(
         RegionName.YampiDesertCave,
@@ -239,10 +222,6 @@ regions: dict[str, RegionData] = {
             LocationName.Alhafra_Apple,
             LocationName.Alhafra_Briggs,
             LocationName.Alhafra_Prison_Briggs,
-        ],
-        [
-            EntranceName.AlhafraToYampiDesertBack,
-            EntranceName.AlhafraToAlhafraCave,
         ],
     ),
     RegionName.AlhafraCave: RegionData(
@@ -268,7 +247,6 @@ regions: dict[str, RegionData] = {
             LocationName.Sour,
             LocationName.Spark,
         ],
-        [EntranceName.MikasallaToYampiDesertFront, EntranceName.MikasallaToGaroh, EntranceName.MikasallaToOseniaCavern],
     ),
     RegionName.Garoh: RegionData(
         RegionName.Garoh,
@@ -280,7 +258,6 @@ regions: dict[str, RegionData] = {
             LocationName.Garoh_Hypnos_Sword,
             LocationName.Ether,
         ],
-        [EntranceName.GarohToAirsRock, EntranceName.GarohToYampiDesertBack],
     ),
     RegionName.AirsRock: RegionData(
         RegionName.AirsRock,
@@ -311,7 +288,6 @@ regions: dict[str, RegionData] = {
             LocationName.Gondowan_Cliffs_Sleep_Bomb,
             LocationName.Kindle,
         ],
-        [EntranceName.GondowanCliffsToNaribwe],
     ),
     RegionName.Naribwe: RegionData(
         RegionName.Naribwe,
@@ -323,9 +299,6 @@ regions: dict[str, RegionData] = {
             LocationName.Naribwe_Unicorn_Ring,
             LocationName.Chill,
         ],
-        [
-            EntranceName.NaribweToKibomboMountains,
-        ],
     ),
     RegionName.KibomboMountains: RegionData(
         RegionName.KibomboMountains,
@@ -336,7 +309,6 @@ regions: dict[str, RegionData] = {
             LocationName.Kibombo_Mountains_Tear_Stone,
             LocationName.Waft,
         ],
-        [EntranceName.KibomboMountainsToKibombo],
     ),
     RegionName.Kibombo: RegionData(
         RegionName.Kibombo,
@@ -345,9 +317,6 @@ regions: dict[str, RegionData] = {
             LocationName.Kibombo_Lucky_Pepper,
             LocationName.Kibombo_Nut,
             LocationName.Kibombo_Piers,
-        ],
-        [
-            EntranceName.KibomboToGabombaStatue,
         ],
     ),
     RegionName.GabombaStatue: RegionData(
@@ -360,7 +329,6 @@ regions: dict[str, RegionData] = {
             LocationName.Gabomba_Statue_Ritual,
             LocationName.Steel,
         ],
-        [EntranceName.GabombaStatueToGabombaCatacombs],
     ),
     RegionName.GabombaCatacombs: RegionData(
         RegionName.GabombaCatacombs,
@@ -383,27 +351,6 @@ regions: dict[str, RegionData] = {
             LocationName.Overworld_Rusty_Axe,
             LocationName.Overworld_Rusty_Mace,
         ],
-        [
-            EntranceName.EasternSeaToAlhafra,
-            EntranceName.EasternSeaToKibombo,
-            EntranceName.EasternSeaToNaribwe,
-            EntranceName.EasternSeaToWestIndraIslet,
-            EntranceName.EasternSeaToNorthOseniaIslet,
-            EntranceName.EasternSeaToSouthEastAngaraIslet,
-            EntranceName.EasternSeaToSeaOfTimeIslet,
-            EntranceName.EasternSeaToSeaOfTime,
-            EntranceName.EasternSeaToTreasureIsland,
-            EntranceName.EasternSeaToChampa,
-            EntranceName.EasternSeaToAnkohlRuins,
-            EntranceName.EasternSeaToIzumo,
-            EntranceName.EasternSeaToGaiaRock,
-            EntranceName.EasternSeaToYallam,
-            EntranceName.EasternSeaToEastTundariaIslet,
-            EntranceName.EasternSeaToTundariaTower,
-            EntranceName.EasternSeaToApojiiIslands,
-            EntranceName.EasternSeaToAquaRock,
-            EntranceName.EasternSeaToWesternSea,
-        ],
     ),
     RegionName.EastTundariaIslet: RegionData(
         RegionName.EastTundariaIslet,
@@ -422,7 +369,6 @@ regions: dict[str, RegionData] = {
     RegionName.SeaOfTimeIslet: RegionData(
         RegionName.SeaOfTimeIslet,
         [LocationName.Sea_of_Time_Islet_Lucky_Medal],
-        [EntranceName.SeaOfTimeIsletToIsletCave],
     ),
     RegionName.IsletCave: RegionData(
         RegionName.IsletCave,
@@ -507,7 +453,6 @@ regions: dict[str, RegionData] = {
             LocationName.Treasure_Isle_Empty_Nine,
             LocationName.Treasure_Isle_Empty_Ten,
         ],
-        [EntranceName.TreasureIslandToTreasureIsland_Grindstone],
     ),
     RegionName.TreasureIsland_Grindstone: RegionData(
         RegionName.TreasureIsland_Grindstone,
@@ -521,7 +466,6 @@ regions: dict[str, RegionData] = {
             LocationName.Treasure_Isle_Jesters_Armlet,
             LocationName.Treasure_Isle_Mimic,
         ],
-        [EntranceName.TreasureIsland_GrindstoneToTreasureIsland_PostReunion],
     ),
     RegionName.TreasureIsland_PostReunion: RegionData(
         RegionName.TreasureIsland_PostReunion,
@@ -538,7 +482,6 @@ regions: dict[str, RegionData] = {
             LocationName.Tundaria_Tower_Center_Prong,
             LocationName.Wheeze,
         ],
-        [EntranceName.TundariaTowerToTundariaTower_Parched],
     ),
     RegionName.TundariaTower_Parched: RegionData(
         RegionName.TundariaTower_Parched,
@@ -567,7 +510,6 @@ regions: dict[str, RegionData] = {
             LocationName.Ankohl_Ruins_210_coins,
             LocationName.Ankohl_Ruins_Crystal_Powder,
         ],
-        [EntranceName.AnkohlRuinsToAnkohlRuins_Sand],
     ),
     RegionName.AnkohlRuins_Sand: RegionData(
         RegionName.AnkohlRuins_Sand,
@@ -606,7 +548,6 @@ regions: dict[str, RegionData] = {
             LocationName.Yallam_Oil_Drop,
             LocationName.Yallam_16_coins,
         ],
-        [EntranceName.YallamToTaopoSwamp],
     ),
     RegionName.TaopoSwamp: RegionData(
         RegionName.TaopoSwamp,
@@ -625,7 +566,6 @@ regions: dict[str, RegionData] = {
         [
             LocationName.Sea_of_Time_Poseidon,
         ],
-        [EntranceName.SeaOfTimeToLemuria],
     ),
     RegionName.Lemuria: RegionData(
         RegionName.Lemuria,
@@ -640,7 +580,6 @@ regions: dict[str, RegionData] = {
             LocationName.Lemuria_Grindstone,
             LocationName.Rime,
         ],
-        [EntranceName.LemuriaToShipRevisit],
     ),
     RegionName.WesternSea: RegionData(
         RegionName.WesternSea,
@@ -648,19 +587,6 @@ regions: dict[str, RegionData] = {
             LocationName.Overworld_Rusty_Sword,
             LocationName.Overworld_Rusty_Sword_Two,
             LocationName.Overworld_Rusty_Staff,
-        ],
-        [
-            EntranceName.WesternSeaToSouthWestAttekaIslet,
-            EntranceName.WesternSeaToHesperiaSettlement,
-            EntranceName.WesternSeaToShamanVillageCave,
-            EntranceName.WesternSeaToAttekaInlet,
-            EntranceName.WesternSeaToAttekaCavern,
-            EntranceName.WesternSeaToGondowanSettlement,
-            EntranceName.WesternSeaToMagmaRock,
-            EntranceName.WesternSeaToLoho,
-            EntranceName.WesternSeaToAngaraCavern,
-            EntranceName.WesternSeaToKaltIsland,
-            EntranceName.WesternSeaToProx,
         ],
     ),
     RegionName.SouthWestAttekaIslet: RegionData(
@@ -676,7 +602,6 @@ regions: dict[str, RegionData] = {
     RegionName.ShamanVillageCave: RegionData(
         RegionName.ShamanVillageCave,
         [LocationName.Petra, LocationName.Eddy],
-        [EntranceName.ShamanVillageCaveToShamanVillage],
     ),
     RegionName.ShamanVillage: RegionData(
         RegionName.ShamanVillage,
@@ -697,7 +622,6 @@ regions: dict[str, RegionData] = {
     RegionName.AttekaInlet: RegionData(
         RegionName.AttekaInlet,
         [LocationName.Atteka_Inlet_Vial, LocationName.Geode],
-        [EntranceName.AttekaInletToContigo, EntranceName.AttekaInletToShipRevisit],
     ),
     RegionName.Contigo: RegionData(
         RegionName.Contigo,
@@ -709,11 +633,6 @@ regions: dict[str, RegionData] = {
             LocationName.Salt,
             LocationName.Core,
             LocationName.Shine,
-        ],
-        [
-            EntranceName.ContigoToJupiterLighthouse,
-            EntranceName.ContigoToAnemosInnerSanctum,
-            EntranceName.ContigoToReunion,
         ],
     ),
     RegionName.JupiterLighthouse: RegionData(
@@ -759,7 +678,6 @@ regions: dict[str, RegionData] = {
             LocationName.Magma_Rock_383_coins,
             LocationName.Magma_Rock_Oil_Drop,
         ],
-        [EntranceName.MagmaRockToMagmaRockInterior],
     ),
     RegionName.MagmaRockInterior: RegionData(
         RegionName.MagmaRockInterior,
@@ -797,7 +715,6 @@ regions: dict[str, RegionData] = {
             LocationName.Prox_Sacred_Feather,
             LocationName.Mold,
         ],
-        [EntranceName.ProxToMarsLighthouse],
     ),
     RegionName.MarsLighthouse: RegionData(
         RegionName.MarsLighthouse,
@@ -813,7 +730,6 @@ regions: dict[str, RegionData] = {
             LocationName.Balm,
             LocationName.Mars_Lighthouse_Heated,
         ],
-        [EntranceName.MarsLighthouseToMarsLighthouse_Activated],
     ),
     RegionName.MarsLighthouse_Activated: RegionData(
         RegionName.MarsLighthouse_Activated,
