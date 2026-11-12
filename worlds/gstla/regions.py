@@ -177,9 +177,7 @@ regions: dict[str, RegionData] = {
             LocationName.Madra_Catacombs_Moloch,
         ],
     ),
-    RegionName.OseniaCliffs: RegionData(
-        RegionName.OseniaCliffs, [LocationName.Osenia_Cliffs_Pirates_Sword]
-    ),
+    RegionName.OseniaCliffs: RegionData(RegionName.OseniaCliffs, [LocationName.Osenia_Cliffs_Pirates_Sword]),
     RegionName.YampiDesertFront: RegionData(
         RegionName.YampiDesertFront,
         [
