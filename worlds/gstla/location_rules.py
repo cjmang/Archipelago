@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from rule_builder.options import OptionFilter
 from rule_builder.rules import And, Has, HasAll, HasAny, HasGroup, Or
-from worlds.generic.Rules import add_rule
 from worlds.gstla.options import ItemShuffle, RevealHiddenItem, ShortcutMagmaRock, ShortcutMarsLighthouse, StartWithShip
 from .game_data.loader import load_game_data
 from .gstla_types import LocationType, TreasureType
@@ -499,172 +498,68 @@ def set_location_rules(world: GSTLAWorld) -> None:
         world.set_rule(location, rule)
 
 
-def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
+HIDDEN_ITEM_RULES: dict[str, Rule] = {
+    LocationName.Daila_Psy_Crystal: Has(ItemName.Scoop_Gem),
+    LocationName.Yampi_Desert_315_coins: Has(ItemName.Scoop_Gem),
+    LocationName.Alhafra_Lucky_Medal: Has(ItemName.Briggs_defeated),
+    LocationName.Alhafran_Cave_Power_Bread: Has(ItemName.Briggs_escaped),
+    LocationName.Kibombo_Mountains_Smoke_Bomb: HasAny(ItemName.Lash_Pebble, ItemName.Gabomba_Statue_Completed),
+    LocationName.Kibombo_Lucky_Medal: Has(ItemName.Gabomba_Statue_Completed),
+    LocationName.Kibombo_Nut: Has(ItemName.Gabomba_Statue_Completed),
+    LocationName.Apojii_Islands_Bramble_Seed: Has(ItemName.Cyclone_Chip),
+    LocationName.Apojii_Islands_Mint: Has(ItemName.Cyclone_Chip),
+    LocationName.Apojii_Islands_Herb: Has(ItemName.Cyclone_Chip),
+    LocationName.Izumo_Antidote: Has(ItemName.Cyclone_Chip),
+    LocationName.Izumo_Antidote_Two: Has(ItemName.Cyclone_Chip),
+    LocationName.Izumo_Lucky_Medal: Has(ItemName.Cyclone_Chip),
+    LocationName.Gaia_Rock_Cloud_Brand: HasAll(ItemName.Sand, ItemName.Growth),
+    LocationName.Yallam_Nut: Has(ItemName.Cyclone_Chip),
+    LocationName.Yallam_Antidote: Has(ItemName.Cyclone_Chip),
+    LocationName.Taopo_Swamp_Star_Dust: HasAll(
+        ItemName.Whirlwind,
+        ItemName.Growth,
+        ItemName.Douse_Drop,
+        ItemName.Frost_Jewel,
+        ItemName.Tremor_Bit,
+        ItemName.Scoop_Gem,
+    ),
+    LocationName.Taopo_Swamp_Bramble_Seed: HasAll(ItemName.Whirlwind, ItemName.Cyclone_Chip),
+    LocationName.Lemuria_Lucky_Medal: Has(ItemName.Scoop_Gem),
+    LocationName.Lemuria_Rusty_Sword: Has(ItemName.Scoop_Gem),
+    LocationName.Lemuria_Hard_Nut: HasAll(ItemName.Growth, ItemName.Cyclone_Chip),
+    LocationName.Lemuria_Bone: Has(ItemName.Scoop_Gem),
+    LocationName.Lemuria_Star_Dust: Has(ItemName.Scoop_Gem),
+    LocationName.Lemurian_Ship_Antidote: Has(ItemName.Frost_Jewel),
+    LocationName.Lemurian_Ship_Oil_Drop: Has(ItemName.Frost_Jewel),
+    LocationName.Overworld_Rusty_Sword_Two: HasAll(ItemName.Wings_of_Anemos, ItemName.Hover_Jade),
+    LocationName.Shaman_Village_Weasels_Claw: Has(ItemName.Shamans_Rod),
+    LocationName.Shaman_Village_Lucky_Medal: Has(ItemName.Moapa_defeated),
+    LocationName.Shaman_Village_Lucky_Pepper: Has(ItemName.Moapa_defeated),
+    LocationName.Contigo_Bramble_Seed: Has(ItemName.Cyclone_Chip),
+    LocationName.Loho_Mythril_Silver: HasAll(ItemName.Ship_Cannon, ItemName.Scoop_Gem),
+}
+
+HAS_REVEAL_FOR_HIDDEN_ITEMS = Has(
+    ItemName.Reveal, options=[OptionFilter(RevealHiddenItem, 1)], filtered_resolution=True
+)
+
+REVEAL_REQUIRED_LOCATIONS = [
+    LocationName.Daila_Psy_Crystal,
+    LocationName.Loho_Mythril_Silver,
+    LocationName.Lemuria_Lucky_Medal,
+    LocationName.Lemuria_Rusty_Sword,
+    LocationName.Lemuria_Bone,
+    LocationName.Lemuria_Star_Dust,
+]
+
+
+def get_reveal_locations() -> set[str]:
+    # for all hidden items that are not eventType 131 (TreasureType.FIELD_ITEM)
+    # (these include scoopable or cyclone places), we require reveal
     game_data = load_game_data()
-    player = world.player
-
-    # Hidden Items
-    if world.options.item_shuffle > 2:
-        add_rule(
-            world.get_location(LocationName.Daila_Psy_Crystal), lambda state: state.has(ItemName.Scoop_Gem, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Yampi_Desert_315_coins), lambda state: state.has(ItemName.Scoop_Gem, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Alhafra_Lucky_Medal),
-            lambda state: state.has(ItemName.Briggs_defeated, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Alhafran_Cave_Power_Bread),
-            lambda state: state.has(ItemName.Briggs_escaped, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Kibombo_Mountains_Smoke_Bomb),
-            lambda state: (
-                state.has(ItemName.Lash_Pebble, player) or state.has(ItemName.Gabomba_Statue_Completed, player)
-            ),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Kibombo_Lucky_Medal),
-            lambda state: state.has(ItemName.Gabomba_Statue_Completed, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Kibombo_Nut),
-            lambda state: state.has(ItemName.Gabomba_Statue_Completed, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Apojii_Islands_Bramble_Seed),
-            lambda state: state.has(ItemName.Cyclone_Chip, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Apojii_Islands_Mint), lambda state: state.has(ItemName.Cyclone_Chip, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Apojii_Islands_Herb), lambda state: state.has(ItemName.Cyclone_Chip, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Izumo_Antidote), lambda state: state.has(ItemName.Cyclone_Chip, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Izumo_Antidote_Two), lambda state: state.has(ItemName.Cyclone_Chip, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Izumo_Lucky_Medal), lambda state: state.has(ItemName.Cyclone_Chip, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Gaia_Rock_Cloud_Brand),
-            lambda state: state.has(ItemName.Sand, player) and state.has(ItemName.Growth, player),
-        )
-
-        add_rule(world.get_location(LocationName.Yallam_Nut), lambda state: state.has(ItemName.Cyclone_Chip, player))
-
-        add_rule(
-            world.get_location(LocationName.Yallam_Antidote), lambda state: state.has(ItemName.Cyclone_Chip, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Taopo_Swamp_Star_Dust),
-            lambda state: (
-                state.has(ItemName.Whirlwind, player)
-                and state.has(ItemName.Growth, player)
-                and state.has(ItemName.Douse_Drop, player)
-                and state.has(ItemName.Frost_Jewel, player)
-                and state.has(ItemName.Tremor_Bit, player)
-                and state.has(ItemName.Scoop_Gem, player)
-            ),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Taopo_Swamp_Bramble_Seed),
-            lambda state: state.has(ItemName.Whirlwind, player) and state.has(ItemName.Cyclone_Chip, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Lemuria_Lucky_Medal), lambda state: state.has(ItemName.Scoop_Gem, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Lemuria_Rusty_Sword), lambda state: state.has(ItemName.Scoop_Gem, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Lemuria_Hard_Nut),
-            lambda state: state.has(ItemName.Growth, player) and state.has(ItemName.Cyclone_Chip, player),
-        )
-
-        add_rule(world.get_location(LocationName.Lemuria_Bone), lambda state: state.has(ItemName.Scoop_Gem, player))
-
-        add_rule(
-            world.get_location(LocationName.Lemuria_Star_Dust), lambda state: state.has(ItemName.Scoop_Gem, player)
-        )
-
-        add_rule(
-            world.get_location(LocationName.Lemurian_Ship_Antidote),
-            lambda state: state.has(ItemName.Frost_Jewel, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Lemurian_Ship_Oil_Drop),
-            lambda state: state.has(ItemName.Frost_Jewel, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Overworld_Rusty_Sword_Two),
-            lambda state: state.has(ItemName.Wings_of_Anemos, player) and state.has(ItemName.Hover_Jade, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Shaman_Village_Weasels_Claw),
-            lambda state: state.has(ItemName.Shamans_Rod, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Shaman_Village_Lucky_Medal),
-            lambda state: state.has(ItemName.Moapa_defeated, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Shaman_Village_Lucky_Pepper),
-            lambda state: state.has(ItemName.Moapa_defeated, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Contigo_Bramble_Seed),
-            lambda state: state.has(ItemName.Cyclone_Chip, player),
-        )
-
-        add_rule(
-            world.get_location(LocationName.Loho_Mythril_Silver),
-            lambda state: state.has(ItemName.Ship_Cannon, player) and state.has(ItemName.Scoop_Gem, player),
-        )
-
-        if world.options.reveal_hidden_item == 1:
-            # for all hidden items that are not eventType 131 (TreasureType.FIELD_ITEM)
-            # (these include scoopable or cyclone places), we require reveal
-            reveal_required_locs = [
-                LocationName.Daila_Psy_Crystal,
-                LocationName.Loho_Mythril_Silver,
-                LocationName.Lemuria_Lucky_Medal,
-                LocationName.Lemuria_Rusty_Sword,
-                LocationName.Lemuria_Bone,
-                LocationName.Lemuria_Star_Dust,
-            ]
-
-            for loc in game_data.locations_by_type[LocationType.Hidden]:
-                item_treasure_type = game_data.chest_locations[loc.id].treasure_type
-                if item_treasure_type != TreasureType.FIELD_ITEM or loc.name in reveal_required_locs:
-                    add_rule(world.get_location(loc.name), lambda state: state.has(ItemName.Reveal, player))
+    locations = set()
+    for loc in game_data.locations_by_type[LocationType.Hidden]:
+        item_treasure_type = game_data.chest_locations[loc.id].treasure_type
+        if item_treasure_type != TreasureType.FIELD_ITEM or loc.name in REVEAL_REQUIRED_LOCATIONS:
+            locations.add(loc.name)
+    return locations

@@ -36,7 +36,7 @@ from .items import (
     get_filler_item,
 )
 from .location_groups import goldensuntla_location_groups
-from .location_rules import set_access_rules, set_goal_rules, set_location_rules
+from .location_rules import set_goal_rules, set_location_rules
 from .locations import GSTLALocation, get_remote_blacklist
 from .names import ItemName
 from .options import GSTLAOptions
@@ -177,7 +177,6 @@ class GSTLAWorld(World):
         set_item_rules(self)
         set_location_rules(self)
         set_goal_rules(self)
-        set_access_rules(self)
 
     def get_pre_fill_items(self) -> list[Item]:
         pre_fill: list[Item] = []
