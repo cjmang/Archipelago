@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import IntEnum, IntFlag, StrEnum, auto
 
 from BaseClasses import ItemClassification
+from rule_builder.rules import Rule
 
 
 class RegionData:
@@ -21,13 +22,11 @@ class RegionData:
         self.exits = _exits
 
 
+@dataclass(frozen=True)
 class EntranceData:
-    source_entrance: str
+    source: str
     target: str
-
-    def __init__(self, _source_entrance: str, _target: str):
-        self.source_entrance = _source_entrance
-        self.target = _target
+    rule: Rule | None
 
 
 class ItemCategory(StrEnum):
