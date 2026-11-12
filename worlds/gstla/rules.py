@@ -1,6 +1,5 @@
 # TODO:
 #  - Evaluate if CachedRuleBuilderWorld would do anything useful for us
-#  - Import ItemName as Item, EntranceName as Entrance after adding all of them
 #  - Why not use the rando logic from game_code? (asked Platano) - DECISION: Do python-only, but test against rando
 #  - We might actually be able to do to_dict() with the data-json format (Reqs) and compare that to the rando data
 
@@ -10,9 +9,9 @@ from typing import TYPE_CHECKING
 
 from rule_builder.options import OptionFilter
 from rule_builder.rules import And, Has, HasAll, HasAny, HasGroup, Or
-from worlds.gstla.names import RegionName
 from .gstla_types import EntranceData, ItemType
 from .items import ItemName
+from .names import RegionName
 from .options import AnemosAccess, ShortcutMagmaRock, ShortcutMarsLighthouse, StartWithShip
 
 if TYPE_CHECKING:
