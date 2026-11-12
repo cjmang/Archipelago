@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 from typing import TYPE_CHECKING
 
@@ -8,10 +10,28 @@ from .items import ItemType
 from .names import ItemName, LocationName
 
 if TYPE_CHECKING:
+    from rule_builder.rules import Rule
     from .world import GSTLAWorld
 
 
-def set_access_rules(world: 'GSTLAWorld'):  # noqa: PLR0912, PLR0915
+LOCATION_RULES: dict[str, Rule] = {
+    # Goals
+    # Chars
+    # Djinns
+    # The Rest
+}
+
+
+def set_location_rules(world: GSTLAWorld) -> None:
+    for location in world.get_locations():
+        if location.name not in LOCATION_RULES:
+            continue
+
+        rule = LOCATION_RULES[location.name]
+        world.set_rule(location, rule)
+
+
+def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
     game_data = load_game_data()
     player = world.player
     # Goal
