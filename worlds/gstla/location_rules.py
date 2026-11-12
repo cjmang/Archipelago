@@ -63,6 +63,49 @@ def set_goal_rules(world: GSTLAWorld) -> None:
     world.set_completion_rule(Has(ItemName.Victory))
 
 
+DJINNS_BY_PARTY_SIZE: dict[int, tuple[str, ...]] = {
+    # In vanilla, these are brought by a newly recruited character,
+    # but since chars can be shuffled we have to grant them by party size
+    2: (
+        LocationName.Spring,
+        LocationName.Shade,
+    ),
+    3: (
+        LocationName.Flint,
+        LocationName.Forge,
+        LocationName.Gust,
+    ),
+    4: (
+        LocationName.Granite,
+        LocationName.Fizz,
+        LocationName.Fever,
+        LocationName.Breeze,
+    ),
+    5: (
+        LocationName.Sleet,
+        LocationName.Quartz,
+        LocationName.Mist,
+        LocationName.Corona,
+        LocationName.Zephyr,
+    ),
+    6: (
+        LocationName.Vine,
+        LocationName.Spritz,
+        LocationName.Scorch,
+        LocationName.Smog,
+        LocationName.Sap,
+        LocationName.Hail,
+    ),
+    7: (
+        LocationName.Ember,
+        LocationName.Kite,
+        LocationName.Ground,
+        LocationName.Tonic,
+        LocationName.Flash,
+        LocationName.Squall,
+    ),
+}
+
 LOCATION_RULES: dict[str, Rule] = {
     # Chars
     LocationName.Idejima_Mind_Read: Has(ItemName.Sheba),
@@ -74,6 +117,11 @@ LOCATION_RULES: dict[str, Rule] = {
     LocationName.Contigo_Orb_of_Force: Has(ItemName.Garet),
     LocationName.Contigo_Catch_Beads: Has(ItemName.Isaac),
     # Djinns
+    **{
+        djinn: HasGroup(ItemType.Character.name, party_size)
+        for party_size, djinns in DJINNS_BY_PARTY_SIZE.items()
+        for djinn in djinns
+    },
     # The Rest
 }
 
@@ -91,92 +139,6 @@ def set_location_rules(world: GSTLAWorld) -> None:
 def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
     game_data = load_game_data()
     player = world.player
-
-    # Character djinn, char shuffle flag is always enabled so we gain djinn every few chars
-    # and they are not tied to specific chars
-    add_rule(
-        world.get_location(LocationName.Spring), lambda state: state.count_group(ItemType.Character.name, player) >= 2
-    )
-    add_rule(
-        world.get_location(LocationName.Shade), lambda state: state.count_group(ItemType.Character.name, player) >= 2
-    )
-
-    add_rule(
-        world.get_location(LocationName.Flint), lambda state: state.count_group(ItemType.Character.name, player) >= 3
-    )
-    add_rule(
-        world.get_location(LocationName.Forge), lambda state: state.count_group(ItemType.Character.name, player) >= 3
-    )
-    add_rule(
-        world.get_location(LocationName.Gust), lambda state: state.count_group(ItemType.Character.name, player) >= 3
-    )
-
-    add_rule(
-        world.get_location(LocationName.Granite), lambda state: state.count_group(ItemType.Character.name, player) >= 4
-    )
-    add_rule(
-        world.get_location(LocationName.Fizz), lambda state: state.count_group(ItemType.Character.name, player) >= 4
-    )
-    add_rule(
-        world.get_location(LocationName.Fever), lambda state: state.count_group(ItemType.Character.name, player) >= 4
-    )
-    add_rule(
-        world.get_location(LocationName.Breeze), lambda state: state.count_group(ItemType.Character.name, player) >= 4
-    )
-
-    add_rule(
-        world.get_location(LocationName.Sleet), lambda state: state.count_group(ItemType.Character.name, player) >= 5
-    )
-    add_rule(
-        world.get_location(LocationName.Quartz), lambda state: state.count_group(ItemType.Character.name, player) >= 5
-    )
-    add_rule(
-        world.get_location(LocationName.Mist), lambda state: state.count_group(ItemType.Character.name, player) >= 5
-    )
-    add_rule(
-        world.get_location(LocationName.Corona), lambda state: state.count_group(ItemType.Character.name, player) >= 5
-    )
-    add_rule(
-        world.get_location(LocationName.Zephyr), lambda state: state.count_group(ItemType.Character.name, player) >= 5
-    )
-
-    add_rule(
-        world.get_location(LocationName.Vine), lambda state: state.count_group(ItemType.Character.name, player) >= 6
-    )
-    add_rule(
-        world.get_location(LocationName.Spritz), lambda state: state.count_group(ItemType.Character.name, player) >= 6
-    )
-    add_rule(
-        world.get_location(LocationName.Scorch), lambda state: state.count_group(ItemType.Character.name, player) >= 6
-    )
-    add_rule(
-        world.get_location(LocationName.Smog), lambda state: state.count_group(ItemType.Character.name, player) >= 6
-    )
-    add_rule(
-        world.get_location(LocationName.Sap), lambda state: state.count_group(ItemType.Character.name, player) >= 6
-    )
-    add_rule(
-        world.get_location(LocationName.Hail), lambda state: state.count_group(ItemType.Character.name, player) >= 6
-    )
-
-    add_rule(
-        world.get_location(LocationName.Ember), lambda state: state.count_group(ItemType.Character.name, player) >= 7
-    )
-    add_rule(
-        world.get_location(LocationName.Kite), lambda state: state.count_group(ItemType.Character.name, player) >= 7
-    )
-    add_rule(
-        world.get_location(LocationName.Ground), lambda state: state.count_group(ItemType.Character.name, player) >= 7
-    )
-    add_rule(
-        world.get_location(LocationName.Tonic), lambda state: state.count_group(ItemType.Character.name, player) >= 7
-    )
-    add_rule(
-        world.get_location(LocationName.Flash), lambda state: state.count_group(ItemType.Character.name, player) >= 7
-    )
-    add_rule(
-        world.get_location(LocationName.Squall), lambda state: state.count_group(ItemType.Character.name, player) >= 7
-    )
 
     # Daila
     add_rule(
