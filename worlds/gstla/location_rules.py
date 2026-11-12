@@ -485,19 +485,6 @@ BOSS_RULES: dict[str, Rule] = {
 }
 
 
-LOCATION_RULES: dict[str, Rule] = {**PARTY_DJINN_RULES, **CHARACTER_RULES, **AREA_RULES, **BOSS_RULES}
-
-
-def set_location_rules(world: GSTLAWorld) -> None:
-    # The rest
-    for location in world.get_locations():
-        if location.name not in LOCATION_RULES:
-            continue
-
-        rule = LOCATION_RULES[location.name]
-        world.set_rule(location, rule)
-
-
 HIDDEN_ITEM_RULES: dict[str, Rule] = {
     LocationName.Daila_Psy_Crystal: Has(ItemName.Scoop_Gem),
     LocationName.Yampi_Desert_315_coins: Has(ItemName.Scoop_Gem),
@@ -563,3 +550,25 @@ def get_reveal_locations() -> set[str]:
         if item_treasure_type != TreasureType.FIELD_ITEM or loc.name in REVEAL_REQUIRED_LOCATIONS:
             locations.add(loc.name)
     return locations
+
+
+LOCATION_RULES: dict[str, Rule] = {
+    **PARTY_DJINN_RULES,
+    **CHARACTER_RULES,
+    **AREA_RULES,
+    **BOSS_RULES,
+    **HIDDEN_ITEM_RULES,
+}
+
+
+def set_location_rules(world: GSTLAWorld) -> None:
+    reveal_locations = get_reveal_locations()
+
+    for location in world.get_locations():
+        rule = LOCATION_RULES.get(location.name)
+
+        if location.name in reveal_locations:
+            rule = HAS_REVEAL_FOR_HIDDEN_ITEMS if rule is None else rule & HAS_REVEAL_FOR_HIDDEN_ITEMS
+
+        if rule is not None:
+            world.set_rule(location, rule)
