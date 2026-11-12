@@ -19,6 +19,7 @@ import settings
 from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
+from .entrances import create_entrances
 from .game_data.loader import load_game_data
 from .gstla_types import ItemCategory, ItemType
 from .items import (
@@ -39,7 +40,6 @@ from .names import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
-from .rules import create_entrances
 from .rules_legacy import set_access_rules, set_item_rules
 from .web_world import GSTLAWeb
 
