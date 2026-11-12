@@ -11,6 +11,8 @@ from .items import ItemType
 from .names import ItemName, LocationName
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from rule_builder.rules import Rule
     from .world import GSTLAWorld
 
@@ -63,6 +65,7 @@ def set_goal_rules(world: GSTLAWorld) -> None:
     world.set_completion_rule(Has(ItemName.Victory))
 
 
+# Character-brought djinns
 DJINNS_BY_PARTY_SIZE: dict[int, tuple[str, ...]] = {
     # In vanilla, these are brought by a newly recruited character,
     # but since chars can be shuffled we have to grant them by party size
@@ -105,9 +108,14 @@ DJINNS_BY_PARTY_SIZE: dict[int, tuple[str, ...]] = {
         LocationName.Squall,
     ),
 }
+PARTY_DJINN_RULES: Mapping[str, Rule] = {
+    djinn: HasGroup(ItemType.Character.name, party_size)
+    for party_size, djinns in DJINNS_BY_PARTY_SIZE.items()
+    for djinn in djinns
+}
 
-LOCATION_RULES: dict[str, Rule] = {
-    # Chars
+# Characters
+CHARACTER_RULES: dict[str, Rule] = {
     LocationName.Idejima_Mind_Read: Has(ItemName.Sheba),
     LocationName.Idejima_Whirlwind: Has(ItemName.Sheba),
     LocationName.Kibombo_Douse_Drop: Has(ItemName.Piers),
@@ -116,14 +124,9 @@ LOCATION_RULES: dict[str, Rule] = {
     LocationName.Contigo_Lifting_Gem: Has(ItemName.Ivan),
     LocationName.Contigo_Orb_of_Force: Has(ItemName.Garet),
     LocationName.Contigo_Catch_Beads: Has(ItemName.Isaac),
-    # Djinns
-    **{
-        djinn: HasGroup(ItemType.Character.name, party_size)
-        for party_size, djinns in DJINNS_BY_PARTY_SIZE.items()
-        for djinn in djinns
-    },
-    # The Rest
 }
+
+LOCATION_RULES: dict[str, Rule] = {**PARTY_DJINN_RULES, **CHARACTER_RULES}
 
 
 def set_location_rules(world: GSTLAWorld) -> None:
