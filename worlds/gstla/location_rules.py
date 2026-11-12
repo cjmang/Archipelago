@@ -127,20 +127,6 @@ CHARACTER_RULES: dict[str, Rule] = {
     LocationName.Contigo_Catch_Beads: Has(ItemName.Isaac),
 }
 
-
-LOCATION_RULES: dict[str, Rule] = {**PARTY_DJINN_RULES, **CHARACTER_RULES}
-
-
-def set_location_rules(world: GSTLAWorld) -> None:
-    # The rest
-    for location in world.get_locations():
-        if location.name not in LOCATION_RULES:
-            continue
-
-        rule = LOCATION_RULES[location.name]
-        world.set_rule(location, rule)
-
-
 AREA_RULES: dict[str, Rule] = {
     # TODO: Should we prefix djinns? Like LocationName.Kandorean_Fog?
     # TODO: Are there some missing? Like Madra_Catacombs_Apple?
@@ -477,6 +463,18 @@ AREA_RULES: dict[str, Rule] = {
         has_djinn(56),
     ),
 }
+
+LOCATION_RULES: dict[str, Rule] = {**PARTY_DJINN_RULES, **CHARACTER_RULES, **AREA_RULES}
+
+
+def set_location_rules(world: GSTLAWorld) -> None:
+    # The rest
+    for location in world.get_locations():
+        if location.name not in LOCATION_RULES:
+            continue
+
+        rule = LOCATION_RULES[location.name]
+        world.set_rule(location, rule)
 
 
 def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
