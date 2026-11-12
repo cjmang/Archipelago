@@ -35,12 +35,12 @@ from .items import (
     get_filler_item,
 )
 from .location_groups import goldensuntla_location_groups
+from .location_rules import set_access_rules, set_item_rules
 from .locations import GSTLALocation, get_remote_blacklist
 from .names import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
-from .rules_legacy import set_access_rules, set_item_rules
 from .web_world import GSTLAWeb
 
 if TYPE_CHECKING:

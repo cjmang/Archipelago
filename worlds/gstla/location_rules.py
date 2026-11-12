@@ -9,7 +9,6 @@ from .items import ItemType
 from .names import ItemName, LocationName
 
 if TYPE_CHECKING:
-
     from .items import GSTLAItem
     from .world import GSTLAWorld
 
