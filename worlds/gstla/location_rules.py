@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from rule_builder.rules import Has
 from worlds.generic.Rules import add_rule
 from .game_data.loader import load_game_data
 from .gstla_types import LocationType, TreasureType
@@ -14,9 +15,23 @@ if TYPE_CHECKING:
     from .world import GSTLAWorld
 
 
+# Regex gaming:
+# Difficulty: ez
+# add_rule\(\s*world\.get_location\(LocationName\.(\w+)\),\s*lambda state: state\.has\(ItemName\.(\w+), player\),?\s*\)
+# replace with
+# LocationName.$1: Has(ItemName.$2),
+
 LOCATION_RULES: dict[str, Rule] = {
-    # Goals
     # Chars
+    LocationName.Idejima_Mind_Read: Has(ItemName.Sheba),
+    LocationName.Idejima_Whirlwind: Has(ItemName.Sheba),
+    LocationName.Kibombo_Douse_Drop: Has(ItemName.Piers),
+    LocationName.Kibombo_Frost_Jewel: Has(ItemName.Piers),
+    LocationName.Contigo_Carry_Stone: Has(ItemName.Mia),
+    LocationName.Contigo_Lifting_Gem: Has(ItemName.Ivan),
+    LocationName.Contigo_Orb_of_Force: Has(ItemName.Garet),
+    LocationName.Contigo_Catch_Beads: Has(ItemName.Isaac),
+    # Goals
     # Djinns
     # The Rest
 }
@@ -80,17 +95,6 @@ def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
             and state.count_group(ItemType.Summon.name, player) >= summons_needed
         ),
     )
-    # Character locations
-    add_rule(world.get_location(LocationName.Idejima_Mind_Read), lambda state: state.has(ItemName.Sheba, player))
-    add_rule(world.get_location(LocationName.Idejima_Whirlwind), lambda state: state.has(ItemName.Sheba, player))
-
-    add_rule(world.get_location(LocationName.Kibombo_Douse_Drop), lambda state: state.has(ItemName.Piers, player))
-    add_rule(world.get_location(LocationName.Kibombo_Frost_Jewel), lambda state: state.has(ItemName.Piers, player))
-
-    add_rule(world.get_location(LocationName.Contigo_Carry_Stone), lambda state: state.has(ItemName.Mia, player))
-    add_rule(world.get_location(LocationName.Contigo_Lifting_Gem), lambda state: state.has(ItemName.Ivan, player))
-    add_rule(world.get_location(LocationName.Contigo_Orb_of_Force), lambda state: state.has(ItemName.Garet, player))
-    add_rule(world.get_location(LocationName.Contigo_Catch_Beads), lambda state: state.has(ItemName.Isaac, player))
 
     # Character djinn, char shuffle flag is always enabled so we gain djinn every few chars
     # and they are not tied to specific chars
