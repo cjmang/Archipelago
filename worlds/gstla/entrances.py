@@ -1,8 +1,3 @@
-# TODO:
-#  - Evaluate if CachedRuleBuilderWorld would do anything useful for us
-#  - Why not use the rando logic from game_code? (asked Platano) - DECISION: Do python-only, but test against rando
-#  - We might actually be able to do to_dict() with the data-json format (Reqs) and compare that to the rando data
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

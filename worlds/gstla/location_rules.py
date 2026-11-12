@@ -23,9 +23,8 @@ MAGMA_SHORTCUT = [OptionFilter(ShortcutMagmaRock, 1)]
 NO_MAGMA_SHORTCUT = [OptionFilter(ShortcutMagmaRock, 0)]
 
 GOAL_EVENTS: dict[str, str] = {
-    # TODO: dedup with EVENTS in events.py?
     # TODO: proper Goal enum?
-    'Doom Dragon': ItemName.Doom_Dragon_Defeated,  # lowercase "defeated"?
+    'Doom Dragon': ItemName.Doom_Dragon_Defeated,
     'Chestbeaters': ItemName.Chestbeaters_defeated,
     'King Scorpion': ItemName.King_Scorpion_defeated,
     'Briggs': ItemName.Briggs_defeated,
@@ -126,8 +125,6 @@ CHARACTER_RULES: dict[str, Rule] = {
 }
 
 AREA_RULES: dict[str, Rule] = {
-    # TODO: Should we prefix djinns? Like LocationName.Kandorean_Fog?
-    # TODO: Are there some missing? Like Madra_Catacombs_Apple?
     # Daila
     LocationName.Daila_Sea_Gods_Tear: Has(ItemName.Frost_Jewel),
     # Kandorean Temple
@@ -394,7 +391,7 @@ AREA_RULES: dict[str, Rule] = {
     LocationName.Gel: Has(ItemName.Lash_Pebble),
     # Prox
     LocationName.Prox_Dark_Matter: HasAll(ItemName.Scoop_Gem, ItemName.Lifting_Gem),
-    LocationName.Mold: Has(ItemName.Scoop_Gem),  # TODO: Only one djinn in Prox?
+    LocationName.Mold: Has(ItemName.Scoop_Gem),
     # Mars Lighthouse
     LocationName.Mars_Lighthouse_Mimic: Has(ItemName.Pound_Cube),
     LocationName.Mars_Lighthouse_Teleport_Lapis: And(
