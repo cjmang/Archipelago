@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from rule_builder.rules import Has
+from rule_builder.rules import And, Has, HasAll, HasGroup
 from worlds.generic.Rules import add_rule
 from .game_data.loader import load_game_data
 from .gstla_types import LocationType, TreasureType
@@ -21,6 +21,48 @@ if TYPE_CHECKING:
 # replace with
 # LocationName.$1: Has(ItemName.$2),
 
+GOAL_EVENTS: dict[str, str] = {
+    # TODO: dedup with EVENTS in events.py?
+    # TODO: proper Goal enum?
+    'Doom Dragon': ItemName.Doom_Dragon_Defeated,  # lowercase "defeated"?
+    'Chestbeaters': ItemName.Chestbeaters_defeated,
+    'King Scorpion': ItemName.King_Scorpion_defeated,
+    'Briggs': ItemName.Briggs_defeated,
+    'Aqua Hydra': ItemName.Aqua_Hydra_defeated,
+    'Poseidon': ItemName.Poseidon_defeated,
+    'Serpent': ItemName.Serpent_defeated,
+    'Avimander': ItemName.Avimander_defeated,
+    'Moapa': ItemName.Moapa_defeated,
+    'Reunion': ItemName.Reunion,
+    'Flame Dragons': ItemName.Flame_Dragons_defeated,
+    'Star Magician': ItemName.Star_Magician_defeated,
+    'Sentinel': ItemName.Sentinel_defeated,
+    'Valukar': ItemName.Valukar_defeated,
+    'Dullahan': ItemName.Dullahan_defeated,
+}
+
+
+def set_goal_rules(world: GSTLAWorld) -> None:
+    goal_conditions = world.goal_conditions
+    required_events: set[str] = set()
+
+    if not goal_conditions:
+        required_events.add(ItemName.Doom_Dragon_Defeated)
+
+    required_events.update([GOAL_EVENTS[goal] for goal in goal_conditions])
+    djinn_needed = world.options.djinn_hunt_count.value if 'Djinn Hunt' in goal_conditions else 0
+    summons_needed = world.options.summon_hunt_count.value if 'Summon Hunt' in goal_conditions else 0
+
+    goal_rule = And(
+        HasAll(*required_events),
+        HasGroup(ItemType.Djinn.name, djinn_needed),
+        HasGroup(ItemType.Summon.name, summons_needed),
+    )
+
+    world.set_rule(world.get_location(LocationName.Victory_Event), goal_rule)
+    world.set_completion_rule(Has(ItemName.Victory))
+
+
 LOCATION_RULES: dict[str, Rule] = {
     # Chars
     LocationName.Idejima_Mind_Read: Has(ItemName.Sheba),
@@ -31,13 +73,13 @@ LOCATION_RULES: dict[str, Rule] = {
     LocationName.Contigo_Lifting_Gem: Has(ItemName.Ivan),
     LocationName.Contigo_Orb_of_Force: Has(ItemName.Garet),
     LocationName.Contigo_Catch_Beads: Has(ItemName.Isaac),
-    # Goals
     # Djinns
     # The Rest
 }
 
 
 def set_location_rules(world: GSTLAWorld) -> None:
+    # The rest
     for location in world.get_locations():
         if location.name not in LOCATION_RULES:
             continue
@@ -49,52 +91,6 @@ def set_location_rules(world: GSTLAWorld) -> None:
 def set_access_rules(world: GSTLAWorld):  # noqa: PLR0912, PLR0915
     game_data = load_game_data()
     player = world.player
-    # Goal
-    goal_conditions = world.goal_conditions
-    needed_items: set[str] = set()
-
-    if len(goal_conditions) == 0 or 'Doom Dragon' in goal_conditions:
-        needed_items.add(ItemName.Doom_Dragon_Defeated)
-    if 'Chestbeaters' in goal_conditions:
-        needed_items.add(ItemName.Chestbeaters_defeated)
-    if 'King Scorpion' in goal_conditions:
-        needed_items.add(ItemName.King_Scorpion_defeated)
-    if 'Briggs' in goal_conditions:
-        needed_items.add(ItemName.Briggs_defeated)
-    if 'Aqua Hydra' in goal_conditions:
-        needed_items.add(ItemName.Aqua_Hydra_defeated)
-    if 'Poseidon' in goal_conditions:
-        needed_items.add(ItemName.Poseidon_defeated)
-    if 'Serpent' in goal_conditions:
-        needed_items.add(ItemName.Serpent_defeated)
-    if 'Avimander' in goal_conditions:
-        needed_items.add(ItemName.Avimander_defeated)
-    if 'Moapa' in goal_conditions:
-        needed_items.add(ItemName.Moapa_defeated)
-    if 'Reunion' in goal_conditions:
-        needed_items.add(ItemName.Reunion)
-    if 'Flame Dragons' in goal_conditions:
-        needed_items.add(ItemName.Flame_Dragons_defeated)
-    if 'Star Magician' in goal_conditions:
-        needed_items.add(ItemName.Star_Magician_defeated)
-    if 'Sentinel' in goal_conditions:
-        needed_items.add(ItemName.Sentinel_defeated)
-    if 'Valukar' in goal_conditions:
-        needed_items.add(ItemName.Valukar_defeated)
-    if 'Dullahan' in goal_conditions:
-        needed_items.add(ItemName.Dullahan_defeated)
-
-    djinn_needed = world.options.djinn_hunt_count.value if 'Djinn Hunt' in goal_conditions else 0
-    summons_needed = world.options.summon_hunt_count.value if 'Summon Hunt' in goal_conditions else 0
-
-    add_rule(
-        world.get_location(LocationName.Victory_Event),
-        lambda state: (
-            all(state.has(item, player) for item in needed_items)
-            and state.count_group(ItemType.Djinn.name, player) >= djinn_needed
-            and state.count_group(ItemType.Summon.name, player) >= summons_needed
-        ),
-    )
 
     # Character djinn, char shuffle flag is always enabled so we gain djinn every few chars
     # and they are not tied to specific chars
