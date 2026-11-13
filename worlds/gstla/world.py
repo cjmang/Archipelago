@@ -278,7 +278,7 @@ class GSTLAWorld(World):
         spheres = multiworld.get_spheres()
         max_spheres: defaultdict[int, int] = defaultdict(lambda: -1)
         for i, sphere in enumerate(spheres):
-            for loc in sphere:
+            for loc in sorted(sphere):  # make sure to always sort spheres, otherwise output is nondeterministic
                 item = loc.item
                 if not isinstance(item, GSTLAItem):
                     continue
