@@ -906,7 +906,8 @@ class DeathLink(CoreDeathLink):
     Of course, the reverse is true too.
     Note: can also be toggled at runtime with the "/deathlink" client command.
     """
-    internal_name = "death_link"
+
+    internal_name = 'death_link'
     default = 0
 
 

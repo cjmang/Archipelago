@@ -1110,9 +1110,7 @@ class TestPCShuffleInVanillaPiers(GSTestBase):
             self.world_setup(seed)
             piers_location = self.multiworld.find_item(ItemName.Piers, self.player)
             piers_locations.add(piers_location.name)
-        self.assertTrue(
-            piers_locations - self.early_piers_locations, f'Piers was only placed at {piers_locations=}'
-        )
+        self.assertTrue(piers_locations - self.early_piers_locations, f'Piers was only placed at {piers_locations=}')
 
 
 class TestFullPCShuffle(TestFormatBase):

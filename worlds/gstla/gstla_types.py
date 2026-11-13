@@ -2,32 +2,26 @@ from dataclasses import dataclass
 from enum import IntEnum, IntFlag, StrEnum, auto
 
 from BaseClasses import ItemClassification
+from rule_builder.rules import Rule
 
 
 class RegionData:
     name: str
     locations: list[str]
-    exits: list[str]
 
-    def __init__(self, _name: str, _locations: list[str] = None, _exits: list[str] = None):
+    def __init__(self, _name: str, _locations: list[str] = None):
         if _locations is None:
             _locations = []
 
-        if _exits is None:
-            _exits = []
-
         self.name = _name
         self.locations = _locations
-        self.exits = _exits
 
 
+@dataclass(frozen=True)
 class EntranceData:
-    source_entrance: str
+    source: str
     target: str
-
-    def __init__(self, _source_entrance: str, _target: str):
-        self.source_entrance = _source_entrance
-        self.target = _target
+    rule: Rule | None
 
 
 class ItemCategory(StrEnum):

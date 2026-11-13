@@ -1,3 +1,5 @@
+# TODO: Prefix djinns. Example "Fog" -> "Kandorean_Fog" or "Djinn_Fog"
+
 class LocationName:
     # Hidden items
     Daila_Herb = 'Daila - North-East Jar'

@@ -19,9 +19,10 @@ import settings
 from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
-from .connections import create_vanilla_connections
+from .entrances import create_entrances
 from .game_data.loader import load_game_data
 from .gstla_types import ItemCategory, ItemType
+from .item_rules import set_item_rules
 from .items import (
     AP_PLACEHOLDER_ITEM,
     AP_PROG_PLACEHOLDER_ITEM,
@@ -35,12 +36,12 @@ from .items import (
     get_filler_item,
 )
 from .location_groups import goldensuntla_location_groups
+from .location_rules import set_goal_rules, set_location_rules
 from .locations import GSTLALocation, get_remote_blacklist
 from .names import ItemName
 from .options import GSTLAOptions
 from .regions import create_regions
 from .rom import CHECKSUM_GSTLA, GSTLADeltaPatch
-from .rules import set_access_rules, set_entrance_rules, set_item_rules
 from .web_world import GSTLAWeb
 
 if TYPE_CHECKING:
@@ -166,17 +167,16 @@ class GSTLAWorld(World):
 
     def create_regions(self) -> None:
         create_regions(self)
-        create_vanilla_connections(self.multiworld, self.player)
+        create_entrances(self)
 
     def create_items(self) -> None:
         create_events(self)
         create_items(self, self.player)
 
     def set_rules(self) -> None:
-        set_entrance_rules(self)
         set_item_rules(self)
-        set_access_rules(self)
-        self.multiworld.completion_condition[self.player] = lambda state: state.has(ItemName.Victory, self.player)
+        set_location_rules(self)
+        set_goal_rules(self)
 
     def get_pre_fill_items(self) -> list[Item]:
         pre_fill: list[Item] = []
