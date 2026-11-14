@@ -208,6 +208,13 @@ class GSTLAWorld(World):
         Adding new fields here is fine, but before removing them, we should check if they're used in our client,
         in the universal tracker data or in the poptracker pack. If we notice that we often need to break compatibilty,
         might be worth it to have them keyed by a version number (or set some "required_world_version" or something).
+
+        Currently looks like this:
+        {
+            "options": {ABC: XYZ},  # deprecated
+            "options_v2": {ABC: XYZ},  # new
+            "goal": {},  # deprecated
+        }
         """
         slot_data_fields = [
             'anemos_inner_sanctum_access',
