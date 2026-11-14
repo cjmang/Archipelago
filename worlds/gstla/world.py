@@ -57,6 +57,31 @@ from worlds.Files import APTokenTypes
 logger = logging.getLogger()
 
 
+SLOT_DATA_FIELDS = [
+    # we could also just add every field,
+    # but not sure if that's too much for something like
+    # a thousand slots if every world does that.
+    'anemos_inner_sanctum_access',
+    'coop',
+    'death_link',
+    'djinn_hunt_count',
+    'djinn_logic',
+    'free_retreat',
+    'goal',
+    'item_shuffle',
+    'lemurian_ship',
+    'manual_retreat_glitch',
+    'name_puzzles',
+    'omit_locations',
+    'reveal_hidden_item',
+    'shortcut_magma_rock',
+    'shortcut_mars_lighthouse',
+    'start_with_wings_of_anemos',
+    'summon_hunt_count',
+    'teleport_to_dungeons_and_towns',
+]
+
+
 class GSTLASettings(settings.Group):
     class RomFile(settings.UserFilePath):
         """File name of the GS TLA UE Rom"""
@@ -83,6 +108,9 @@ class GSTLAWorld(World):
     item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}
     location_name_to_id = {name: location.id for name, location in load_game_data().location_by_name.items()}
     web = GSTLAWeb()
+
+    # Universal Tracker
+    ut_can_gen_without_yaml = True
 
     item_name_groups = {
         ItemType.Djinn.name: {item.name for item in load_game_data().djinn.values()},
@@ -126,6 +154,8 @@ class GSTLAWorld(World):
         )
 
     def generate_early(self) -> None:
+        self._apply_fake_universal_tracker_slot_data()
+
         # TODO: There has to be a way to simplify these
         if len(self.options.goal.value) == 0:
             raise OptionError(f'A goal must be selected for Golden Sun TLA for player {self.player_name}')
@@ -201,6 +231,39 @@ class GSTLAWorld(World):
         filler_item = get_filler_item(self)
         return filler_item.name
 
+    def _apply_fake_universal_tracker_slot_data(self) -> None:
+        """
+        The Universal Tracker works by rerunning the whole world generation.
+
+        The two ways it can do that:
+        Either via a provided YAML file, which passes the options to the world like the normal generation does it.
+        Note that if there is no provided YAML, it tries it with the default options of a world.
+        It then also needs some kind of "interpret_slot_data" function.
+        If a world sets "ut_can_gen_without_yaml" (like we do), it creates an empty YAML and the world is expected
+        to come up with the correct options for itself.
+
+        Either way, "self.multiworld.re_gen_passthrough" contains the "slot_data".
+        Since we set "ut_can_gen_without_yaml=True",
+        this is the slot_data we generated in fill_slot_data() for the multiworld, which the server sends on a connect.
+        We can then just use that 1:1 to set our options, since we don't need any mapping after introducing the
+        "options_v2", which is set via `self.options.as_dict()`.
+
+        In upstream #6287, there is a "UniversalTrackerEnabled" resolver,
+        that we could also use to handle glitched logic, but that's probably going to be in 0.6.9 at the earliest.
+
+        TODO: Glitched logic, deferred entrances for entrance randos? Location aliases? Direct Poptracker support?
+              Also: "/explain Air's Rock Interior - Reveal Tablet" returns the path as
+              "Garoh (True): Garoh -> AirsRock: Has Whirlwind", which seems whacky.
+              Probably should add some kind of "Overworld" region or the individual "Antekka, Gondowan, etc" regions?
+        """
+        slot_data = getattr(self.multiworld, 're_gen_passthrough', {}).get(self.game)
+        if slot_data is None:
+            return
+
+        for name, value in slot_data['options_v2'].items():
+            option = getattr(self.options, name)
+            setattr(self.options, name, type(option).from_any(value))
+
     def fill_slot_data(self) -> Mapping[str, Any]:
         """
         We'll require the new slot data for the Universal Tracker.
@@ -216,29 +279,8 @@ class GSTLAWorld(World):
             "goal": {},  # deprecated
         }
         """
-        slot_data_fields = [
-            'anemos_inner_sanctum_access',
-            'coop',
-            'death_link',
-            'djinn_hunt_count',
-            'djinn_logic',
-            'free_retreat',
-            'goal',
-            'item_shuffle',
-            'lemurian_ship',
-            'manual_retreat_glitch',
-            'name_puzzles',
-            'omit_locations',
-            'reveal_hidden_item',
-            'shortcut_magma_rock',
-            'shortcut_mars_lighthouse',
-            'start_with_wings_of_anemos',
-            'summon_hunt_count',
-            'teleport_to_dungeons_and_towns',
-        ]
-
         deprecated_slot_data = self.fill_slot_data_deprecated()
-        slot_data = {'options_v2': self.options.as_dict(*slot_data_fields)}
+        slot_data = {'options_v2': self.options.as_dict(*SLOT_DATA_FIELDS)}
         slot_data.update(deprecated_slot_data)
         return slot_data
 
