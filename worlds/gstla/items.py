@@ -275,7 +275,7 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         ap_item = create_item_direct(item, player)
         pool.append(ap_item)
     summon_classification = None
-    if 'Summon Hunt' in world.goal_conditions:
+    if world.goal_requirements.summon_count > 0:
         summon_classification = ItemClassification.progression_deprioritized_skip_balancing
     for item in game_data.items_by_category[ItemCategory.summons]:
         if not item.shuffled:

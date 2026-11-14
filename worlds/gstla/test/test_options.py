@@ -1212,7 +1212,7 @@ class TestDeathLinkEnabled(GSTestBase):
 
     def test_deathlink_enabled(self):
         world = self.get_world()
-        self.assertEqual(1, world.fill_slot_data()['options']['death_link'])
+        self.assertEqual(1, world.fill_slot_data()['options_v2']['death_link'])
 
 
 class TestDeathLinkDoesNotAffectRandoData(GSTestBase):
