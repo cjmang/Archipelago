@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from .world import GSTLAWorld
 
 
+# Note: There are some that are modeled as "direct" connections like Idejima -> Daila, because that's how vanilla works,
+# but once we add the entrance rando, these might have to be split by the Overworld/"Pre-Daila" or something.
+# I think we'd also need to make everyting two-way.
 ENTRANCES: list[EntranceData] = [
     # Start
     EntranceData(RegionName.Menu, RegionName.Idejima, None),
@@ -52,6 +55,7 @@ ENTRANCES: list[EntranceData] = [
     EntranceData(RegionName.SouthOsenia, RegionName.YampiDesertBack, Has(ItemName.Sand)),
     EntranceData(RegionName.YampiDesertFront, RegionName.YampiDesertBack, Has(ItemName.Scoop_Gem)),
     EntranceData(RegionName.YampiDesertBack, RegionName.NorthOsenia, None),
+    EntranceData(RegionName.NorthOsenia, RegionName.YampiDesertBack, None),  # two-way because we can reach with ship
     # North Osenia (Alhafra)
     EntranceData(RegionName.NorthOsenia, RegionName.Alhafra, None),
     EntranceData(
@@ -62,13 +66,11 @@ ENTRANCES: list[EntranceData] = [
             HasAll(ItemName.Briggs_defeated, ItemName.Tremor_Bit),
         ),
     ),
-    EntranceData(RegionName.NorthOsenia, RegionName.YampiDesertBack, None),  # TODO: two-way?
     EntranceData(RegionName.EasternSea, RegionName.NorthOsenia, None),
     # South Gondowan
     EntranceData(RegionName.GondowanCliffs, RegionName.SouthGondowan, Has(ItemName.Briggs_defeated)),
     EntranceData(RegionName.SouthGondowan, RegionName.Naribwe, None),
     EntranceData(RegionName.SouthGondowan, RegionName.KibomboMountains, None),
-    EntranceData(RegionName.Naribwe, RegionName.SouthGondowan, None),  # TODO: two-way?
     EntranceData(
         RegionName.KibomboMountains,
         RegionName.NorthGondowan,
