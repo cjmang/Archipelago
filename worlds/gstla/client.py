@@ -14,6 +14,8 @@ from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
 from worlds.gstla.game_data.djinns import DJINN_MAPPING_TABLE_ADDR
 from worlds.gstla.memory import (
+    AP_ITEM_SLOT,
+    AP_ITEMS_RECEIVED,
     FLAG_START,
     GAME_SNAPSHOT_READS,
     ROM_GAME_NAME,
@@ -81,12 +83,7 @@ def get_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str, Any]:
 
 
 class _DataLocations(IntEnum):
-    MAP_ID = (0x428, 0x2, 0x0, MemoryDomain.EWRAM)
-    ENTRANCE_ID = (0x42A, 0x2, 0x0, MemoryDomain.EWRAM)
     DJINN_FLAGS = (FLAG_START + (0x30 >> 3), 0x0A, 0x30, MemoryDomain.EWRAM)
-    AP_ITEM_SLOT = (0xA96, 0x2, 0x0, MemoryDomain.EWRAM)
-    # two unused bytes in save data
-    AP_ITEMS_RECEIVED = (0xA72, 0x2, 0x0, MemoryDomain.EWRAM)
     INITIAL_INVENTORY = (FLAG_START + 0x0, 0x1, 0x0, MemoryDomain.EWRAM)
     SUMMONS = (FLAG_START + (0x10 >> 3), 0x2, 0x10, MemoryDomain.EWRAM)
     TREASURE_8_FLAGS = (FLAG_START + (0x800 >> 3), 0x20, 0x800, MemoryDomain.EWRAM)
@@ -514,12 +511,11 @@ class GSTLAClient(BizHawkClient):
                 part_int >>= 1
         # logger.debug(self.temp_locs)
 
-    async def _receive_items(self, ctx: BizHawkClientContext, data: list[bytes]) -> None:
-        item_in_slot = int.from_bytes(data[_DataLocations.AP_ITEM_SLOT], byteorder='little')
-        if item_in_slot != 0:
-            logger.debug('AP Item slot has data in it: %d', item_in_slot)
+    async def _receive_items(self, ctx: BizHawkClientContext, game_state: GameSnapshot) -> None:
+        if game_state.pending_item_id != 0:
+            logger.debug('AP Item slot has data in it: %d', game_state.pending_item_id)
             return
-        item_index = int.from_bytes(data[_DataLocations.AP_ITEMS_RECEIVED], 'little')
+        item_index = game_state.next_item_index
         cur_amount = len(ctx.items_received)
         if cur_amount <= item_index:
             return
@@ -535,44 +531,16 @@ class GSTLAClient(BizHawkClient):
 
         if index_to_give == -1:
             logger.debug('None of the current items should be given')
-            await write(
-                ctx.bizhawk_ctx,
-                [
-                    (
-                        _DataLocations.AP_ITEMS_RECEIVED.addr,
-                        cur_amount.to_bytes(length=2, byteorder='little'),
-                        _DataLocations.AP_ITEMS_RECEIVED.domain,
-                    )
-                ],
-            )
+            await write(ctx.bizhawk_ctx, [AP_ITEMS_RECEIVED.to_write(cur_amount)])
             return
         if item_index != index_to_give:
             # Update the item index so as to skip ones we don't care about
-            update_index = index_to_give
-            await write(
-                ctx.bizhawk_ctx,
-                [
-                    (
-                        _DataLocations.AP_ITEMS_RECEIVED.addr,
-                        update_index.to_bytes(length=2, byteorder='little'),
-                        _DataLocations.AP_ITEMS_RECEIVED.domain,
-                    )
-                ],
-            )
+            await write(ctx.bizhawk_ctx, [AP_ITEMS_RECEIVED.to_write(index_to_give)])
 
         item = ctx.items_received[index_to_give]
 
         logger.debug('Writing Item %d to Slot', item.item)
-        await write(
-            ctx.bizhawk_ctx,
-            [
-                (
-                    _DataLocations.AP_ITEM_SLOT.addr,
-                    item.item.to_bytes(length=2, byteorder='little'),
-                    _DataLocations.AP_ITEM_SLOT.domain,
-                )
-            ],
-        )
+        await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(item.item)])
 
     def _should_give_to_player(self, ctx: BizHawkClientContext, item: NetworkItem) -> bool:
         logger.debug('item: %s flags: %s location: %s coop: %s', item.item, item.flags, item.location, self.coop)
@@ -672,11 +640,11 @@ class GSTLAClient(BizHawkClient):
             logger.debug(f'DeathLink enabled: {self.death_link_enabled} with {ctx.server_seed_name=}, {ctx.slot=}')
 
         # TODO: dedup these after testing
-        snapshot_read = await read(ctx.bizhawk_ctx, GAME_SNAPSHOT_READS)
-        snapshot = GameSnapshot.from_read_result(snapshot_read)
-        logger.info(f'Snapshot read: {snapshot.__dict__=}')
+        game_state_read = await read(ctx.bizhawk_ctx, GAME_SNAPSHOT_READS)
+        game_state = GameSnapshot.from_read_result(game_state_read)
+        # logger.info(f'Game state read: {game_state._asdict()=}')
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
-        if not snapshot.is_in_game:
+        if not game_state.is_in_game:
             self.death_deliverer.reset()  # makes sure title menu/game reset does not send outgoing deaths
             self.previous_death_link = ctx.last_death_link
 
@@ -717,7 +685,7 @@ class GSTLAClient(BizHawkClient):
         self._check_common_flags(_DataLocations.ENEMY_FLAGS, result)
         self._check_common_flags(_DataLocations.STORY_FLAGS, result)
 
-        await self._receive_items(ctx, result)
+        await self._receive_items(ctx, game_state)
 
         await self._handle_death_link(ctx)
 
@@ -771,8 +739,8 @@ class GSTLAClient(BizHawkClient):
 
         await self.goals.check_goals(self, ctx)
 
-        current_map = int.from_bytes(result[_DataLocations.MAP_ID], 'little')
-        current_entrance = int.from_bytes(result[_DataLocations.ENTRANCE_ID], 'little')
+        current_map = game_state.map_id
+        current_entrance = game_state.entrance_id
         if current_map != self.last_map or current_entrance != self.last_entrance:
             self.last_map = current_map
             self.last_entrance = current_entrance

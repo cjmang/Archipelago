@@ -23,10 +23,14 @@ class MemoryRange(NamedTuple):
     length: int  # in bytes
     domain: MemoryDomain
 
+    def to_write(self, value: int) -> MemoryWrite:
+        return MemoryWrite(self.address, value.to_bytes(self.length, 'little'), self.domain)
+
 
 class MemoryWrite(NamedTuple):
     address: int
     data: bytes
+    domain: MemoryDomain = MemoryDomain.EWRAM
 
     @classmethod
     def u16(cls, address: int, value: int) -> MemoryWrite:
