@@ -108,6 +108,7 @@ regions: dict[str, RegionData] = {
             LocationName.Squall,
         ],
     ),
+    RegionName.NorthIndra: RegionData(RegionName.NorthIndra, [LocationName.Echo]),
     RegionName.Daila: RegionData(
         RegionName.Daila,
         [
@@ -118,7 +119,6 @@ regions: dict[str, RegionData] = {
             LocationName.Daila_Sleep_Bomb,
             LocationName.Daila_Sea_Gods_Tear,
             LocationName.Daila_Smoke_Bomb,
-            LocationName.Echo,
         ],
     ),
     RegionName.KandoreanTemple: RegionData(
@@ -151,6 +151,7 @@ regions: dict[str, RegionData] = {
             LocationName.Cannon,
         ],
     ),
+    RegionName.SouthIndra: RegionData(RegionName.SouthIndra, [LocationName.Iron]),
     RegionName.IndraCavern: RegionData(RegionName.IndraCavern, [LocationName.Indra_Cavern_Zagan]),
     RegionName.Madra: RegionData(
         RegionName.Madra,
@@ -162,7 +163,6 @@ regions: dict[str, RegionData] = {
             LocationName.Madra_Sleep_Bomb,
             LocationName.Madra_15_coins,
             LocationName.Madra_Nurses_Cap,
-            LocationName.Iron,
             LocationName.Char,
         ],
     ),
@@ -234,6 +234,7 @@ regions: dict[str, RegionData] = {
             LocationName.Alhafran_Cave_Psy_Crystal,
         ],
     ),
+    RegionName.SouthOsenia: RegionData(RegionName.SouthOsenia, [LocationName.Sour]),
     RegionName.Mikasalla: RegionData(
         RegionName.Mikasalla,
         [
@@ -242,7 +243,6 @@ regions: dict[str, RegionData] = {
             LocationName.Mikasalla_Elixir,
             LocationName.Mikasalla_82_coins,
             LocationName.Mikasalla_Lucky_Pepper,
-            LocationName.Sour,
             LocationName.Spark,
         ],
     ),
@@ -287,6 +287,7 @@ regions: dict[str, RegionData] = {
             LocationName.Kindle,
         ],
     ),
+    RegionName.SouthGondowan: RegionData(RegionName.SouthGondowan, [LocationName.Chill]),
     RegionName.Naribwe: RegionData(
         RegionName.Naribwe,
         [
@@ -295,7 +296,6 @@ regions: dict[str, RegionData] = {
             LocationName.Naribwe_Sleep_Bomb,
             LocationName.Naribwe_Thorn_Crown,
             LocationName.Naribwe_Unicorn_Ring,
-            LocationName.Chill,
         ],
     ),
     RegionName.KibomboMountains: RegionData(
