@@ -77,3 +77,4 @@ class RegionName:
     SouthGondowan = 'South Gondowan'
     NorthGondowan = 'North Gondowan'
     SouthAngara = 'South Angara'
+    Atteka = 'Atteka'
