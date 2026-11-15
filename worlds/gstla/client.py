@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import logging
+import os
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import IntEnum
@@ -398,7 +399,8 @@ class GSTLAClient(BizHawkClient):
         return True
 
     async def set_auth(self, ctx: BizHawkClientContext) -> None:
-        if self.slot_name:
+        ignore_slot_name = os.environ.get('GSTLA_IGNORE_SLOT_NAME') in ['1', 'true', 'yes']
+        if self.slot_name and not ignore_slot_name:
             ctx.auth = self.slot_name
 
     async def set_death_link(self, ctx: BizHawkClientContext, enabled: bool) -> None:
