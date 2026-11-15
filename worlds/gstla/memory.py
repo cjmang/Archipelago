@@ -7,10 +7,6 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-def _from_bytes(b):
-    return int.from_bytes(b, 'little')
-
-
 class MemoryDomain(StrEnum):
     EWRAM = 'EWRAM'
     ROM = 'ROM'
@@ -42,11 +38,7 @@ class FlagArray:
     The full block of game flags as read by the bizhawk client every tick.
 
     The client reads the whole array once (via FLAG_ARRAY_RANGE), we put it in self._data,
-    and we just check the flags we actually need directly, instead of iterating over everything and categorizing them
-    like we did before in `_check_common_flags`.
-    At least that's the plan.
-
-    # TODO: Reword? Don't think anyone cares after this actually gets merged x)
+    and we just check the flags we actually need directly.
 
     Example:
         "Doom Dragon Defeated" = is_set(0x778)
@@ -73,10 +65,10 @@ class GameState(NamedTuple):
     def from_read_result(cls, results: Sequence[bytes]) -> GameState:
         map_id, entrance_id, pending_item_id, next_item_index, flags = results
         return cls(
-            map_id=_from_bytes(map_id),
-            entrance_id=_from_bytes(entrance_id),
-            pending_item_id=_from_bytes(pending_item_id),
-            next_item_index=_from_bytes(next_item_index),
+            map_id=int.from_bytes(map_id, 'little'),
+            entrance_id=int.from_bytes(entrance_id, 'little'),
+            pending_item_id=int.from_bytes(pending_item_id, 'little'),
+            next_item_index=int.from_bytes(next_item_index, 'little'),
             flags=FlagArray(flags),
         )
 
@@ -89,7 +81,6 @@ class GameState(NamedTuple):
 FLAG_START = 0x40
 FLAG_ARRAY_RANGE = MemoryRange(FLAG_START, 0x200, MemoryDomain.EWRAM)  # not sure if 0x200 is enough?
 
-# previously _DataLocations
 MAP_ID = MemoryRange(0x428, 2, MemoryDomain.EWRAM)
 ENTRANCE_ID = MemoryRange(0x42A, 2, MemoryDomain.EWRAM)
 AP_ITEM_SLOT = MemoryRange(0xA96, 2, MemoryDomain.EWRAM)
