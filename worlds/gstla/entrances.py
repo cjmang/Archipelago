@@ -53,12 +53,39 @@ ENTRANCES: list[EntranceData] = [
     EntranceData(RegionName.YampiDesertBack, RegionName.NorthOsenia, None),
     # North Osenia (Alhafra)
     EntranceData(RegionName.NorthOsenia, RegionName.Alhafra, None),
-    EntranceData(RegionName.NorthOsenia, RegionName.YampiDesertBack, None),  # hm? two way, why explicitly?
+    EntranceData(
+        RegionName.Alhafra,
+        RegionName.AlhafraCave,
+        Or(
+            Has(ItemName.Briggs_escaped),
+            HasAll(ItemName.Briggs_defeated, ItemName.Tremor_Bit),
+        ),
+    ),
+    EntranceData(RegionName.NorthOsenia, RegionName.YampiDesertBack, None),  # TODO: two-way?
     EntranceData(RegionName.EasternSea, RegionName.NorthOsenia, None),
-    # TODO
-    EntranceData(RegionName.Naribwe, RegionName.KibomboMountains, None),
-    EntranceData(RegionName.EasternSea, RegionName.Kibombo, None),
-    EntranceData(RegionName.EasternSea, RegionName.Naribwe, None),
+    # South Gondowan
+    EntranceData(RegionName.GondowanCliffs, RegionName.SouthGondowan, Has(ItemName.Briggs_defeated)),
+    EntranceData(RegionName.SouthGondowan, RegionName.Naribwe, None),
+    EntranceData(RegionName.SouthGondowan, RegionName.KibomboMountains, None),
+    EntranceData(RegionName.Naribwe, RegionName.SouthGondowan, None),  # TODO: two-way?
+    EntranceData(
+        RegionName.KibomboMountains,
+        RegionName.NorthGondowan,
+        Or(
+            Has(ItemName.Frost_Jewel),
+            HasAll(ItemName.Lash_Pebble, ItemName.Whirlwind),
+        ),
+    ),
+    EntranceData(RegionName.NorthGondowan, RegionName.Kibombo, None),
+    EntranceData(RegionName.Kibombo, RegionName.GabombaStatue, HasAll(ItemName.Lash_Pebble, ItemName.Scoop_Gem)),
+    EntranceData(
+        RegionName.GabombaStatue,
+        RegionName.GabombaCatacombs,
+        HasAll(ItemName.Gabomba_Statue_Completed, ItemName.Cyclone_Chip),
+    ),
+    # Eastern Sea
+    EntranceData(RegionName.EasternSea, RegionName.NorthGondowan, None),
+    EntranceData(RegionName.EasternSea, RegionName.SouthGondowan, None),
     EntranceData(RegionName.EasternSea, RegionName.WestIndraIslet, None),
     EntranceData(RegionName.EasternSea, RegionName.NorthOseniaIslet, None),
     EntranceData(RegionName.EasternSea, RegionName.SouthEastAngaraIslet, None),
@@ -90,29 +117,6 @@ ENTRANCES: list[EntranceData] = [
         RegionName.YampiDesertBack,
         RegionName.YampiDesertCave,
         HasAll(ItemName.Sand, ItemName.Teleport_Lapis, ItemName.Burst_Brooch),
-    ),
-    EntranceData(
-        RegionName.Alhafra,
-        RegionName.AlhafraCave,
-        Or(
-            Has(ItemName.Briggs_escaped),
-            HasAll(ItemName.Briggs_defeated, ItemName.Tremor_Bit),
-        ),
-    ),
-    EntranceData(RegionName.GondowanCliffs, RegionName.Naribwe, Has(ItemName.Briggs_defeated)),
-    EntranceData(
-        RegionName.KibomboMountains,
-        RegionName.Kibombo,
-        Or(
-            Has(ItemName.Frost_Jewel),
-            HasAll(ItemName.Lash_Pebble, ItemName.Whirlwind),
-        ),
-    ),
-    EntranceData(RegionName.Kibombo, RegionName.GabombaStatue, HasAll(ItemName.Lash_Pebble, ItemName.Scoop_Gem)),
-    EntranceData(
-        RegionName.GabombaStatue,
-        RegionName.GabombaCatacombs,
-        HasAll(ItemName.Gabomba_Statue_Completed, ItemName.Cyclone_Chip),
     ),
     EntranceData(RegionName.SeaOfTimeIslet, RegionName.IsletCave, HasAll(ItemName.Mind_Read, ItemName.Lil_Turtle)),
     EntranceData(RegionName.SeaOfTime, RegionName.Lemuria, HasAny(ItemName.Poseidon_defeated, ItemName.Grindstone)),
