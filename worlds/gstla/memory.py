@@ -62,9 +62,7 @@ class FlagArray:
         return bool(self._data[byte_idx] & (1 << bit_idx))
 
 
-class GameSnapshot(NamedTuple):
-    # TODO: dedup with GameState in deathlink.py? Or rename the deathlink one? I want this to be GameState
-    #       rename the other to PartyState or something?
+class GameState(NamedTuple):
     map_id: int
     entrance_id: int
     pending_item_id: int
@@ -72,7 +70,7 @@ class GameSnapshot(NamedTuple):
     flags: FlagArray
 
     @classmethod
-    def from_read_result(cls, results: Sequence[bytes]) -> GameSnapshot:
+    def from_read_result(cls, results: Sequence[bytes]) -> GameState:
         map_id, entrance_id, pending_item_id, next_item_index, flags = results
         return cls(
             map_id=_from_bytes(map_id),
@@ -96,7 +94,7 @@ MAP_ID = MemoryRange(0x428, 2, MemoryDomain.EWRAM)
 ENTRANCE_ID = MemoryRange(0x42A, 2, MemoryDomain.EWRAM)
 AP_ITEM_SLOT = MemoryRange(0xA96, 2, MemoryDomain.EWRAM)
 AP_ITEMS_RECEIVED = MemoryRange(0xA72, 2, MemoryDomain.EWRAM)  # two unused bytes in save data
-GAME_SNAPSHOT_READS: tuple[MemoryRange, ...] = (
+GAME_STATE_READS: tuple[MemoryRange, ...] = (
     MAP_ID,
     ENTRANCE_ID,
     AP_ITEM_SLOT,

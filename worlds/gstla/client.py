@@ -17,10 +17,10 @@ from worlds.gstla.memory import (
     AP_ITEM_SLOT,
     AP_ITEMS_RECEIVED,
     FLAG_START,
-    GAME_SNAPSHOT_READS,
+    GAME_STATE_READS,
     ROM_GAME_NAME,
     ROM_SLOT_NAME,
-    GameSnapshot,
+    GameState,
     MemoryDomain,
 )
 from .deathlink import PARTY_STATE_READS, DeathDeliverer, PartyState
@@ -511,7 +511,7 @@ class GSTLAClient(BizHawkClient):
                 part_int >>= 1
         # logger.debug(self.temp_locs)
 
-    async def _receive_items(self, ctx: BizHawkClientContext, game_state: GameSnapshot) -> None:
+    async def _receive_items(self, ctx: BizHawkClientContext, game_state: GameState) -> None:
         if game_state.pending_item_id != 0:
             logger.debug('AP Item slot has data in it: %d', game_state.pending_item_id)
             return
@@ -640,8 +640,8 @@ class GSTLAClient(BizHawkClient):
             logger.debug(f'DeathLink enabled: {self.death_link_enabled} with {ctx.server_seed_name=}, {ctx.slot=}')
 
         # TODO: dedup these after testing
-        game_state_read = await read(ctx.bizhawk_ctx, GAME_SNAPSHOT_READS)
-        game_state = GameSnapshot.from_read_result(game_state_read)
+        game_state_read = await read(ctx.bizhawk_ctx, GAME_STATE_READS)
+        game_state = GameState.from_read_result(game_state_read)
         # logger.info(f'Game state read: {game_state._asdict()=}')
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
         if not game_state.is_in_game:
