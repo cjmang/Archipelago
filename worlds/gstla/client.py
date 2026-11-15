@@ -23,7 +23,7 @@ from worlds.gstla.memory import (
     GameSnapshot,
     MemoryDomain,
 )
-from .deathlink import GAME_STATE_READS, DeathDeliverer, GameState
+from .deathlink import PARTY_STATE_READS, DeathDeliverer, PartyState
 from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
 from .locations import get_remote_blacklist
@@ -609,9 +609,9 @@ class GSTLAClient(BizHawkClient):
 
         read_result = await read(
             ctx.bizhawk_ctx,
-            [(address, width, MemoryDomain.EWRAM) for address, width in GAME_STATE_READS],
+            [(address, width, MemoryDomain.EWRAM) for address, width in PARTY_STATE_READS],
         )
-        game_state = GameState.from_read_result(read_result)
+        game_state = PartyState.from_read_result(read_result)
         instruction = self.death_deliverer.tick(game_state)
         if instruction.writes:
             delivered = await guarded_write(

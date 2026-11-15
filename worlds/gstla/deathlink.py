@@ -47,7 +47,7 @@ def get_current_hp_ratio_address(character: CharacterIndex) -> int:
     return get_character_block_address(character) + HP_RATIO_OFFSET
 
 
-GAME_STATE_READS: tuple[tuple[int, int], ...] = (
+PARTY_STATE_READS: tuple[tuple[int, int], ...] = (
     (RECRUITMENT_ADDR, 1),
     (IN_BATTLE_ADDR, 1),
     (SYSTEM_EVENT_ADDR, 2),
@@ -56,7 +56,7 @@ GAME_STATE_READS: tuple[tuple[int, int], ...] = (
 )
 
 
-class GameState(NamedTuple):
+class PartyState(NamedTuple):
     recruitment: int
     in_battle: int
     system_event: int
@@ -64,9 +64,9 @@ class GameState(NamedTuple):
     hp: tuple[int, ...]
 
     @classmethod
-    def from_read_result(cls, results: Sequence[bytes]) -> GameState:
+    def from_read_result(cls, results: Sequence[bytes]) -> PartyState:
         values = {}
-        for (address, _width), result in zip(GAME_STATE_READS, results, strict=True):
+        for (address, _width), result in zip(PARTY_STATE_READS, results, strict=True):
             values[address] = int.from_bytes(result, 'little')
 
         return cls(
@@ -240,7 +240,7 @@ class DeathDeliverer:
         self._death_observed_last_tick = False
         self.state = DeathDeliveryState.IDLE
 
-    def tick(self, game_state: GameState) -> DeathLinkInstruction:
+    def tick(self, game_state: PartyState) -> DeathLinkInstruction:
         send_death = self._detect_new_death(game_state)
         return DeathLinkInstruction(writes=self._advance(game_state), send_death=send_death)
 
@@ -269,7 +269,7 @@ class DeathDeliverer:
         self._death_observed_last_tick = False
         self.state = DeathDeliveryState.IDLE
 
-    def _advance(self, game_state: GameState) -> list[MemoryWrite]:
+    def _advance(self, game_state: PartyState) -> list[MemoryWrite]:
         """The inbound part of tick()"""
         if self.state is DeathDeliveryState.PENDING:
             if game_state.is_death_observed:
@@ -284,15 +284,15 @@ class DeathDeliverer:
 
         return []
 
-    def _detect_new_death(self, game_state: GameState) -> bool:
+    def _detect_new_death(self, game_state: PartyState) -> bool:
         """The outbound part of tick()"""
         death_observed = game_state.is_death_observed
         send_death = death_observed and not self._death_observed_last_tick and not self.is_delivering
         self._death_observed_last_tick = death_observed
         return send_death
 
-    def _deliver(self, game_state: GameState) -> list[MemoryWrite]:
-        """See `GameState.is_death_observed()` for an explanation of how this works"""
+    def _deliver(self, game_state: PartyState) -> list[MemoryWrite]:
+        """See `PartyState.is_death_observed()` for an explanation of how this works"""
         recruited = game_state.recruited_characters
         if not recruited:
             # should only happen when there's no savefile loaded yet
@@ -308,7 +308,7 @@ class DeathDeliverer:
         self.state = DeathDeliveryState.IN_FLIGHT
         return writes
 
-    def _check_for_arrival(self, game_state: GameState) -> None:
+    def _check_for_arrival(self, game_state: PartyState) -> None:
         """
         This handles the following outcomes:
 
