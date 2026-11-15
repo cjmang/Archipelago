@@ -13,7 +13,7 @@ from NetUtils import ClientStatus, NetworkItem
 from Utils import async_start
 from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
-from worlds.gstla.game_data.djinns import DJINN_MAPPING_TABLE_ADDR
+from worlds.gstla.game_data.djinns import DJINN_MAPPING_TABLE_RANGE, djinn_to_flag_index
 from worlds.gstla.memory import (
     AP_ITEM_SLOT,
     AP_ITEMS_RECEIVED,
@@ -350,9 +350,10 @@ class GSTLAClient(BizHawkClient):
         for event in self.game_data.event_by_name.values():
             self.event_flag_map[event.flag].add(event.id)
         for loc in self.game_data.location_by_id.values():
-            self.flag_map[loc.flag].add(loc.id)
             if loc.type == LocationType.Djinn:
                 self.djinn_flag_map[loc.flag] = loc.name
+            else:
+                self.flag_map[loc.flag].add(loc.id)
         self.temp_locs: set[int] = set()
         self.temp_events: set[int] = set()
         self.local_events: set[int] = set()
@@ -415,18 +416,27 @@ class GSTLAClient(BizHawkClient):
             # reset deathlink when either the server or slot changes.
             self.death_link_initialized_for = None
 
-    async def _load_djinn(self, ctx: BizHawkClientContext) -> None:
-        # TODO: Simplify this via the Djinn dataclass
+    async def _load_djinn_legacy(self, ctx: BizHawkClientContext) -> None:
+        # TODO: Simplify this via the Djinn dataclass / Remove after testing
         if len(self.djinn_ram_to_rom) > 0:
             return
         # Don't put this in the data locations class; we don't want to check this regularly
-        # TODO: replace with proper MemoryRange obj (either djinns.py or memory.py, idk yet)
-        result = await read(ctx.bizhawk_ctx, [(DJINN_MAPPING_TABLE_ADDR, 0x2 * 18 * 4, MemoryDomain.ROM)])
+        result = await read(ctx.bizhawk_ctx, [DJINN_MAPPING_TABLE_RANGE])
         for index in range(18 * 4):
             djinn_flag = (index // 18) * 20 + (index % 18) + _DataLocations.DJINN_FLAGS.initial_flag
             section = int.from_bytes(result[0][index * 2 : (index * 2) + 2], 'little')
             rom_flag = (section >> 8) * 0x14 + (section & 0xFF) + 0x30
             self.djinn_ram_to_rom[rom_flag] = djinn_flag
+
+    async def _load_djinn(self, ctx: BizHawkClientContext) -> None:
+        if self.djinn_ram_to_rom:
+            return
+        (table,) = await read(ctx.bizhawk_ctx, [DJINN_MAPPING_TABLE_RANGE])
+        for vanilla_djinn in self.game_data.djinn.values():
+            entry_offset = 2 * vanilla_djinn.rom_index
+            djinn_index, djinn_element = table[entry_offset : entry_offset + 2]
+            placed_flag = djinn_to_flag_index(djinn_element, djinn_index)
+            self.djinn_ram_to_rom[placed_flag] = vanilla_djinn.flag_index
 
     @staticmethod
     def get_goal_flags_key(ctx: BizHawkClientContext) -> str:
