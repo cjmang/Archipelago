@@ -4,7 +4,7 @@ import base64
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from enum import IntEnum, StrEnum
+from enum import IntEnum
 from typing import TYPE_CHECKING, Any, Self, cast
 
 from BaseClasses import ItemClassification
@@ -12,6 +12,8 @@ from NetUtils import ClientStatus, NetworkItem
 from Utils import async_start
 from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
+from worlds.gstla.game_data.djinns import DJINN_MAPPING_TABLE_ADDR
+from worlds.gstla.memory import FLAG_START, ROM_GAME_NAME, ROM_SLOT_NAME, MemoryDomain
 from .deathlink import GAME_STATE_READS, DeathDeliverer, GameState
 from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
@@ -25,9 +27,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger('Client')
 
-FLAG_START = 0x40
-FORCE_ENCOUNTER_ADDR = 0x30164
-PREVENT_FLEEING_ADDR = 0x48B
 
 OPTION_NAME_TO_GOAL_NAME: dict[str, str] = {
     'Chestbeaters': LocationName.Kandorean_Temple_Chestbeaters,
@@ -74,33 +73,28 @@ def get_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str, Any]:
     return get_deprecated_options_from_slot_data(slot_data)
 
 
-class _MemDomain(StrEnum):
-    EWRAM = 'EWRAM'
-    ROM = 'ROM'
-
-
 class _DataLocations(IntEnum):
-    MAP_ID = (0x428, 0x2, 0x0, _MemDomain.EWRAM)
-    ENTRANCE_ID = (0x42A, 0x2, 0x0, _MemDomain.EWRAM)
-    DJINN_FLAGS = (FLAG_START + (0x30 >> 3), 0x0A, 0x30, _MemDomain.EWRAM)
-    AP_ITEM_SLOT = (0xA96, 0x2, 0x0, _MemDomain.EWRAM)
+    MAP_ID = (0x428, 0x2, 0x0, MemoryDomain.EWRAM)
+    ENTRANCE_ID = (0x42A, 0x2, 0x0, MemoryDomain.EWRAM)
+    DJINN_FLAGS = (FLAG_START + (0x30 >> 3), 0x0A, 0x30, MemoryDomain.EWRAM)
+    AP_ITEM_SLOT = (0xA96, 0x2, 0x0, MemoryDomain.EWRAM)
     # two unused bytes in save data
-    AP_ITEMS_RECEIVED = (0xA72, 0x2, 0x0, _MemDomain.EWRAM)
-    INITIAL_INVENTORY = (FLAG_START + 0x0, 0x1, 0x0, _MemDomain.EWRAM)
-    SUMMONS = (FLAG_START + (0x10 >> 3), 0x2, 0x10, _MemDomain.EWRAM)
-    TREASURE_8_FLAGS = (FLAG_START + (0x800 >> 3), 0x20, 0x800, _MemDomain.EWRAM)
-    TREASURE_9_FLAGS = (FLAG_START + (0x900 >> 3), 0x20, 0x900, _MemDomain.EWRAM)
-    TREASURE_A_FLAGS = (FLAG_START + (0xA00 >> 3), 0x20, 0xA00, _MemDomain.EWRAM)
-    TREASURE_B_FLAGS = (FLAG_START + (0xB00 >> 3), 0x20, 0xB00, _MemDomain.EWRAM)
-    TREASURE_C_FLAGS = (FLAG_START + (0xC00 >> 3), 0x20, 0xC00, _MemDomain.EWRAM)
-    TREASURE_D_FLAGS = (FLAG_START + (0xD00 >> 3), 0x20, 0xD00, _MemDomain.EWRAM)
-    TREASURE_E_FLAGS = (FLAG_START + (0xE00 >> 3), 0x20, 0xE00, _MemDomain.EWRAM)
-    TREASURE_F_FLAGS = (FLAG_START + (0xF00 >> 3), 0x20, 0xF00, _MemDomain.EWRAM)
-    ENEMY_FLAGS = (FLAG_START + (0x600 >> 3), 0x40, 0x600, _MemDomain.EWRAM)
-    STORY_FLAGS = (FLAG_START + (0x800 >> 3), 0x40, 0x800, _MemDomain.EWRAM)
-    # DOOM_DRAGON = (FLAG_START + (0x778 >> 3), 0x1, 0x778, _MemDomain.EWRAM)
+    AP_ITEMS_RECEIVED = (0xA72, 0x2, 0x0, MemoryDomain.EWRAM)
+    INITIAL_INVENTORY = (FLAG_START + 0x0, 0x1, 0x0, MemoryDomain.EWRAM)
+    SUMMONS = (FLAG_START + (0x10 >> 3), 0x2, 0x10, MemoryDomain.EWRAM)
+    TREASURE_8_FLAGS = (FLAG_START + (0x800 >> 3), 0x20, 0x800, MemoryDomain.EWRAM)
+    TREASURE_9_FLAGS = (FLAG_START + (0x900 >> 3), 0x20, 0x900, MemoryDomain.EWRAM)
+    TREASURE_A_FLAGS = (FLAG_START + (0xA00 >> 3), 0x20, 0xA00, MemoryDomain.EWRAM)
+    TREASURE_B_FLAGS = (FLAG_START + (0xB00 >> 3), 0x20, 0xB00, MemoryDomain.EWRAM)
+    TREASURE_C_FLAGS = (FLAG_START + (0xC00 >> 3), 0x20, 0xC00, MemoryDomain.EWRAM)
+    TREASURE_D_FLAGS = (FLAG_START + (0xD00 >> 3), 0x20, 0xD00, MemoryDomain.EWRAM)
+    TREASURE_E_FLAGS = (FLAG_START + (0xE00 >> 3), 0x20, 0xE00, MemoryDomain.EWRAM)
+    TREASURE_F_FLAGS = (FLAG_START + (0xF00 >> 3), 0x20, 0xF00, MemoryDomain.EWRAM)
+    ENEMY_FLAGS = (FLAG_START + (0x600 >> 3), 0x40, 0x600, MemoryDomain.EWRAM)
+    STORY_FLAGS = (FLAG_START + (0x800 >> 3), 0x40, 0x800, MemoryDomain.EWRAM)
+    # DOOM_DRAGON = (FLAG_START + (0x778 >> 3), 0x1, 0x778, MemoryDomain.EWRAM)
 
-    def __new__(cls, addr: int, length: int, initial_flag: int, domain: _MemDomain):
+    def __new__(cls, addr: int, length: int, initial_flag: int, domain: MemoryDomain):
         value = len(cls.__members__)
         obj = int.__new__(cls, value)
         obj._value_ = value
@@ -110,7 +104,7 @@ class _DataLocations(IntEnum):
         obj.domain = domain
         return obj
 
-    def to_request(self) -> tuple[int, int, _MemDomain]:
+    def to_request(self) -> tuple[int, int, MemoryDomain]:
         return self.addr, self.length, self.domain
 
 
@@ -373,7 +367,7 @@ class GSTLAClient(BizHawkClient):
     async def validate_rom(self, ctx: BizHawkClientContext):
         from worlds._bizhawk.context import TextCategory
 
-        game_name = await read(ctx.bizhawk_ctx, [(0xA0, 0x12, _MemDomain.ROM)])
+        game_name = await read(ctx.bizhawk_ctx, [ROM_GAME_NAME])
         game_name = game_name[0].decode('ascii')
         logger.debug('Game loaded: %s', game_name)
         if game_name != 'GOLDEN_SUN_BAGFE01':
@@ -385,7 +379,7 @@ class GSTLAClient(BizHawkClient):
         # TODO: would like to verify that the ROM is the correct one somehow
         # Possibly verify the seed; would also be nice to have the slot name encoded
         # in the rom somewhere, though not necessary
-        slot_name = await read(ctx.bizhawk_ctx, [(0xFFF000, 64, _MemDomain.ROM)])
+        slot_name = await read(ctx.bizhawk_ctx, [ROM_SLOT_NAME])
         if not slot_name:
             logger.warning('Could not find slot name in GSTLA ROM; please double check the ROM is correct')
         else:
@@ -420,7 +414,8 @@ class GSTLAClient(BizHawkClient):
         if len(self.djinn_ram_to_rom) > 0:
             return
         # Don't put this in the data locations class; we don't want to check this regularly
-        result = await read(ctx.bizhawk_ctx, [(0xFA0000, 0x2 * 18 * 4, _MemDomain.ROM)])
+        # TODO: replace with proper MemoryRange obj (either djinns.py or memory.py, idk yet)
+        result = await read(ctx.bizhawk_ctx, [(DJINN_MAPPING_TABLE_ADDR, 0x2 * 18 * 4, MemoryDomain.ROM)])
         for index in range(18 * 4):
             djinn_flag = (index // 18) * 20 + (index % 18) + _DataLocations.DJINN_FLAGS.initial_flag
             section = int.from_bytes(result[0][index * 2 : (index * 2) + 2], 'little')
@@ -645,15 +640,15 @@ class GSTLAClient(BizHawkClient):
 
         read_result = await read(
             ctx.bizhawk_ctx,
-            [(address, width, _MemDomain.EWRAM) for address, width in GAME_STATE_READS],
+            [(address, width, MemoryDomain.EWRAM) for address, width in GAME_STATE_READS],
         )
         game_state = GameState.from_read_result(read_result)
         instruction = self.death_deliverer.tick(game_state)
         if instruction.writes:
             delivered = await guarded_write(
                 ctx.bizhawk_ctx,
-                [(mem_write.address, mem_write.data, _MemDomain.EWRAM) for mem_write in instruction.writes],
-                [(address, data, _MemDomain.EWRAM) for address, data in game_state.write_guards],
+                [(mem_write.address, mem_write.data, MemoryDomain.EWRAM) for mem_write in instruction.writes],
+                [(address, data, MemoryDomain.EWRAM) for address, data in game_state.write_guards],
             )
             if not delivered:
                 self.death_deliverer.retry_delivery()

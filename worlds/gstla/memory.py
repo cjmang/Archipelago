@@ -1,4 +1,21 @@
-RECRUITMENT_ADDR = 0x40  # also BizClient.FLAG_START
+from enum import StrEnum
+from typing import NamedTuple
+
+
+class MemoryDomain(StrEnum):
+    EWRAM = 'EWRAM'
+    ROM = 'ROM'
+
+
+class MemoryRange(NamedTuple):
+    """We can pass an instance of this directly into the BizHawk client"""
+    address: int
+    length: int
+    domain: MemoryDomain
+
+
+FLAG_START = 0x40
+RECRUITMENT_ADDR = FLAG_START
 CHARACTER_BLOCK_SIZE = 0x14C
 CHARACTER_BLOCK_START = 0x520
 
@@ -7,6 +24,9 @@ IN_BATTLE_BIT = 0x08
 
 SYSTEM_EVENT_ADDR = 0x3016A
 SYSTEM_EVENT_FIELD_DEATH = 0xFFFF
+
+FORCE_ENCOUNTER_ADDR = 0x30164
+PREVENT_FLEEING_ADDR = 0x48B
 
 FIELD_DEATH_NARRATION_COUNT_ADDR = 0x3016C
 FIELD_DEATH_SURVIVOR_COUNT_ADDR = 0x3016E
@@ -20,3 +40,8 @@ MAX_PP_RATIO_OFFSET = 0x16
 MAX_PP_OFFSET = 0x36
 CURRENT_PP_OFFSET = 0x3A
 CHARACTER_STATUS_BYTE_OFFSET = 0x131  # 0 = none, 1 = poison, 2 = venom, ...
+
+
+ROM_GAME_NAME = MemoryRange(0xA0, 0x12, MemoryDomain.ROM)
+ROM_SLOT_NAME = MemoryRange(0xFFF000, 64, MemoryDomain.ROM)
+AUTO_RUN_PATCH_ADDRESSES = (0x26361, 0x270A5, 0x279DD, 0x1007900)
