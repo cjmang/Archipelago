@@ -32,7 +32,7 @@ EVENTS: tuple[tuple[int, int, str], ...] = (
     # Flag for 5020 is really the Jupiter Lighthouse flag. Base rando with PC shuffle
     # seems to do something weird with the reunion flag.
     (5020, 0xA21, ItemName.Reunion),
-    (5021, 0x1, ItemName.Victory),
+    (5021, 0x1, ItemName.Victory),  # TODO: This is the same flag as Garet. So when Garet gets recruited, this is set
     (5022, 0xA5F, ItemName.Ship_Cannon),
     (5023, 0xA30, ItemName.Mars_Lighthouse_Heated),
 )

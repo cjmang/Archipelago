@@ -7,11 +7,6 @@ from worlds.gstla.memory import MemoryDomain, MemoryRange
 from .base import BaseItem, BaseLocation, read_json
 from .location_names import loc_names_by_id
 
-# TODO: merge the constants below with the stuff from somewhere else:
-#       _DataLocations.DJINN_FLAGS, client._load_djinn()
-#       also make sure we use these constants everywhere instead of hardcoding "20" or something.
-
-
 DJINN_PER_ELEMENT = 18  # (0x12), ROM
 DJINN_MAPPING_TABLE_ADDR = 0xFA0000  # ROM (the patched table, 4 * 18 * 2 bytes)
 DJINN_FLAG_START = 0x30  # 48, EWRAM
@@ -28,7 +23,6 @@ def djinn_to_flag_index(element: int, index: int) -> int:
 
 def flag_index_to_djinn(flag: int) -> tuple[ElementType, int]:
     # 111 = ElementType.Air + ID 3 = Smog
-    # TODO: unused for now. Maybe for _check_djinn_flags?
     offset = flag - DJINN_FLAG_START
     element, index = divmod(offset, DJINN_FLAGS_PER_ELEMENT)
     if index >= DJINN_PER_ELEMENT:

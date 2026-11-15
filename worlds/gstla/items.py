@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Protocol
 
 from BaseClasses import Item, ItemClassification
+from worlds.gstla.game_data.djinns import DJINN_PER_ELEMENT
 from .game_data.loader import load_game_data
-from .gstla_types import ItemCategory, ItemData, ItemType, LocationType
+from .gstla_types import ElementType, ItemCategory, ItemData, ItemType, LocationType
 from .names import ItemName, LocationName
 from .options import (
     AddDummyItems,
@@ -188,16 +189,16 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
     sorted_djinn_locs = sorted(game_data.locations_by_type[LocationType.Djinn], key=lambda loc: loc.id)
 
     if world.options.shuffle_djinn == 1:
-        for i in range(0, 4):
-            slice_start = 0 + i * 18
-            sub_djinns = sorted_djinns[slice_start : slice_start + 18]
-            sub_locs = sorted_djinn_locs[slice_start : slice_start + 18]
+        for i in range(len(ElementType)):
+            slice_start = 0 + i * DJINN_PER_ELEMENT
+            sub_djinns = sorted_djinns[slice_start : slice_start + DJINN_PER_ELEMENT]
+            sub_locs = sorted_djinn_locs[slice_start : slice_start + DJINN_PER_ELEMENT]
 
             world.random.shuffle(sub_djinns)
             world.random.shuffle(sub_locs)
 
-            sorted_djinns[slice_start : slice_start + 18] = sub_djinns
-            sorted_djinn_locs[slice_start : slice_start + 18] = sub_locs
+            sorted_djinns[slice_start : slice_start + DJINN_PER_ELEMENT] = sub_djinns
+            sorted_djinn_locs[slice_start : slice_start + DJINN_PER_ELEMENT] = sub_locs
     elif world.options.shuffle_djinn > 1:
         world.random.shuffle(sorted_djinns)
         world.random.shuffle(sorted_djinn_locs)
