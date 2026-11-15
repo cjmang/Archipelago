@@ -16,6 +16,8 @@ from .memory import (
     RECRUITMENT_ADDR,
     SYSTEM_EVENT_ADDR,
     SYSTEM_EVENT_FIELD_DEATH,
+    MemoryDomain,
+    MemoryRange,
     MemoryWrite,
 )
 
@@ -47,12 +49,12 @@ def get_current_hp_ratio_address(character: CharacterIndex) -> int:
     return get_character_block_address(character) + HP_RATIO_OFFSET
 
 
-PARTY_STATE_READS: tuple[tuple[int, int], ...] = (
-    (RECRUITMENT_ADDR, 1),
-    (IN_BATTLE_ADDR, 1),
-    (SYSTEM_EVENT_ADDR, 2),
-    (FIELD_DEATH_SURVIVOR_COUNT_ADDR, 2),
-    *tuple((get_current_hp_address(character), 2) for character in CharacterIndex),
+PARTY_STATE_READS: tuple[MemoryRange, ...] = (
+    MemoryRange(RECRUITMENT_ADDR, 1, MemoryDomain.EWRAM),
+    MemoryRange(IN_BATTLE_ADDR, 1, MemoryDomain.EWRAM),
+    MemoryRange(SYSTEM_EVENT_ADDR, 2, MemoryDomain.EWRAM),
+    MemoryRange(FIELD_DEATH_SURVIVOR_COUNT_ADDR, 2, MemoryDomain.EWRAM),
+    *tuple(MemoryRange(get_current_hp_address(character), 2, MemoryDomain.EWRAM) for character in CharacterIndex),
 )
 
 
@@ -66,8 +68,8 @@ class PartyState(NamedTuple):
     @classmethod
     def from_read_result(cls, results: Sequence[bytes]) -> PartyState:
         values = {}
-        for (address, _width), result in zip(PARTY_STATE_READS, results, strict=True):
-            values[address] = int.from_bytes(result, 'little')
+        for read_range, result in zip(PARTY_STATE_READS, results, strict=True):
+            values[read_range.address] = int.from_bytes(result, 'little')
 
         return cls(
             recruitment=values[RECRUITMENT_ADDR],
@@ -169,10 +171,10 @@ class PartyState(NamedTuple):
         return self.is_party_wiped and (self.is_in_battle or self.is_field_death_in_progress)
 
     @property
-    def write_guards(self) -> list[tuple[int, bytes]]:
+    def write_guards(self) -> list[MemoryWrite]:
         return [
-            (SYSTEM_EVENT_ADDR, self.system_event.to_bytes(2, 'little')),
-            (IN_BATTLE_ADDR, self.in_battle.to_bytes(1, 'little')),
+            MemoryWrite(SYSTEM_EVENT_ADDR, self.system_event.to_bytes(2, 'little')),
+            MemoryWrite(IN_BATTLE_ADDR, self.in_battle.to_bytes(1, 'little')),
         ]
 
 

@@ -619,18 +619,11 @@ class GSTLAClient(BizHawkClient):
             self.previous_death_link = ctx.last_death_link
             self.death_deliverer.queue_death()
 
-        read_result = await read(
-            ctx.bizhawk_ctx,
-            [(address, width, MemoryDomain.EWRAM) for address, width in PARTY_STATE_READS],
-        )
+        read_result = await read(ctx.bizhawk_ctx, PARTY_STATE_READS)
         game_state = PartyState.from_read_result(read_result)
         instruction = self.death_deliverer.tick(game_state)
         if instruction.writes:
-            delivered = await guarded_write(
-                ctx.bizhawk_ctx,
-                [(mem_write.address, mem_write.data, MemoryDomain.EWRAM) for mem_write in instruction.writes],
-                [(address, data, MemoryDomain.EWRAM) for address, data in game_state.write_guards],
-            )
+            delivered = await guarded_write(ctx.bizhawk_ctx, instruction.writes, game_state.write_guards)
             if not delivered:
                 self.death_deliverer.retry_delivery()
                 logger.debug('DeathLink writes rejected by a guard. Retrying on next tick.')

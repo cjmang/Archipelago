@@ -230,7 +230,7 @@ class TestIsDeathObserved(unittest.TestCase):
 
 class TestPartyStateReads(unittest.TestCase):
     def setUp(self):
-        self.width_by_address = dict(PARTY_STATE_READS)
+        self.width_by_address = {read_range.address: read_range.length for read_range in PARTY_STATE_READS}
 
     def test_every_address_is_read_once(self):
         self.assertEqual(len(PARTY_STATE_READS), len(self.width_by_address))
