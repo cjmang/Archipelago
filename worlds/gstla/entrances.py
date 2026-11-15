@@ -14,13 +14,35 @@ if TYPE_CHECKING:
 
 
 ENTRANCES: list[EntranceData] = [
+    # Start
     EntranceData(RegionName.Menu, RegionName.Idejima, None),
     EntranceData(RegionName.Idejima, RegionName.PartyMembers, None),
     EntranceData(RegionName.Idejima, RegionName.Daila, None),
-    EntranceData(RegionName.Daila, RegionName.DehkanPlateau, None),
-    EntranceData(RegionName.DehkanPlateau, RegionName.Madra, None),
-    EntranceData(RegionName.Madra, RegionName.IndraCavern, None),
-    EntranceData(RegionName.Madra, RegionName.OseniaCliffs, None),
+    EntranceData(RegionName.Idejima, RegionName.NorthIndra, None),
+    # North Indra
+    EntranceData(RegionName.NorthIndra, RegionName.DehkanPlateau, None),
+    EntranceData(RegionName.NorthIndra, RegionName.ShrineOfTheSeaGod, Has(ItemName.Lash_Pebble)),  # no glitch handling!
+    EntranceData(RegionName.NorthIndra, RegionName.KandoreanTemple, Has(ItemName.Whirlwind)),
+    EntranceData(RegionName.DehkanPlateau, RegionName.SouthIndra, None),
+    # South Indra
+    EntranceData(RegionName.SouthIndra, RegionName.Madra, None),
+    EntranceData(RegionName.Madra, RegionName.MadraCatacombs, Has(ItemName.Reveal)),
+    EntranceData(RegionName.SouthIndra, RegionName.IndraCavern, None),
+    EntranceData(RegionName.SouthIndra, RegionName.GondowanCliffs, HasAny(ItemName.Frost_Jewel, ItemName.Scoop_Gem)),
+    EntranceData(
+        RegionName.SouthIndra,
+        RegionName.Lemurian_Ship,
+        HasAll(
+            ItemName.Black_Crystal,
+            ItemName.Gabomba_Statue_Completed,
+            ItemName.Piers,
+            options=[OptionFilter(StartWithShip, StartWithShip.option_vanilla)],
+            filtered_resolution=True,
+        ),
+    ),
+    EntranceData(RegionName.SouthIndra, RegionName.EasternSea, Has(ItemName.Ship)),
+    EntranceData(RegionName.SouthIndra, RegionName.OseniaCliffs, None),
+    # Osenia
     EntranceData(RegionName.OseniaCliffs, RegionName.Mikasalla, None),
     EntranceData(RegionName.YampiDesertBack, RegionName.Alhafra, None),
     EntranceData(RegionName.Alhafra, RegionName.YampiDesertBack, None),
@@ -57,9 +79,6 @@ ENTRANCES: list[EntranceData] = [
     EntranceData(RegionName.AttekaInlet, RegionName.Contigo, None),
     EntranceData(RegionName.AttekaInlet, RegionName.Lemurian_Ship_Revisit, None),
     EntranceData(RegionName.Prox, RegionName.MarsLighthouse, None),
-    EntranceData(RegionName.Daila, RegionName.ShrineOfTheSeaGod, Has(ItemName.Lash_Pebble)),
-    EntranceData(RegionName.Daila, RegionName.KandoreanTemple, Has(ItemName.Whirlwind)),
-    EntranceData(RegionName.Madra, RegionName.MadraCatacombs, Has(ItemName.Reveal)),
     EntranceData(RegionName.YampiDesertFront, RegionName.YampiDesertBack, Has(ItemName.Scoop_Gem)),
     EntranceData(
         RegionName.YampiDesertBack,
@@ -76,7 +95,6 @@ ENTRANCES: list[EntranceData] = [
     ),
     EntranceData(RegionName.Garoh, RegionName.AirsRock, Has(ItemName.Whirlwind)),
     EntranceData(RegionName.Garoh, RegionName.YampiDesertBack, Has(ItemName.Sand)),
-    EntranceData(RegionName.Madra, RegionName.GondowanCliffs, HasAny(ItemName.Frost_Jewel, ItemName.Scoop_Gem)),
     EntranceData(RegionName.GondowanCliffs, RegionName.Naribwe, Has(ItemName.Briggs_defeated)),
     EntranceData(
         RegionName.KibomboMountains,
@@ -92,7 +110,6 @@ ENTRANCES: list[EntranceData] = [
         RegionName.GabombaCatacombs,
         HasAll(ItemName.Gabomba_Statue_Completed, ItemName.Cyclone_Chip),
     ),
-    EntranceData(RegionName.Madra, RegionName.EasternSea, Has(ItemName.Ship)),
     EntranceData(RegionName.SeaOfTimeIslet, RegionName.IsletCave, HasAll(ItemName.Mind_Read, ItemName.Lil_Turtle)),
     EntranceData(RegionName.SeaOfTime, RegionName.Lemuria, HasAny(ItemName.Poseidon_defeated, ItemName.Grindstone)),
     EntranceData(RegionName.TreasureIsland, RegionName.TreasureIsland_Grindstone, Has(ItemName.Grindstone)),
@@ -163,17 +180,6 @@ ENTRANCES: list[EntranceData] = [
                 ItemName.Mars_Lighthouse_Heated,
                 options=[OptionFilter(ShortcutMarsLighthouse, ShortcutMarsLighthouse.option_false)],
             ),
-        ),
-    ),
-    EntranceData(
-        RegionName.Madra,
-        RegionName.Lemurian_Ship,
-        HasAll(
-            ItemName.Black_Crystal,
-            ItemName.Gabomba_Statue_Completed,
-            ItemName.Piers,
-            options=[OptionFilter(StartWithShip, StartWithShip.option_vanilla)],
-            filtered_resolution=True,
         ),
     ),
 ]
