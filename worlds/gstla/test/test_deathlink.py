@@ -4,13 +4,7 @@ import unittest
 from typing import TYPE_CHECKING
 
 from worlds.gstla.deathlink import (
-    FIELD_DEATH_NARRATION_COUNT_ADDR,
-    FIELD_DEATH_NARRATION_LIST_ADDR,
-    FIELD_DEATH_SURVIVOR_COUNT_ADDR,
     GAME_STATE_READS,
-    IN_BATTLE_BIT,
-    SYSTEM_EVENT_ADDR,
-    SYSTEM_EVENT_FIELD_DEATH,
     CharacterIndex as Character,
     DeathDeliverer,
     DeathDeliveryState,
@@ -20,6 +14,14 @@ from worlds.gstla.deathlink import (
     _build_multi_zero_hp_writes,
     get_current_hp_address,
     get_current_hp_ratio_address,
+)
+from worlds.gstla.memory import (
+    FIELD_DEATH_NARRATION_COUNT_ADDR,
+    FIELD_DEATH_NARRATION_LIST_ADDR,
+    FIELD_DEATH_SURVIVOR_COUNT_ADDR,
+    IN_BATTLE_BIT,
+    SYSTEM_EVENT_ADDR,
+    SYSTEM_EVENT_FIELD_DEATH,
 )
 
 if TYPE_CHECKING:

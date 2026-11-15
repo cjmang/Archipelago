@@ -4,33 +4,22 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple
 
 from worlds.gstla.gstla_types import CharacterIndex
+from .memory import (
+    CHARACTER_BLOCK_SIZE,
+    CHARACTER_BLOCK_START,
+    CURRENT_HP_OFFSET,
+    FIELD_DEATH_NARRATION_COUNT_ADDR,
+    FIELD_DEATH_SURVIVOR_COUNT_ADDR,
+    HP_RATIO_OFFSET,
+    IN_BATTLE_ADDR,
+    IN_BATTLE_BIT,
+    RECRUITMENT_ADDR,
+    SYSTEM_EVENT_ADDR,
+    SYSTEM_EVENT_FIELD_DEATH,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
-RECRUITMENT_ADDR = 0x40  # also BizClient.FLAG_START
-CHARACTER_BLOCK_SIZE = 0x14C
-CHARACTER_BLOCK_START = 0x520
-
-IN_BATTLE_ADDR = 0x60
-IN_BATTLE_BIT = 0x08
-
-SYSTEM_EVENT_ADDR = 0x3016A
-SYSTEM_EVENT_FIELD_DEATH = 0xFFFF
-
-FIELD_DEATH_NARRATION_COUNT_ADDR = 0x3016C
-FIELD_DEATH_SURVIVOR_COUNT_ADDR = 0x3016E
-FIELD_DEATH_NARRATION_LIST_ADDR = 0x30170
-
-HP_RATIO_OFFSET = 0x14
-MAX_HP_OFFSET = 0x34
-CURRENT_HP_OFFSET = 0x38
-
-# TODO: Obsolete for deathlink, but maybe useful to store somewhere?
-MAX_PP_RATIO_OFFSET = 0x16
-MAX_PP_OFFSET = 0x36
-CURRENT_PP_OFFSET = 0x3A
-CHARACTER_STATUS_BYTE_OFFSET = 0x131  # 0 = none, 1 = poison, 2 = venom, ...
 
 
 def get_character_block_address(character: CharacterIndex) -> int:
