@@ -42,15 +42,21 @@ ENTRANCES: list[EntranceData] = [
     ),
     EntranceData(RegionName.SouthIndra, RegionName.EasternSea, Has(ItemName.Ship)),
     EntranceData(RegionName.SouthIndra, RegionName.OseniaCliffs, None),
-    # Osenia
-    EntranceData(RegionName.OseniaCliffs, RegionName.Mikasalla, None),
-    EntranceData(RegionName.YampiDesertBack, RegionName.Alhafra, None),
-    EntranceData(RegionName.Alhafra, RegionName.YampiDesertBack, None),
-    EntranceData(RegionName.Mikasalla, RegionName.Garoh, None),
-    EntranceData(RegionName.Mikasalla, RegionName.OseniaCavern, None),
-    EntranceData(RegionName.Mikasalla, RegionName.YampiDesertFront, None),
+    EntranceData(RegionName.OseniaCliffs, RegionName.SouthOsenia, None),
+    # South Osenia
+    EntranceData(RegionName.SouthOsenia, RegionName.Mikasalla, None),
+    EntranceData(RegionName.SouthOsenia, RegionName.Garoh, None),
+    EntranceData(RegionName.SouthOsenia, RegionName.OseniaCavern, None),
+    EntranceData(RegionName.SouthOsenia, RegionName.YampiDesertFront, None),
+    EntranceData(RegionName.SouthOsenia, RegionName.AirsRock, Has(ItemName.Whirlwind)),
+    EntranceData(RegionName.SouthOsenia, RegionName.YampiDesertBack, Has(ItemName.Sand)),
+    EntranceData(RegionName.YampiDesertBack, RegionName.NorthOsenia, None),
+    # North Osenia (Alhafra)
+    EntranceData(RegionName.NorthOsenia, RegionName.Alhafra, None),
+    EntranceData(RegionName.NorthOsenia, RegionName.YampiDesertBack, None),  # hm? two way, why explicitly?
+    EntranceData(RegionName.EasternSea, RegionName.NorthOsenia, None),
+    # TODO
     EntranceData(RegionName.Naribwe, RegionName.KibomboMountains, None),
-    EntranceData(RegionName.EasternSea, RegionName.Alhafra, None),
     EntranceData(RegionName.EasternSea, RegionName.Kibombo, None),
     EntranceData(RegionName.EasternSea, RegionName.Naribwe, None),
     EntranceData(RegionName.EasternSea, RegionName.WestIndraIslet, None),
@@ -93,8 +99,6 @@ ENTRANCES: list[EntranceData] = [
             HasAll(ItemName.Briggs_defeated, ItemName.Tremor_Bit),
         ),
     ),
-    EntranceData(RegionName.Garoh, RegionName.AirsRock, Has(ItemName.Whirlwind)),
-    EntranceData(RegionName.Garoh, RegionName.YampiDesertBack, Has(ItemName.Sand)),
     EntranceData(RegionName.GondowanCliffs, RegionName.Naribwe, Has(ItemName.Briggs_defeated)),
     EntranceData(
         RegionName.KibomboMountains,
