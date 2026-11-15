@@ -13,7 +13,14 @@ from Utils import async_start
 from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
 from worlds.gstla.game_data.djinns import DJINN_MAPPING_TABLE_ADDR
-from worlds.gstla.memory import FLAG_START, ROM_GAME_NAME, ROM_SLOT_NAME, MemoryDomain
+from worlds.gstla.memory import (
+    FLAG_START,
+    GAME_SNAPSHOT_READS,
+    ROM_GAME_NAME,
+    ROM_SLOT_NAME,
+    GameSnapshot,
+    MemoryDomain,
+)
 from .deathlink import GAME_STATE_READS, DeathDeliverer, GameState
 from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
@@ -423,12 +430,6 @@ class GSTLAClient(BizHawkClient):
             self.djinn_ram_to_rom[rom_flag] = djinn_flag
 
     @staticmethod
-    def _is_in_game(data: list[bytes]) -> bool:
-        # Map ID 0x00 and 0x01 are Title Screen and Clear Data respectively, everything greater is safe
-        current_map = int.from_bytes(data[_DataLocations.MAP_ID], 'little')
-        return current_map > 1
-
-    @staticmethod
     def get_goal_flags_key(ctx: BizHawkClientContext) -> str:
         return f'gstla_goal_flags_status_{ctx.slot}_{ctx.team}'
 
@@ -670,8 +671,12 @@ class GSTLAClient(BizHawkClient):
             self.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
             logger.debug(f'DeathLink enabled: {self.death_link_enabled} with {ctx.server_seed_name=}, {ctx.slot=}')
 
+        # TODO: dedup these after testing
+        snapshot_read = await read(ctx.bizhawk_ctx, GAME_SNAPSHOT_READS)
+        snapshot = GameSnapshot.from_read_result(snapshot_read)
+        logger.info(f'Snapshot read: {snapshot.__dict__=}')
         result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
-        if not self._is_in_game(result):
+        if not snapshot.is_in_game:
             self.death_deliverer.reset()  # makes sure title menu/game reset does not send outgoing deaths
             self.previous_death_link = ctx.last_death_link
 

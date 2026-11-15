@@ -1,5 +1,14 @@
+from __future__ import annotations
+
 from enum import StrEnum
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+
+def _from_bytes(b):
+    return int.from_bytes(b, 'little')
 
 
 class MemoryDomain(StrEnum):
@@ -11,7 +20,7 @@ class MemoryRange(NamedTuple):
     """We can pass an instance of this directly into the BizHawk client"""
 
     address: int
-    length: int
+    length: int  # in bytes
     domain: MemoryDomain
 
 
@@ -40,8 +49,47 @@ class FlagArray:
         return bool(self._data[byte_idx] & (1 << bit_idx))
 
 
+class GameSnapshot(NamedTuple):
+    # TODO: dedup with GameState in deathlink.py? Or rename the deathlink one? I want this to be GameState
+    #       rename the other to PartyState or something?
+    map_id: int
+    entrance_id: int
+    item_slot: int
+    items_received: int
+    flags: FlagArray
+
+    @classmethod
+    def from_read_result(cls, results: Sequence[bytes]) -> GameSnapshot:
+        map_id, entrance_id, item_slot, items_received, flags = results
+        return cls(
+            map_id=_from_bytes(map_id),
+            entrance_id=_from_bytes(entrance_id),
+            item_slot=_from_bytes(item_slot),
+            items_received=_from_bytes(items_received),
+            flags=FlagArray(flags),
+        )
+
+    @property
+    def is_in_game(self) -> bool:
+        # Map ID 0x00 and 0x01 are Title Screen and Clear Data respectively, everything greater is safe
+        return self.map_id > 0x01
+
+
 FLAG_START = 0x40
 FLAG_ARRAY_RANGE = MemoryRange(FLAG_START, 0x200, MemoryDomain.EWRAM)  # not sure if 0x200 is enough?
+
+# previously _DataLocations
+MAP_ID = MemoryRange(0x428, 2, MemoryDomain.EWRAM)
+ENTRANCE_ID = MemoryRange(0x42A, 2, MemoryDomain.EWRAM)
+AP_ITEM_SLOT = MemoryRange(0xA96, 2, MemoryDomain.EWRAM)
+AP_ITEMS_RECEIVED = MemoryRange(0xA72, 2, MemoryDomain.EWRAM)  # two unused bytes in save data
+GAME_SNAPSHOT_READS: tuple[MemoryRange, ...] = (
+    MAP_ID,
+    ENTRANCE_ID,
+    AP_ITEM_SLOT,
+    AP_ITEMS_RECEIVED,
+    FLAG_ARRAY_RANGE,
+)
 
 RECRUITMENT_ADDR = FLAG_START
 CHARACTER_BLOCK_SIZE = 0x14C
