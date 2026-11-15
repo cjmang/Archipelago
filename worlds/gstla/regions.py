@@ -350,6 +350,7 @@ regions: dict[str, RegionData] = {
         [
             LocationName.Overworld_Rusty_Axe,
             LocationName.Overworld_Rusty_Mace,
+            LocationName.Wheeze,  # is below Tundaria Tower, but not in it
         ],
     ),
     RegionName.EastTundariaIslet: RegionData(
@@ -480,7 +481,6 @@ regions: dict[str, RegionData] = {
         RegionName.TundariaTower,
         [
             LocationName.Tundaria_Tower_Center_Prong,
-            LocationName.Wheeze,
         ],
     ),
     RegionName.TundariaTower_Parched: RegionData(
@@ -587,6 +587,8 @@ regions: dict[str, RegionData] = {
             LocationName.Overworld_Rusty_Sword,
             LocationName.Overworld_Rusty_Sword_Two,
             LocationName.Overworld_Rusty_Staff,
+            LocationName.Core,  # is on Atteka but not reachable from there
+            LocationName.Petra,  # is on Hisperia, but not reachable from Shaman Cave
         ],
     ),
     RegionName.SouthWestAttekaIslet: RegionData(
@@ -599,10 +601,7 @@ regions: dict[str, RegionData] = {
     RegionName.HesperiaSettlement: RegionData(
         RegionName.HesperiaSettlement, [LocationName.Hesperia_Settlement_166_coins, LocationName.Tinder]
     ),
-    RegionName.ShamanVillageCave: RegionData(
-        RegionName.ShamanVillageCave,
-        [LocationName.Petra, LocationName.Eddy],
-    ),
+    RegionName.ShamanVillageCave: RegionData(RegionName.ShamanVillageCave, [LocationName.Eddy]),
     RegionName.ShamanVillage: RegionData(
         RegionName.ShamanVillage,
         [
@@ -632,7 +631,6 @@ regions: dict[str, RegionData] = {
             LocationName.Contigo_Dragon_Skin,
             LocationName.Contigo_Power_Bread,
             LocationName.Salt,
-            LocationName.Core,
             LocationName.Shine,
         ],
     ),
