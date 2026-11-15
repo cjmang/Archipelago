@@ -9,7 +9,6 @@ from worlds.gstla.deathlink import (
     DeathDeliverer,
     DeathDeliveryState,
     GameState,
-    MemoryWrite,
     _build_field_death_request_writes,
     _build_multi_zero_hp_writes,
     get_current_hp_address,
@@ -22,6 +21,7 @@ from worlds.gstla.memory import (
     IN_BATTLE_BIT,
     SYSTEM_EVENT_ADDR,
     SYSTEM_EVENT_FIELD_DEATH,
+    MemoryWrite,
 )
 
 if TYPE_CHECKING:

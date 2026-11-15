@@ -16,6 +16,7 @@ from .memory import (
     RECRUITMENT_ADDR,
     SYSTEM_EVENT_ADDR,
     SYSTEM_EVENT_FIELD_DEATH,
+    MemoryWrite,
 )
 
 if TYPE_CHECKING:
@@ -173,15 +174,6 @@ class GameState(NamedTuple):
             (SYSTEM_EVENT_ADDR, self.system_event.to_bytes(2, 'little')),
             (IN_BATTLE_ADDR, self.in_battle.to_bytes(1, 'little')),
         ]
-
-
-class MemoryWrite(NamedTuple):
-    address: int
-    data: bytes
-
-    @classmethod
-    def u16(cls, address: int, value: int) -> MemoryWrite:
-        return cls(address, value.to_bytes(2, 'little'))
 
 
 def _build_zero_hp_writes(character: CharacterIndex) -> tuple[MemoryWrite, MemoryWrite]:

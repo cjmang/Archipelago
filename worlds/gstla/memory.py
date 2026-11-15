@@ -24,6 +24,15 @@ class MemoryRange(NamedTuple):
     domain: MemoryDomain
 
 
+class MemoryWrite(NamedTuple):
+    address: int
+    data: bytes
+
+    @classmethod
+    def u16(cls, address: int, value: int) -> MemoryWrite:
+        return cls(address, value.to_bytes(2, 'little'))
+
+
 class FlagArray:
     """
     The full block of game flags as read by the bizhawk client every tick.
@@ -54,18 +63,18 @@ class GameSnapshot(NamedTuple):
     #       rename the other to PartyState or something?
     map_id: int
     entrance_id: int
-    item_slot: int
-    items_received: int
+    pending_item_id: int
+    next_item_index: int
     flags: FlagArray
 
     @classmethod
     def from_read_result(cls, results: Sequence[bytes]) -> GameSnapshot:
-        map_id, entrance_id, item_slot, items_received, flags = results
+        map_id, entrance_id, pending_item_id, next_item_index, flags = results
         return cls(
             map_id=_from_bytes(map_id),
             entrance_id=_from_bytes(entrance_id),
-            item_slot=_from_bytes(item_slot),
-            items_received=_from_bytes(items_received),
+            pending_item_id=_from_bytes(pending_item_id),
+            next_item_index=_from_bytes(next_item_index),
             flags=FlagArray(flags),
         )
 
