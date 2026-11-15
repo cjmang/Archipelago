@@ -21,7 +21,7 @@ ENTRANCES: list[EntranceData] = [
     EntranceData(RegionName.Menu, RegionName.Idejima, None),
     EntranceData(RegionName.Idejima, RegionName.PartyMembers, None),
     EntranceData(RegionName.Idejima, RegionName.Daila, None),
-    EntranceData(RegionName.Idejima, RegionName.NorthIndra, None),
+    EntranceData(RegionName.Daila, RegionName.NorthIndra, None),
     # North Indra
     EntranceData(RegionName.NorthIndra, RegionName.DehkanPlateau, None),
     EntranceData(RegionName.NorthIndra, RegionName.ShrineOfTheSeaGod, Has(ItemName.Lash_Pebble)),  # no glitch handling!
