@@ -359,7 +359,7 @@ class GSTLAClient(BizHawkClient):
             if cmd not in ctx.command_processor.commands:
                 ctx.command_processor.commands[cmd] = func
         ctx.items_handling = 0b111
-        ctx.watcher_timeout = 1  # not sure what a reasonable setting here is; passed to asyncio.wait_for
+        ctx.watcher_timeout = 0.125
         ctx.text_passthrough_categories.add(TextCategory.OUTGOING)
         ctx.text_passthrough_categories.add(TextCategory.HINT)
         return True
