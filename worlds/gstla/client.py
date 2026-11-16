@@ -551,8 +551,7 @@ class GSTLAClient(BizHawkClient):
             self.previous_death_link = ctx.last_death_link
 
     async def game_watcher(self, ctx: BizHawkClientContext) -> None:
-        if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
-            logger.debug('Not connected to server...')
+        if ctx.server is None or ctx.server.socket.closed or ctx.slot is None:
             return
 
         if self.death_link_initialized_for is None and ctx.slot_data is not None and ctx.slot is not None:
