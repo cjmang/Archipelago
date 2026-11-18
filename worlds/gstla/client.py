@@ -437,12 +437,15 @@ class GSTLAClient(BizHawkClient):
 
         checked_djinn: set[int] = set()
         possessed_djinn: set[int] = set()
+        djinn_locs: set[int] = set()
         for owned_djinn_flag, location_flag in self.djinn_ram_to_rom.items():
             if flags.is_set(owned_djinn_flag):
                 checked_djinn.add(location_flag)
                 possessed_djinn.add(owned_djinn_flag)
+                djinn_locs.add(self.djinn_flag_to_loc_id[location_flag])
         self.checked_djinn = checked_djinn
         self.possessed_djinn = possessed_djinn
+        self.temp_locs |= djinn_locs
 
         for flag in self.goal_map:
             if flags.is_set(flag):
