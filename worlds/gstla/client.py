@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import base64
 import logging
+import os
 from collections import defaultdict
 from dataclasses import dataclass
-from enum import IntEnum, StrEnum
 from typing import TYPE_CHECKING, Any, Self, cast
 
 from BaseClasses import ItemClassification
@@ -12,7 +12,16 @@ from NetUtils import ClientStatus, NetworkItem
 from Utils import async_start
 from worlds._bizhawk import display_message, guarded_write, read, write
 from worlds._bizhawk.client import BizHawkClient
-from .deathlink import GAME_STATE_READS, DeathDeliverer, GameState
+from worlds.gstla.game_data.djinns import DJINN_MAPPING_TABLE_RANGE, djinn_to_flag_index
+from worlds.gstla.memory import (
+    AP_ITEM_SLOT,
+    AP_ITEMS_RECEIVED,
+    GAME_STATE_READS,
+    ROM_GAME_NAME,
+    ROM_SLOT_NAME,
+    GameState,
+)
+from .deathlink import PARTY_STATE_READS, DeathDeliverer, PartyState
 from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
 from .locations import get_remote_blacklist
@@ -22,12 +31,10 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from worlds._bizhawk.context import BizHawkClientCommandProcessor, BizHawkClientContext
+    from worlds.gstla.memory import FlagArray
 
 logger = logging.getLogger('Client')
 
-FLAG_START = 0x40
-FORCE_ENCOUNTER_ADDR = 0x30164
-PREVENT_FLEEING_ADDR = 0x48B
 
 OPTION_NAME_TO_GOAL_NAME: dict[str, str] = {
     'Chestbeaters': LocationName.Kandorean_Temple_Chestbeaters,
@@ -72,46 +79,6 @@ def get_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str, Any]:
         return dict(slot_data['options']['v2'])
 
     return get_deprecated_options_from_slot_data(slot_data)
-
-
-class _MemDomain(StrEnum):
-    EWRAM = 'EWRAM'
-    ROM = 'ROM'
-
-
-class _DataLocations(IntEnum):
-    MAP_ID = (0x428, 0x2, 0x0, _MemDomain.EWRAM)
-    ENTRANCE_ID = (0x42A, 0x2, 0x0, _MemDomain.EWRAM)
-    DJINN_FLAGS = (FLAG_START + (0x30 >> 3), 0x0A, 0x30, _MemDomain.EWRAM)
-    AP_ITEM_SLOT = (0xA96, 0x2, 0x0, _MemDomain.EWRAM)
-    # two unused bytes in save data
-    AP_ITEMS_RECEIVED = (0xA72, 0x2, 0x0, _MemDomain.EWRAM)
-    INITIAL_INVENTORY = (FLAG_START + 0x0, 0x1, 0x0, _MemDomain.EWRAM)
-    SUMMONS = (FLAG_START + (0x10 >> 3), 0x2, 0x10, _MemDomain.EWRAM)
-    TREASURE_8_FLAGS = (FLAG_START + (0x800 >> 3), 0x20, 0x800, _MemDomain.EWRAM)
-    TREASURE_9_FLAGS = (FLAG_START + (0x900 >> 3), 0x20, 0x900, _MemDomain.EWRAM)
-    TREASURE_A_FLAGS = (FLAG_START + (0xA00 >> 3), 0x20, 0xA00, _MemDomain.EWRAM)
-    TREASURE_B_FLAGS = (FLAG_START + (0xB00 >> 3), 0x20, 0xB00, _MemDomain.EWRAM)
-    TREASURE_C_FLAGS = (FLAG_START + (0xC00 >> 3), 0x20, 0xC00, _MemDomain.EWRAM)
-    TREASURE_D_FLAGS = (FLAG_START + (0xD00 >> 3), 0x20, 0xD00, _MemDomain.EWRAM)
-    TREASURE_E_FLAGS = (FLAG_START + (0xE00 >> 3), 0x20, 0xE00, _MemDomain.EWRAM)
-    TREASURE_F_FLAGS = (FLAG_START + (0xF00 >> 3), 0x20, 0xF00, _MemDomain.EWRAM)
-    ENEMY_FLAGS = (FLAG_START + (0x600 >> 3), 0x40, 0x600, _MemDomain.EWRAM)
-    STORY_FLAGS = (FLAG_START + (0x800 >> 3), 0x40, 0x800, _MemDomain.EWRAM)
-    # DOOM_DRAGON = (FLAG_START + (0x778 >> 3), 0x1, 0x778, _MemDomain.EWRAM)
-
-    def __new__(cls, addr: int, length: int, initial_flag: int, domain: _MemDomain):
-        value = len(cls.__members__)
-        obj = int.__new__(cls, value)
-        obj._value_ = value
-        obj.addr = addr
-        obj.length = length
-        obj.initial_flag = initial_flag
-        obj.domain = domain
-        return obj
-
-    def to_request(self) -> tuple[int, int, _MemDomain]:
-        return self.addr, self.length, self.domain
 
 
 @dataclass(frozen=True)
@@ -339,7 +306,6 @@ class GSTLAClient(BizHawkClient):
         self.event_flag_map: defaultdict[int, set[int]] = defaultdict(lambda: set())
         self.goal_map: dict[int, bool] = {}
         self.djinn_ram_to_rom: dict[int, int] = {}
-        self.djinn_flag_map: dict[int, str] = {}
         self.djinn_flag_to_loc_id: dict[int, int] = {
             d.flag: d.id for d in self.game_data.locations_by_type[LocationType.Djinn]
         }
@@ -351,9 +317,8 @@ class GSTLAClient(BizHawkClient):
         for event in self.game_data.event_by_name.values():
             self.event_flag_map[event.flag].add(event.id)
         for loc in self.game_data.location_by_id.values():
-            self.flag_map[loc.flag].add(loc.id)
-            if loc.type == LocationType.Djinn:
-                self.djinn_flag_map[loc.flag] = loc.name
+            if loc.type != LocationType.Djinn:
+                self.flag_map[loc.flag].add(loc.id)
         self.temp_locs: set[int] = set()
         self.temp_events: set[int] = set()
         self.local_events: set[int] = set()
@@ -373,7 +338,7 @@ class GSTLAClient(BizHawkClient):
     async def validate_rom(self, ctx: BizHawkClientContext):
         from worlds._bizhawk.context import TextCategory
 
-        game_name = await read(ctx.bizhawk_ctx, [(0xA0, 0x12, _MemDomain.ROM)])
+        game_name = await read(ctx.bizhawk_ctx, [ROM_GAME_NAME])
         game_name = game_name[0].decode('ascii')
         logger.debug('Game loaded: %s', game_name)
         if game_name != 'GOLDEN_SUN_BAGFE01':
@@ -385,7 +350,7 @@ class GSTLAClient(BizHawkClient):
         # TODO: would like to verify that the ROM is the correct one somehow
         # Possibly verify the seed; would also be nice to have the slot name encoded
         # in the rom somewhere, though not necessary
-        slot_name = await read(ctx.bizhawk_ctx, [(0xFFF000, 64, _MemDomain.ROM)])
+        slot_name = await read(ctx.bizhawk_ctx, [ROM_SLOT_NAME])
         if not slot_name:
             logger.warning('Could not find slot name in GSTLA ROM; please double check the ROM is correct')
         else:
@@ -400,7 +365,8 @@ class GSTLAClient(BizHawkClient):
         return True
 
     async def set_auth(self, ctx: BizHawkClientContext) -> None:
-        if self.slot_name:
+        ignore_slot_name = os.environ.get('GSTLA_IGNORE_SLOT_NAME') in ['1', 'true', 'yes']
+        if self.slot_name and not ignore_slot_name:
             ctx.auth = self.slot_name
 
     async def set_death_link(self, ctx: BizHawkClientContext, enabled: bool) -> None:
@@ -416,22 +382,14 @@ class GSTLAClient(BizHawkClient):
             self.death_link_initialized_for = None
 
     async def _load_djinn(self, ctx: BizHawkClientContext) -> None:
-        # TODO: Simplify this via the Djinn dataclass
-        if len(self.djinn_ram_to_rom) > 0:
+        if self.djinn_ram_to_rom:
             return
-        # Don't put this in the data locations class; we don't want to check this regularly
-        result = await read(ctx.bizhawk_ctx, [(0xFA0000, 0x2 * 18 * 4, _MemDomain.ROM)])
-        for index in range(18 * 4):
-            djinn_flag = (index // 18) * 20 + (index % 18) + _DataLocations.DJINN_FLAGS.initial_flag
-            section = int.from_bytes(result[0][index * 2 : (index * 2) + 2], 'little')
-            rom_flag = (section >> 8) * 0x14 + (section & 0xFF) + 0x30
-            self.djinn_ram_to_rom[rom_flag] = djinn_flag
-
-    @staticmethod
-    def _is_in_game(data: list[bytes]) -> bool:
-        # Map ID 0x00 and 0x01 are Title Screen and Clear Data respectively, everything greater is safe
-        current_map = int.from_bytes(data[_DataLocations.MAP_ID], 'little')
-        return current_map > 1
+        (table,) = await read(ctx.bizhawk_ctx, [DJINN_MAPPING_TABLE_RANGE])
+        for vanilla_djinn in self.game_data.djinn.values():
+            entry_offset = 2 * vanilla_djinn.rom_index
+            djinn_index, djinn_element = table[entry_offset : entry_offset + 2]
+            placed_flag = djinn_to_flag_index(djinn_element, djinn_index)
+            self.djinn_ram_to_rom[placed_flag] = vanilla_djinn.flag_index
 
     @staticmethod
     def get_goal_flags_key(ctx: BizHawkClientContext) -> str:
@@ -464,66 +422,31 @@ class GSTLAClient(BizHawkClient):
                 self.summons.add(itemdata.id)
         self.summon_item_index = end
 
-    def _check_djinn_flags(self, data: list[bytes]) -> None:
-        flag_bytes = data[_DataLocations.DJINN_FLAGS]
-        for i in range(0, _DataLocations.DJINN_FLAGS.length, 2):
-            part = flag_bytes[i : i + 2]
-            part_int = int.from_bytes(part, 'little')
-            # logger.info(part_int)
-            for bit in range(16):
-                if part_int & 1 > 0:
-                    flag = i * 8 + bit
-                    original_flag = flag + _DataLocations.DJINN_FLAGS.initial_flag
-                    if original_flag not in self.possessed_djinn:
-                        self.possessed_djinn.add(original_flag)
-                    shuffled_flag = self.djinn_ram_to_rom[original_flag]
-                    # original_djinn = self.djinn_flag_map[original_flag]
-                    # shuffled_djinn = self.djinn_flag_map[shuffled_flag]
-                    # TODO: this may be wrong once djinn are events
-                    # logger.debug("RAM Djinn: %s, Flag: %s -> ROM Djinn: %s, Flag: %s",
-                    #              original_djinn, hex(original_flag), shuffled_djinn, hex(shuffled_flag))
-                    self.checked_djinn.add(shuffled_flag)
-                    # TODO: if djinn ever become proper items this code would be needed
-                    # locs = self.flag_map.get(shuffled_flag, None)
-                    # # logger.debug("orig_flag: %s, shuffle flag: %s, locs: %s", hex(flag), hex(shuffled_flag), locs)
-                    # assert locs is not None, "Got null locations for flag: %s" % hex(shuffled_flag)
-                    # self.temp_locs |= locs
-                part_int >>= 1
+    def _check_djinn_flags(self, flags: FlagArray) -> None:
+        for owned_djinn_flag, location_flag in self.djinn_ram_to_rom.items():
+            if flags.is_set(owned_djinn_flag):
+                self.checked_djinn.add(location_flag)
+                self.possessed_djinn.add(owned_djinn_flag)
 
-    def _check_common_flags(self, data_loc: _DataLocations, data: list[bytes]) -> None:
-        flag_bytes = data[data_loc]
-        initial_flag = data_loc.initial_flag
-        # logger.debug("Checking flags for %s" % data_loc.name)
-        itr_step = 0x2 if data_loc.length > 0x1 else 0x1
-        for i in range(0, data_loc.length, itr_step):
-            part = flag_bytes[i : i + itr_step]
-            part_int = int.from_bytes(part, 'little')
-            # logger.debug("Data found: %s", hex(part_int))
-            # logger.debug("Bytes: %s", part)
-            for bit in range(itr_step * 8):
-                # logger.debug("int %d", part_int)
-                if part_int & 1 > 0:
-                    flag = i * 8 + bit + initial_flag
-                    locs = self.flag_map.get(flag, None)
-                    # logger.debug("flag found: %s, locs: %s", hex(flag), locs)
-                    if locs is not None:
-                        self.temp_locs |= locs
-                    events = self.event_flag_map.get(flag, None)
-                    if events is not None:
-                        self.temp_events |= events
-                    # if 0x600 < flag < 0x800:
-                    #     logger.info("flag found: %s", hex(flag))
-                    if flag in self.goal_map:
-                        self.goal_map[flag] = True
-                part_int >>= 1
-        # logger.debug(self.temp_locs)
+    def _scan_flags(self, flags: FlagArray) -> tuple[set[int], set[int]]:
+        location_ids: set[int] = set()
+        for flag, locations in self.flag_map.items():
+            if flags.is_set(flag):
+                location_ids |= locations
+        event_ids: set[int] = set()
+        for flag, events in self.event_flag_map.items():
+            if flags.is_set(flag):
+                event_ids |= events
+        for flag in self.goal_map:
+            if flags.is_set(flag):
+                self.goal_map[flag] = True
+        return location_ids, event_ids
 
-    async def _receive_items(self, ctx: BizHawkClientContext, data: list[bytes]) -> None:
-        item_in_slot = int.from_bytes(data[_DataLocations.AP_ITEM_SLOT], byteorder='little')
-        if item_in_slot != 0:
-            logger.debug('AP Item slot has data in it: %d', item_in_slot)
+    async def _receive_items(self, ctx: BizHawkClientContext, game_state: GameState) -> None:
+        if game_state.pending_item_id != 0:
+            logger.debug('AP Item slot has data in it: %d', game_state.pending_item_id)
             return
-        item_index = int.from_bytes(data[_DataLocations.AP_ITEMS_RECEIVED], 'little')
+        item_index = game_state.next_item_index
         cur_amount = len(ctx.items_received)
         if cur_amount <= item_index:
             return
@@ -539,44 +462,16 @@ class GSTLAClient(BizHawkClient):
 
         if index_to_give == -1:
             logger.debug('None of the current items should be given')
-            await write(
-                ctx.bizhawk_ctx,
-                [
-                    (
-                        _DataLocations.AP_ITEMS_RECEIVED.addr,
-                        cur_amount.to_bytes(length=2, byteorder='little'),
-                        _DataLocations.AP_ITEMS_RECEIVED.domain,
-                    )
-                ],
-            )
+            await write(ctx.bizhawk_ctx, [AP_ITEMS_RECEIVED.to_write(cur_amount)])
             return
         if item_index != index_to_give:
             # Update the item index so as to skip ones we don't care about
-            update_index = index_to_give
-            await write(
-                ctx.bizhawk_ctx,
-                [
-                    (
-                        _DataLocations.AP_ITEMS_RECEIVED.addr,
-                        update_index.to_bytes(length=2, byteorder='little'),
-                        _DataLocations.AP_ITEMS_RECEIVED.domain,
-                    )
-                ],
-            )
+            await write(ctx.bizhawk_ctx, [AP_ITEMS_RECEIVED.to_write(index_to_give)])
 
         item = ctx.items_received[index_to_give]
 
         logger.debug('Writing Item %d to Slot', item.item)
-        await write(
-            ctx.bizhawk_ctx,
-            [
-                (
-                    _DataLocations.AP_ITEM_SLOT.addr,
-                    item.item.to_bytes(length=2, byteorder='little'),
-                    _DataLocations.AP_ITEM_SLOT.domain,
-                )
-            ],
-        )
+        await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(item.item)])
 
     def _should_give_to_player(self, ctx: BizHawkClientContext, item: NetworkItem) -> bool:
         logger.debug('item: %s flags: %s location: %s coop: %s', item.item, item.flags, item.location, self.coop)
@@ -643,18 +538,11 @@ class GSTLAClient(BizHawkClient):
             self.previous_death_link = ctx.last_death_link
             self.death_deliverer.queue_death()
 
-        read_result = await read(
-            ctx.bizhawk_ctx,
-            [(address, width, _MemDomain.EWRAM) for address, width in GAME_STATE_READS],
-        )
-        game_state = GameState.from_read_result(read_result)
+        read_result = await read(ctx.bizhawk_ctx, PARTY_STATE_READS)
+        game_state = PartyState.from_read_result(read_result)
         instruction = self.death_deliverer.tick(game_state)
         if instruction.writes:
-            delivered = await guarded_write(
-                ctx.bizhawk_ctx,
-                [(mem_write.address, mem_write.data, _MemDomain.EWRAM) for mem_write in instruction.writes],
-                [(address, data, _MemDomain.EWRAM) for address, data in game_state.write_guards],
-            )
+            delivered = await guarded_write(ctx.bizhawk_ctx, instruction.writes, game_state.write_guards)
             if not delivered:
                 self.death_deliverer.retry_delivery()
                 logger.debug('DeathLink writes rejected by a guard. Retrying on next tick.')
@@ -662,7 +550,7 @@ class GSTLAClient(BizHawkClient):
             await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party has been defeated.")
             self.previous_death_link = ctx.last_death_link
 
-    async def game_watcher(self, ctx: BizHawkClientContext) -> None:  # noqa: PLR0915
+    async def game_watcher(self, ctx: BizHawkClientContext) -> None:
         if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
             logger.debug('Not connected to server...')
             return
@@ -675,8 +563,10 @@ class GSTLAClient(BizHawkClient):
             self.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
             logger.debug(f'DeathLink enabled: {self.death_link_enabled} with {ctx.server_seed_name=}, {ctx.slot=}')
 
-        result = await read(ctx.bizhawk_ctx, [data_loc.to_request() for data_loc in _DataLocations])
-        if not self._is_in_game(result):
+        game_state_read = await read(ctx.bizhawk_ctx, GAME_STATE_READS)
+        game_state = GameState.from_read_result(game_state_read)
+        # logger.info(f'Game state read: {game_state._asdict()=}')
+        if not game_state.is_in_game:
             self.death_deliverer.reset()  # makes sure title menu/game reset does not send outgoing deaths
             self.previous_death_link = ctx.last_death_link
 
@@ -705,19 +595,11 @@ class GSTLAClient(BizHawkClient):
         #     f"server locations checked: {len(ctx.checked_locations)}"
         # )
 
-        self.temp_locs = set()
-        self.temp_events = set()
         await self._load_djinn(ctx)
+        self.temp_locs, self.temp_events = self._scan_flags(game_state.flags)
+        self._check_djinn_flags(game_state.flags)
 
-        self._check_djinn_flags(result)
-        self._check_common_flags(_DataLocations.SUMMONS, result)
-        for i in range(_DataLocations.TREASURE_8_FLAGS, _DataLocations.TREASURE_F_FLAGS.value + 1):
-            self._check_common_flags(_DataLocations(i), result)
-        self._check_common_flags(_DataLocations.INITIAL_INVENTORY, result)
-        self._check_common_flags(_DataLocations.ENEMY_FLAGS, result)
-        self._check_common_flags(_DataLocations.STORY_FLAGS, result)
-
-        await self._receive_items(ctx, result)
+        await self._receive_items(ctx, game_state)
 
         await self._handle_death_link(ctx)
 
@@ -771,8 +653,8 @@ class GSTLAClient(BizHawkClient):
 
         await self.goals.check_goals(self, ctx)
 
-        current_map = int.from_bytes(result[_DataLocations.MAP_ID], 'little')
-        current_entrance = int.from_bytes(result[_DataLocations.ENTRANCE_ID], 'little')
+        current_map = game_state.map_id
+        current_entrance = game_state.entrance_id
         if current_map != self.last_map or current_entrance != self.last_entrance:
             self.last_map = current_map
             self.last_entrance = current_entrance

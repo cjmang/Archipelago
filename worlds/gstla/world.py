@@ -19,6 +19,7 @@ import settings
 from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
+from worlds.gstla.memory import AUTO_RUN_PATCH_ADDRESSES
 from .client import GoalRequirements
 from .entrances import create_entrances
 from .game_data.loader import load_game_data
@@ -346,10 +347,8 @@ class GSTLAWorld(World):
         )
         patch.add_settings(ap_settings.getvalue(), ap_settings_debug.getvalue().encode('utf-8'))
         if self.options.auto_run:
-            patch.write_token(APTokenTypes.XOR_8, 0x26361, 0x01)
-            patch.write_token(APTokenTypes.XOR_8, 0x270A5, 0x01)
-            patch.write_token(APTokenTypes.XOR_8, 0x279DD, 0x01)
-            patch.write_token(APTokenTypes.XOR_8, 0x1007900, 0x01)
+            for addr in AUTO_RUN_PATCH_ADDRESSES:
+                patch.write_token(APTokenTypes.XOR_8, addr, 0x01)
         patch.write_file('token_data.bin', patch.get_token_binary())
         patch.write()
 

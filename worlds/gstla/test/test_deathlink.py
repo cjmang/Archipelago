@@ -4,22 +4,24 @@ import unittest
 from typing import TYPE_CHECKING
 
 from worlds.gstla.deathlink import (
-    FIELD_DEATH_NARRATION_COUNT_ADDR,
-    FIELD_DEATH_NARRATION_LIST_ADDR,
-    FIELD_DEATH_SURVIVOR_COUNT_ADDR,
-    GAME_STATE_READS,
-    IN_BATTLE_BIT,
-    SYSTEM_EVENT_ADDR,
-    SYSTEM_EVENT_FIELD_DEATH,
+    PARTY_STATE_READS,
     CharacterIndex as Character,
     DeathDeliverer,
     DeathDeliveryState,
-    GameState,
-    MemoryWrite,
+    PartyState,
     _build_field_death_request_writes,
     _build_multi_zero_hp_writes,
     get_current_hp_address,
     get_current_hp_ratio_address,
+)
+from worlds.gstla.memory import (
+    FIELD_DEATH_NARRATION_COUNT_ADDR,
+    FIELD_DEATH_NARRATION_LIST_ADDR,
+    FIELD_DEATH_SURVIVOR_COUNT_ADDR,
+    IN_BATTLE_BIT,
+    SYSTEM_EVENT_ADDR,
+    SYSTEM_EVENT_FIELD_DEATH,
+    MemoryWrite,
 )
 
 if TYPE_CHECKING:
@@ -70,8 +72,8 @@ def _game_state(
     system_event: int = 0x00,
     survivor_count: int = 0,
     dead: Sequence[Character] = (),  # TODO: change "dead" to "zero_hp_chars" or something?
-) -> GameState:
-    return GameState(
+) -> PartyState:
+    return PartyState(
         recruitment=recruitment,
         in_battle=in_battle,
         system_event=system_event,
@@ -226,12 +228,12 @@ class TestIsDeathObserved(unittest.TestCase):
         )
 
 
-class TestGameStateReads(unittest.TestCase):
+class TestPartyStateReads(unittest.TestCase):
     def setUp(self):
-        self.width_by_address = dict(GAME_STATE_READS)
+        self.width_by_address = {read_range.address: read_range.length for read_range in PARTY_STATE_READS}
 
     def test_every_address_is_read_once(self):
-        self.assertEqual(len(GAME_STATE_READS), len(self.width_by_address))
+        self.assertEqual(len(PARTY_STATE_READS), len(self.width_by_address))
 
     def test_every_character_hp_is_u16(self):
         for character in Character:
@@ -249,11 +251,11 @@ class TestGameStateReads(unittest.TestCase):
                 self.assertEqual(self.width_by_address[write.address], len(write.data))
 
 
-class TestGameStateFromReadResult(unittest.TestCase):
+class TestPartyStateFromReadResult(unittest.TestCase):
     BATTLE_BIT_CLEAR_BYTE = 0x10
 
     def test_field_death_with_real_data_is_death(self):
-        state = GameState.from_read_result(
+        state = PartyState.from_read_result(
             [
                 bytes([_DEFAULT_PARTY]),
                 bytes([self.BATTLE_BIT_CLEAR_BYTE]),
@@ -263,7 +265,7 @@ class TestGameStateFromReadResult(unittest.TestCase):
             ]
         )
         self.assertEqual(
-            GameState(
+            PartyState(
                 recruitment=_DEFAULT_PARTY,
                 in_battle=self.BATTLE_BIT_CLEAR_BYTE,
                 system_event=SYSTEM_EVENT_FIELD_DEATH,
