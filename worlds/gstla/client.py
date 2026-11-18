@@ -483,6 +483,10 @@ class GSTLAClient(BizHawkClient):
             return False
         if ctx.slot != item.player:
             return True
+        if item.item in self.game_data.djinn:
+            # Found djinns should be delivered regardless of remote/coop on/off.
+            # Otherwise the Poptracker would show djinns already collected when they're not.
+            return self.game_data.djinn[item.item].flag_index not in self.possessed_djinn
         if item.location < 0:
             # -1 can be the "!getitem" and "/send" command
             # -2 is the starting inventory, also allowed by "ctx.slot != item.player"
