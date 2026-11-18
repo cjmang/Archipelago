@@ -68,8 +68,8 @@ def get_deprecated_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str
 
 
 def get_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str, Any]:
-    if 'options_v2' in slot_data:
-        return dict(slot_data['options_v2'])
+    if 'v2' in slot_data['options']:
+        return dict(slot_data['options']['v2'])
 
     return get_deprecated_options_from_slot_data(slot_data)
 

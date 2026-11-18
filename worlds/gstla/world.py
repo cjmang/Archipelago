@@ -246,7 +246,7 @@ class GSTLAWorld(World):
         Since we set "ut_can_gen_without_yaml=True",
         this is the slot_data we generated in fill_slot_data() for the multiworld, which the server sends on a connect.
         We can then just use that 1:1 to set our options, since we don't need any mapping after introducing the
-        "options_v2", which is set via `self.options.as_dict()`.
+        "options.v2", which is set via `self.options.as_dict()`.
 
         In upstream #6287, there is a "UniversalTrackerEnabled" resolver,
         that we could also use to handle glitched logic, but that's probably going to be in 0.6.9 at the earliest.
@@ -260,7 +260,7 @@ class GSTLAWorld(World):
         if slot_data is None:
             return
 
-        for name, value in slot_data['options_v2'].items():
+        for name, value in slot_data['options']['v2'].items():
             option = getattr(self.options, name)
             setattr(self.options, name, type(option).from_any(value))
 
@@ -274,14 +274,15 @@ class GSTLAWorld(World):
 
         Currently looks like this:
         {
-            "options": {ABC: XYZ},  # deprecated
-            "options_v2": {ABC: XYZ},  # new
+            "options": {
+                "ABC": "XYZ"   # deprecated
+                "v2": {"ABC": "XYZ"},  # new
+            },
             "goal": {},  # deprecated
         }
         """
-        deprecated_slot_data = self.fill_slot_data_deprecated()
-        slot_data = {'options_v2': self.options.as_dict(*SLOT_DATA_FIELDS)}
-        slot_data.update(deprecated_slot_data)
+        slot_data = dict(self.fill_slot_data_deprecated())
+        slot_data['options'] = {**slot_data['options'], 'v2': self.options.as_dict(*SLOT_DATA_FIELDS)}
         return slot_data
 
     def fill_slot_data_deprecated(self) -> Mapping[str, Any]:
