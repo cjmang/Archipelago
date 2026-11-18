@@ -24,6 +24,7 @@ from worlds.gstla.memory import (
 from .deathlink import PARTY_STATE_READS, DeathDeliverer, PartyState
 from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
+from .location_rules import DJINNS_BY_PARTY_SIZE
 from .locations import get_remote_blacklist
 from .names import LocationName
 
@@ -327,6 +328,11 @@ class GSTLAClient(BizHawkClient):
         self.was_in_game: bool = False
         self.coop: int = 0
         self.remote_blacklist: set[int] = get_remote_blacklist()
+        self.party_djinn_location_ids: frozenset[int] = frozenset(
+            self.game_data.location_by_name[location_name].id
+            for location_names in DJINNS_BY_PARTY_SIZE.values()
+            for location_name in location_names
+        )
         self.goals = GoalManager()
         self.last_map: int = 0
         self.last_entrance: int = 0
@@ -493,6 +499,14 @@ class GSTLAClient(BizHawkClient):
         if ctx.slot != item.player:
             return True
         if item.item in self.game_data.djinn:
+            # As of right now, the djinns brought be the characters would be duplicated if we already have them.
+            # To replicate:
+            # start new seed, recruit garet, get his two djinns, restart the game, we obtain those two djinns,
+            # and after we recruit garet, he brings his two djinns regardless. Now we have two Waft and Petra.
+            # This has to preferably be fixed inside the rando itself already.
+            if item.location in self.party_djinn_location_ids:
+                return False
+
             # Found djinns should be delivered regardless of remote/coop on/off.
             # Otherwise the Poptracker would show djinns already collected when they're not.
             return self.game_data.djinn[item.item].flag_index not in self.possessed_djinn
