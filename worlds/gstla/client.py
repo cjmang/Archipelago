@@ -422,25 +422,31 @@ class GSTLAClient(BizHawkClient):
                 self.summons.add(itemdata.id)
         self.summon_item_index = end
 
-    def _check_djinn_flags(self, flags: FlagArray) -> None:
-        for owned_djinn_flag, location_flag in self.djinn_ram_to_rom.items():
-            if flags.is_set(owned_djinn_flag):
-                self.checked_djinn.add(location_flag)
-                self.possessed_djinn.add(owned_djinn_flag)
-
-    def _scan_flags(self, flags: FlagArray) -> tuple[set[int], set[int]]:
+    def _scan_flags(self, flags: FlagArray) -> None:
         location_ids: set[int] = set()
         for flag, locations in self.flag_map.items():
             if flags.is_set(flag):
                 location_ids |= locations
+        self.temp_locs = location_ids
+
         event_ids: set[int] = set()
         for flag, events in self.event_flag_map.items():
             if flags.is_set(flag):
                 event_ids |= events
+        self.temp_events = event_ids
+
+        checked_djinn: set[int] = set()
+        possessed_djinn: set[int] = set()
+        for owned_djinn_flag, location_flag in self.djinn_ram_to_rom.items():
+            if flags.is_set(owned_djinn_flag):
+                checked_djinn.add(location_flag)
+                possessed_djinn.add(owned_djinn_flag)
+        self.checked_djinn = checked_djinn
+        self.possessed_djinn = possessed_djinn
+
         for flag in self.goal_map:
             if flags.is_set(flag):
                 self.goal_map[flag] = True
-        return location_ids, event_ids
 
     async def _receive_items(self, ctx: BizHawkClientContext, game_state: GameState) -> None:
         if game_state.pending_item_id != 0:
@@ -603,8 +609,7 @@ class GSTLAClient(BizHawkClient):
         # )
 
         await self._load_djinn(ctx)
-        self.temp_locs, self.temp_events = self._scan_flags(game_state.flags)
-        self._check_djinn_flags(game_state.flags)
+        self._scan_flags(game_state.flags)
 
         await self._receive_items(ctx, game_state)
 
