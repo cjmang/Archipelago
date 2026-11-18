@@ -359,7 +359,7 @@ class GSTLAClient(BizHawkClient):
             if cmd not in ctx.command_processor.commands:
                 ctx.command_processor.commands[cmd] = func
         ctx.items_handling = 0b111
-        ctx.watcher_timeout = 1  # not sure what a reasonable setting here is; passed to asyncio.wait_for
+        ctx.watcher_timeout = 0.125
         ctx.text_passthrough_categories.add(TextCategory.OUTGOING)
         ctx.text_passthrough_categories.add(TextCategory.HINT)
         return True
@@ -477,6 +477,15 @@ class GSTLAClient(BizHawkClient):
         logger.debug('item: %s flags: %s location: %s coop: %s', item.item, item.flags, item.location, self.coop)
         if item.item in self.game_data.event_locations:
             return False
+        if item.item in self.game_data.djinn:
+            # Since currently we cannot deliver djinns, we'll have to make this exception here.
+            # Otherwise, !getitem or /send might try to send a djinn.
+            # This is just a bandaid until we can deliver them.
+            #
+            # We could also remove djinns from the item pool entirely, maybe.
+            # I only noticed this when trying a "!getitem Lash", which tried to map to "Flash"
+            logger.warning('Cannot give %s: djinn cannot be sent as items', self.game_data.djinn[item.item].name)
+            return False
         if ctx.slot != item.player:
             return True
         if item.location < 0:
@@ -551,8 +560,7 @@ class GSTLAClient(BizHawkClient):
             self.previous_death_link = ctx.last_death_link
 
     async def game_watcher(self, ctx: BizHawkClientContext) -> None:
-        if not ctx.server or not ctx.server.socket.open or ctx.server.socket.closed:
-            logger.debug('Not connected to server...')
+        if ctx.server is None or ctx.server.socket.closed or ctx.slot is None:
             return
 
         if self.death_link_initialized_for is None and ctx.slot_data is not None and ctx.slot is not None:
