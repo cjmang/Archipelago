@@ -251,10 +251,7 @@ class GSTLAWorld(World):
         In upstream #6287, there is a "UniversalTrackerEnabled" resolver,
         that we could also use to handle glitched logic, but that's probably going to be in 0.6.9 at the earliest.
 
-        TODO: Glitched logic, deferred entrances for entrance randos? Location aliases? Direct Poptracker support?
-              Also: "/explain Air's Rock Interior - Reveal Tablet" returns the path as
-              "Garoh (True): Garoh -> AirsRock: Has Whirlwind", which seems whacky.
-              Probably should add some kind of "Overworld" region or the individual "Antekka, Gondowan, etc" regions?
+        TODO: Glitched logic, deferred entrances for entrance randos? Direct Poptracker support?
         """
         slot_data = getattr(self.multiworld, 're_gen_passthrough', {}).get(self.game)
         if slot_data is None:

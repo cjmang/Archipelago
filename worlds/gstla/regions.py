@@ -108,6 +108,7 @@ regions: dict[str, RegionData] = {
             LocationName.Squall,
         ],
     ),
+    RegionName.NorthIndra: RegionData(RegionName.NorthIndra, [LocationName.Echo]),
     RegionName.Daila: RegionData(
         RegionName.Daila,
         [
@@ -118,7 +119,6 @@ regions: dict[str, RegionData] = {
             LocationName.Daila_Sleep_Bomb,
             LocationName.Daila_Sea_Gods_Tear,
             LocationName.Daila_Smoke_Bomb,
-            LocationName.Echo,
         ],
     ),
     RegionName.KandoreanTemple: RegionData(
@@ -151,6 +151,7 @@ regions: dict[str, RegionData] = {
             LocationName.Cannon,
         ],
     ),
+    RegionName.SouthIndra: RegionData(RegionName.SouthIndra, [LocationName.Iron]),
     RegionName.IndraCavern: RegionData(RegionName.IndraCavern, [LocationName.Indra_Cavern_Zagan]),
     RegionName.Madra: RegionData(
         RegionName.Madra,
@@ -162,7 +163,6 @@ regions: dict[str, RegionData] = {
             LocationName.Madra_Sleep_Bomb,
             LocationName.Madra_15_coins,
             LocationName.Madra_Nurses_Cap,
-            LocationName.Iron,
             LocationName.Char,
         ],
     ),
@@ -178,6 +178,7 @@ regions: dict[str, RegionData] = {
         ],
     ),
     RegionName.OseniaCliffs: RegionData(RegionName.OseniaCliffs, [LocationName.Osenia_Cliffs_Pirates_Sword]),
+    RegionName.SouthOsenia: RegionData(RegionName.SouthOsenia, [LocationName.Sour]),
     RegionName.YampiDesertFront: RegionData(
         RegionName.YampiDesertFront,
         [
@@ -208,32 +209,6 @@ regions: dict[str, RegionData] = {
             LocationName.Crystal,
         ],
     ),
-    RegionName.Alhafra: RegionData(
-        RegionName.Alhafra,
-        [
-            LocationName.Alhafra_Psy_Crystal,
-            LocationName.Alhafra_Sleep_Bomb,
-            LocationName.Alhafra_Lucky_Medal,
-            LocationName.Alhafra_32_coins,
-            LocationName.Alhafra_Smoke_Bomb,
-            LocationName.Alhafra_Elixir,
-            LocationName.Alhafra_Apple,
-            LocationName.Alhafra_Briggs,
-            LocationName.Alhafra_Prison_Briggs,
-        ],
-    ),
-    RegionName.AlhafraCave: RegionData(
-        RegionName.AlhafraCave,
-        [
-            LocationName.Alhafran_Cave_123_coins,
-            LocationName.Alhafran_Cave_Ixion_Mail,
-            LocationName.Alhafran_Cave_Lucky_Medal,
-            LocationName.Alhafran_Cave_Power_Bread,
-            LocationName.Alhafran_Cave_777_coins,
-            LocationName.Alhafran_Cave_Potion,
-            LocationName.Alhafran_Cave_Psy_Crystal,
-        ],
-    ),
     RegionName.Mikasalla: RegionData(
         RegionName.Mikasalla,
         [
@@ -242,7 +217,6 @@ regions: dict[str, RegionData] = {
             LocationName.Mikasalla_Elixir,
             LocationName.Mikasalla_82_coins,
             LocationName.Mikasalla_Lucky_Pepper,
-            LocationName.Sour,
             LocationName.Spark,
         ],
     ),
@@ -278,6 +252,34 @@ regions: dict[str, RegionData] = {
         ],
     ),
     RegionName.OseniaCavern: RegionData(RegionName.OseniaCavern, [LocationName.Osenia_Cavern_Megaera]),
+    RegionName.NorthOsenia: RegionData(RegionName.NorthOsenia, []),
+    RegionName.Alhafra: RegionData(
+        RegionName.Alhafra,
+        [
+            LocationName.Alhafra_Psy_Crystal,
+            LocationName.Alhafra_Sleep_Bomb,
+            LocationName.Alhafra_Lucky_Medal,
+            LocationName.Alhafra_32_coins,
+            LocationName.Alhafra_Smoke_Bomb,
+            LocationName.Alhafra_Elixir,
+            LocationName.Alhafra_Apple,
+            LocationName.Alhafra_Briggs,
+            LocationName.Alhafra_Prison_Briggs,
+        ],
+    ),
+    RegionName.AlhafraCave: RegionData(
+        RegionName.AlhafraCave,
+        [
+            LocationName.Alhafran_Cave_123_coins,
+            LocationName.Alhafran_Cave_Ixion_Mail,
+            LocationName.Alhafran_Cave_Lucky_Medal,
+            LocationName.Alhafran_Cave_Power_Bread,
+            LocationName.Alhafran_Cave_777_coins,
+            LocationName.Alhafran_Cave_Potion,
+            LocationName.Alhafran_Cave_Psy_Crystal,
+        ],
+    ),
+    RegionName.SouthGondowan: RegionData(RegionName.SouthGondowan, [LocationName.Chill]),
     RegionName.GondowanCliffs: RegionData(
         RegionName.GondowanCliffs,
         [
@@ -295,7 +297,6 @@ regions: dict[str, RegionData] = {
             LocationName.Naribwe_Sleep_Bomb,
             LocationName.Naribwe_Thorn_Crown,
             LocationName.Naribwe_Unicorn_Ring,
-            LocationName.Chill,
         ],
     ),
     RegionName.KibomboMountains: RegionData(
@@ -308,6 +309,7 @@ regions: dict[str, RegionData] = {
             LocationName.Waft,
         ],
     ),
+    RegionName.NorthGondowan: RegionData(RegionName.NorthGondowan, []),
     RegionName.Kibombo: RegionData(
         RegionName.Kibombo,
         [
@@ -348,6 +350,7 @@ regions: dict[str, RegionData] = {
         [
             LocationName.Overworld_Rusty_Axe,
             LocationName.Overworld_Rusty_Mace,
+            LocationName.Wheeze,  # is below Tundaria Tower, but not in it
         ],
     ),
     RegionName.EastTundariaIslet: RegionData(
@@ -478,7 +481,6 @@ regions: dict[str, RegionData] = {
         RegionName.TundariaTower,
         [
             LocationName.Tundaria_Tower_Center_Prong,
-            LocationName.Wheeze,
         ],
     ),
     RegionName.TundariaTower_Parched: RegionData(
@@ -585,6 +587,8 @@ regions: dict[str, RegionData] = {
             LocationName.Overworld_Rusty_Sword,
             LocationName.Overworld_Rusty_Sword_Two,
             LocationName.Overworld_Rusty_Staff,
+            LocationName.Core,  # is on Atteka but not reachable from there
+            LocationName.Petra,  # is on Hisperia, but not reachable from Shaman Cave
         ],
     ),
     RegionName.SouthWestAttekaIslet: RegionData(
@@ -597,10 +601,7 @@ regions: dict[str, RegionData] = {
     RegionName.HesperiaSettlement: RegionData(
         RegionName.HesperiaSettlement, [LocationName.Hesperia_Settlement_166_coins, LocationName.Tinder]
     ),
-    RegionName.ShamanVillageCave: RegionData(
-        RegionName.ShamanVillageCave,
-        [LocationName.Petra, LocationName.Eddy],
-    ),
+    RegionName.ShamanVillageCave: RegionData(RegionName.ShamanVillageCave, [LocationName.Eddy]),
     RegionName.ShamanVillage: RegionData(
         RegionName.ShamanVillage,
         [
@@ -617,6 +618,7 @@ regions: dict[str, RegionData] = {
             LocationName.Gasp,
         ],
     ),
+    RegionName.Atteka: RegionData(RegionName.Atteka, []),
     RegionName.AttekaInlet: RegionData(
         RegionName.AttekaInlet,
         [LocationName.Atteka_Inlet_Vial, LocationName.Geode],
@@ -629,7 +631,6 @@ regions: dict[str, RegionData] = {
             LocationName.Contigo_Dragon_Skin,
             LocationName.Contigo_Power_Bread,
             LocationName.Salt,
-            LocationName.Core,
             LocationName.Shine,
         ],
     ),
