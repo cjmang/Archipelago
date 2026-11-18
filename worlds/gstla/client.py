@@ -312,7 +312,7 @@ class GSTLAClient(BizHawkClient):
         }
         self.checked_djinn: set[int] = set()
         self.possessed_djinn: set[int] = set()
-        self.djinn_last_count: int = 0
+        self.sent_possessed_djinn: set[int] = set()
         self.summons: set[int] = set()
         self.summon_item_index: int = 0
         for event in self.game_data.event_by_name.values():
@@ -639,7 +639,7 @@ class GSTLAClient(BizHawkClient):
             await ctx.send_msgs([{'cmd': 'LocationChecks', 'locations': list(self.temp_locs)}])
             self.local_locations = self.temp_locs
 
-        if self.possessed_djinn and self.djinn_last_count != len(self.possessed_djinn):
+        if self.possessed_djinn - self.sent_possessed_djinn:
             logger.debug(f'Possesed djinn: {self.possessed_djinn}')
             await ctx.send_msgs(
                 [
@@ -658,7 +658,7 @@ class GSTLAClient(BizHawkClient):
                     }
                 ]
             )
-            self.djinn_last_count = len(self.possessed_djinn)
+            self.sent_possessed_djinn |= self.possessed_djinn
 
         if self.temp_events and self.temp_events != self.local_events:
             await ctx.send_msgs(
