@@ -3,8 +3,9 @@ from __future__ import annotations
 import base64
 import logging
 from collections import defaultdict
+from dataclasses import dataclass
 from enum import IntEnum, StrEnum
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Self, cast
 
 from BaseClasses import ItemClassification
 from NetUtils import ClientStatus, NetworkItem
@@ -18,6 +19,8 @@ from .locations import get_remote_blacklist
 from .names import LocationName
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from worlds._bizhawk.context import BizHawkClientCommandProcessor, BizHawkClientContext
 
 logger = logging.getLogger('Client')
@@ -43,6 +46,32 @@ OPTION_NAME_TO_GOAL_NAME: dict[str, str] = {
     'Valukar': LocationName.Yampi_Desert_Cave_Valukar,
     'Dullahan': LocationName.Anemos_Inner_Sanctum_Dullahan,
 }
+
+
+def get_deprecated_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str, Any]:
+    # Should be removed after the next release/a few months after the poptracker pack release
+    options = dict(slot_data['options'])
+    if 'start_with_wings' in options:
+        options['start_with_wings_of_anemos'] = options.pop('start_with_wings')
+
+    legacy_goal = slot_data.get('goal') or {}
+    goals = set(legacy_goal.get('flags', ()))
+    counts = legacy_goal.get('counts', {})
+    if 'djinn' in counts:
+        goals.add('Djinn Hunt')
+        options['djinn_hunt_count'] = counts['djinn']
+    if 'summons' in counts:
+        goals.add('Summon Hunt')
+        options['summon_hunt_count'] = counts['summons']
+    options['goal'] = sorted(goals)
+    return options
+
+
+def get_options_from_slot_data(slot_data: dict[str, Any]) -> dict[str, Any]:
+    if 'v2' in slot_data['options']:
+        return dict(slot_data['options']['v2'])
+
+    return get_deprecated_options_from_slot_data(slot_data)
 
 
 class _MemDomain(StrEnum):
@@ -85,6 +114,22 @@ class _DataLocations(IntEnum):
         return self.addr, self.length, self.domain
 
 
+@dataclass(frozen=True)
+class GoalRequirements:
+    events: frozenset[str]
+    djinn_count: int
+    summon_count: int
+
+    @classmethod
+    def from_options(cls, goal: Iterable[str], djinn_hunt_count: int, summon_hunt_count: int) -> Self:
+        goals = frozenset(goal)
+        return cls(
+            events=goals - {'Djinn Hunt', 'Summon Hunt'},
+            djinn_count=djinn_hunt_count if 'Djinn Hunt' in goals else 0,
+            summon_count=summon_hunt_count if 'Summon Hunt' in goals else 0,
+        )
+
+
 class GoalManager:
     def __init__(self):
         self.game_data = load_game_data()
@@ -92,24 +137,20 @@ class GoalManager:
             name: self.game_data.event_by_name[name].flag for name in OPTION_NAME_TO_GOAL_NAME.values()
         }
         self.flag_to_name: dict[int, str] = {v: k for k, v in self.supported_flags.items()}
-        self.flag_requirements: set[str] = set()
-        self.count_requirements: dict[str, int] = {}
+        self.requirements = GoalRequirements(events=frozenset(), djinn_count=0, summon_count=0)
         self.desired_flags: dict[int, int] = {}
         self.current: defaultdict[str, defaultdict[str, bool]] = defaultdict(lambda: defaultdict(lambda: False))
         self.initialized = False
 
     def init_reqs_from_slotdata(self, slot_data: dict[str, Any]) -> None:
-        reqs: dict[str, Any] = slot_data['goal'] or {}
+        options = get_options_from_slot_data(slot_data)
+        self.requirements = GoalRequirements.from_options(
+            options['goal'],
+            options.get('djinn_hunt_count', 0),
+            options.get('summon_hunt_count', 0),
+        )
 
-        if 'flags' in reqs:
-            self.flag_requirements: set[str] = reqs['flags']
-        if 'counts' in reqs:
-            self.count_requirements: dict[str, int] = reqs['counts']
-
-        if len(self.flag_requirements) == 0 and len(self.count_requirements) == 0:
-            self.flag_requirements.add('Doom Dragon')
-
-        for key in self.flag_requirements:
+        for key in self.requirements.events:
             location_name = OPTION_NAME_TO_GOAL_NAME[key]
             enemy_flag = self.supported_flags[location_name]
             self.desired_flags[enemy_flag] = self.game_data.event_by_name[location_name].id
@@ -138,11 +179,7 @@ class GoalManager:
             await display_message(
                 ctx.bizhawk_ctx,
                 f'Number of Djinn Obtained: {len(client.checked_djinn)}'
-                + (
-                    ''
-                    if 'djinn' not in client.goals.count_requirements
-                    else '/' + str(client.goals.count_requirements.get('djinn', 0))
-                ),
+                + (f'/{self.requirements.djinn_count}' if self.requirements.djinn_count else ''),
             )
 
         if updated_flags or difference:
@@ -161,21 +198,10 @@ class GoalManager:
             if ap_id not in goal_flags:
                 return False
 
-        if 'djinn' in self.count_requirements:
-            required_count = self.count_requirements['djinn']
-            server_count = ctx.stored_data.get(client.get_djinn_location_key(ctx), None)
-            if server_count is None:
-                server_count = {}
-            if required_count > len(server_count):
-                return False
-
-        if 'summons' in self.count_requirements:
-            required_count = self.count_requirements['summons']
-            server_count = len(client.summons)
-            if required_count > server_count:
-                return False
-
-        return True
+        server_djinn = ctx.stored_data.get(client.get_djinn_location_key(ctx)) or []
+        return (
+            len(server_djinn) >= self.requirements.djinn_count and len(client.summons) >= self.requirements.summon_count
+        )
 
 
 def _handle_common_cmd(self: BizHawkClientCommandProcessor) -> GSTLAClient | None:
@@ -220,16 +246,17 @@ def cmd_print_goals(self: BizHawkClientCommandProcessor) -> None:
     client = _handle_common_cmd(self)
     if client is None:
         return
-    flags = client.goals.flag_requirements
-    if flags:
+    requirements = client.goals.requirements
+    if requirements.events:
         logger.info('Must clear the following: ')
-        for flag in flags:
-            logger.info(flag)
-    counters = client.goals.count_requirements
-    if counters:
+        for event in sorted(requirements.events):
+            logger.info(event)
+    if requirements.djinn_count or requirements.summon_count:
         logger.info('Obtain the following: ')
-        for thing, num in counters.items():
-            logger.info(f'{thing.capitalize()} count: {num}')
+        if requirements.djinn_count:
+            logger.info(f'Djinn count: {requirements.djinn_count}')
+        if requirements.summon_count:
+            logger.info(f'Summons count: {requirements.summon_count}')
 
 
 def cmd_print_progress(self: BizHawkClientCommandProcessor) -> None:
@@ -237,20 +264,20 @@ def cmd_print_progress(self: BizHawkClientCommandProcessor) -> None:
     client = _handle_common_cmd(self)
     if client is None:
         return
-    flags: list[int] = self.ctx.stored_data.get(client.get_goal_flags_key(self.ctx))
+    flags: list[int] | None = self.ctx.stored_data.get(client.get_goal_flags_key(self.ctx))
     if flags is not None and len(flags) != 0:
         logger.info('Objectives Completed: ')
         for ap_id in flags:
             logger.info(client.game_data.event_locations[ap_id].name)
 
-    djinn_count: list[int] = self.ctx.stored_data.get(client.get_djinn_location_key(self.ctx))
-    if 'djinn' in client.goals.count_requirements and djinn_count is not None:
+    djinn_count: list[int] | None = self.ctx.stored_data.get(client.get_djinn_location_key(self.ctx))
+    if client.goals.requirements.djinn_count and djinn_count is not None:
         logger.info(f'Djinn count: {len(djinn_count)}')
         # logger.info("Objectives Not Completed: ")
         # for flag, cleared in flags.items():
         #     if not cleared:
         #         logger.info(flag)
-    if 'summons' in client.goals.count_requirements:
+    if client.goals.requirements.summon_count:
         logger.info(f'Summon count: {len(client.summons)}')
 
 
@@ -644,7 +671,7 @@ class GSTLAClient(BizHawkClient):
             # initializing here already before in-game check because we *could* do a "/deathlink"
             # on the title screen, which would then be overwritten once the stuff below initializes
             # with the YAML options
-            await self.set_death_link(ctx, bool(ctx.slot_data.get('options', {}).get('death_link', False)))
+            await self.set_death_link(ctx, bool(get_options_from_slot_data(ctx.slot_data).get('death_link', False)))
             self.death_link_initialized_for = (ctx.server_seed_name, ctx.slot)
             logger.debug(f'DeathLink enabled: {self.death_link_enabled} with {ctx.server_seed_name=}, {ctx.slot=}')
 
@@ -666,7 +693,7 @@ class GSTLAClient(BizHawkClient):
             for desired_flag in self.goals.desired_flags:
                 self.goal_map[desired_flag] = False
             self.check_summon_count(ctx)
-            self.coop = ctx.slot_data.get('options', {}).get('coop', 0)
+            self.coop = get_options_from_slot_data(ctx.slot_data).get('coop', 0)
             ctx.set_notify(self.get_goal_flags_key(ctx), self.get_djinn_location_key(ctx))
             # logger.info(self.goals.flag_requirements)
             # logger.info(self.goals.count_requirements)

@@ -12,9 +12,9 @@ class TestRandomGoals(GSTestBase):
     def test_goal_option_matches_randomized_goals(self):
         self.world_setup()
         world = self.get_world()
-        slot_goal = world.fill_slot_data()['goal']
+        slot_goal = world.fill_slot_data()['options']['v2']['goal']
         self.assertEqual(2, len(world.options.goal.value))
-        self.assertEqual(world.options.goal.value, set(slot_goal['flags']))
+        self.assertEqual(world.options.goal.value, set(slot_goal))
 
 
 class TestDjinnHunt(GSTestBase):

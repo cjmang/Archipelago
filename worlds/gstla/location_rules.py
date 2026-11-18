@@ -43,20 +43,12 @@ GOAL_EVENTS: dict[str, str] = {
 
 
 def set_goal_rules(world: GSTLAWorld) -> None:
-    goal_conditions = world.goal_conditions
-    required_events: set[str] = set()
-
-    if not goal_conditions:
-        required_events.add(ItemName.Doom_Dragon_Defeated)
-
-    required_events.update([GOAL_EVENTS[goal] for goal in goal_conditions if goal in GOAL_EVENTS])
-    djinn_needed = world.options.djinn_hunt_count.value if 'Djinn Hunt' in goal_conditions else 0
-    summons_needed = world.options.summon_hunt_count.value if 'Summon Hunt' in goal_conditions else 0
+    requirements = world.goal_requirements
 
     goal_rule = And(
-        HasAll(*required_events),
-        HasGroup(ItemType.Djinn.name, djinn_needed),
-        HasGroup(ItemType.Summon.name, summons_needed),
+        HasAll(*(GOAL_EVENTS[goal] for goal in sorted(requirements.events))),
+        HasGroup(ItemType.Djinn.name, requirements.djinn_count),
+        HasGroup(ItemType.Summon.name, requirements.summon_count),
     )
 
     world.set_rule(world.get_location(LocationName.Victory_Event), goal_rule)

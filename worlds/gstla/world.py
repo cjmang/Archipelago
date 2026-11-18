@@ -19,6 +19,7 @@ import settings
 from BaseClasses import Item, ItemClassification, Location
 from Options import OptionError, PerGameCommonOptions
 from worlds.AutoWorld import World
+from .client import GoalRequirements
 from .entrances import create_entrances
 from .game_data.loader import load_game_data
 from .gstla_types import ItemCategory, ItemType
@@ -56,6 +57,31 @@ from worlds.Files import APTokenTypes
 logger = logging.getLogger()
 
 
+SLOT_DATA_FIELDS = [
+    # we could also just add every field,
+    # but not sure if that's too much for something like
+    # a thousand slots if every world does that.
+    'anemos_inner_sanctum_access',
+    'coop',
+    'death_link',
+    'djinn_hunt_count',
+    'djinn_logic',
+    'free_retreat',
+    'goal',
+    'item_shuffle',
+    'lemurian_ship',
+    'manual_retreat_glitch',
+    'name_puzzles',
+    'omit_locations',
+    'reveal_hidden_item',
+    'shortcut_magma_rock',
+    'shortcut_mars_lighthouse',
+    'start_with_wings_of_anemos',
+    'summon_hunt_count',
+    'teleport_to_dungeons_and_towns',
+]
+
+
 class GSTLASettings(settings.Group):
     class RomFile(settings.UserFilePath):
         """File name of the GS TLA UE Rom"""
@@ -82,6 +108,9 @@ class GSTLAWorld(World):
     item_name_to_id = {name: item.id for name, item in load_game_data().item_by_name.items()}
     location_name_to_id = {name: location.id for name, location in load_game_data().location_by_name.items()}
     web = GSTLAWeb()
+
+    # Universal Tracker
+    ut_can_gen_without_yaml = True
 
     item_name_groups = {
         ItemType.Djinn.name: {item.name for item in load_game_data().djinn.values()},
@@ -113,33 +142,39 @@ class GSTLAWorld(World):
         super().__init__(multiworld, player)
         self._character_levels: list[tuple[int, int]] = []
         self._remote_blacklist = get_remote_blacklist()
-        self.goal_conditions: set[str] = set()
+
+    @property
+    def goal_requirements(self) -> GoalRequirements:
+        # note: never cache this. self.options.goal might change based on YAML-randomization
+        # see generate_early() below
+        return GoalRequirements.from_options(
+            self.options.goal.value,
+            self.options.djinn_hunt_count.value,
+            self.options.summon_hunt_count.value,
+        )
 
     def generate_early(self) -> None:
+        self._apply_fake_universal_tracker_slot_data()
+
         # TODO: There has to be a way to simplify these
         if len(self.options.goal.value) == 0:
             raise OptionError(f'A goal must be selected for Golden Sun TLA for player {self.player_name}')
 
-        if self.options.random_goals.value == 0 or self.options.random_goals.value >= len(self.options.goal.value):
-            self.goal_conditions = self.options.goal.value
-        else:
-            self.goal_conditions = set(
+        if 0 < self.options.random_goals.value < len(self.options.goal.value):
+            # Gotta write back to options.goal so that the spoiler log also saves the proper goal.
+            # Note: The CSV from ArchipelagoMW/AsyncTools (Big Async) would still show all goals.
+            # Gotta use triggers for that. See https://github.com/ArchipelagoMW/AsyncTools/pull/483
+            self.options.goal.value = set(
                 # sampled list has to be sorted, otherwise a seed is not deterministic
                 self.random.sample(sorted(self.options.goal.value), k=self.options.random_goals.value)
             )
 
-            # Gotta write back to options.goal so that the spoiler log also saves the proper goal.
-            # Note: The CSV from ArchipelagoMW/AsyncTools (Big Async) would still show all goals.
-            # Gotta use triggers for that. See https://github.com/ArchipelagoMW/AsyncTools/pull/483
-            self.options.goal.value = set(self.goal_conditions)
-
-        if 'Dullahan' in self.goal_conditions and self.options.omit_locations.value > 0:
+        goals = self.options.goal.value
+        if 'Dullahan' in goals and self.options.omit_locations.value > 0:
             self.options.omit_locations.value = 0
 
         if (
-            'Valukar' in self.goal_conditions
-            or 'Sentinel' in self.goal_conditions
-            or 'Star Magician' in self.goal_conditions
+            'Valukar' in goals or 'Sentinel' in goals or 'Star Magician' in goals
         ) and self.options.omit_locations.value == 2:
             self.options.omit_locations.value = 1
 
@@ -196,7 +231,61 @@ class GSTLAWorld(World):
         filler_item = get_filler_item(self)
         return filler_item.name
 
+    def _apply_fake_universal_tracker_slot_data(self) -> None:
+        """
+        The Universal Tracker works by rerunning the whole world generation.
+
+        The two ways it can do that:
+        Either via a provided YAML file, which passes the options to the world like the normal generation does it.
+        Note that if there is no provided YAML, it tries it with the default options of a world.
+        It then also needs some kind of "interpret_slot_data" function.
+        If a world sets "ut_can_gen_without_yaml" (like we do), it creates an empty YAML and the world is expected
+        to come up with the correct options for itself.
+
+        Either way, "self.multiworld.re_gen_passthrough" contains the "slot_data".
+        Since we set "ut_can_gen_without_yaml=True",
+        this is the slot_data we generated in fill_slot_data() for the multiworld, which the server sends on a connect.
+        We can then just use that 1:1 to set our options, since we don't need any mapping after introducing the
+        "options.v2", which is set via `self.options.as_dict()`.
+
+        In upstream #6287, there is a "UniversalTrackerEnabled" resolver,
+        that we could also use to handle glitched logic, but that's probably going to be in 0.6.9 at the earliest.
+
+        TODO: Glitched logic, deferred entrances for entrance randos? Location aliases? Direct Poptracker support?
+              Also: "/explain Air's Rock Interior - Reveal Tablet" returns the path as
+              "Garoh (True): Garoh -> AirsRock: Has Whirlwind", which seems whacky.
+              Probably should add some kind of "Overworld" region or the individual "Antekka, Gondowan, etc" regions?
+        """
+        slot_data = getattr(self.multiworld, 're_gen_passthrough', {}).get(self.game)
+        if slot_data is None:
+            return
+
+        for name, value in slot_data['options']['v2'].items():
+            option = getattr(self.options, name)
+            setattr(self.options, name, type(option).from_any(value))
+
     def fill_slot_data(self) -> Mapping[str, Any]:
+        """
+        We'll require the new slot data for the Universal Tracker.
+        But we should support older clients and poptrackers for a little while at least.
+        Adding new fields here is fine, but before removing them, we should check if they're used in our client,
+        in the universal tracker data or in the poptracker pack. If we notice that we often need to break compatibilty,
+        might be worth it to have them keyed by a version number (or set some "required_world_version" or something).
+
+        Currently looks like this:
+        {
+            "options": {
+                "ABC": "XYZ"   # deprecated
+                "v2": {"ABC": "XYZ"},  # new
+            },
+            "goal": {},  # deprecated
+        }
+        """
+        slot_data = dict(self.fill_slot_data_deprecated())
+        slot_data['options'] = {**slot_data['options'], 'v2': self.options.as_dict(*SLOT_DATA_FIELDS)}
+        return slot_data
+
+    def fill_slot_data_deprecated(self) -> Mapping[str, Any]:
         ret: dict[str, Any] = {
             'options': {
                 'item_shuffle': self.options.item_shuffle.value,
@@ -221,13 +310,13 @@ class GSTLAWorld(World):
         goal_dict: dict[str, Any] = {}
         flags = set()
         counts = {}
-        for goal in self.goal_conditions:
+        for goal in self.options.goal.value:
             if 'Hunt' in goal:
                 continue
             flags.add(goal)
-        if 'Djinn Hunt' in self.goal_conditions:
+        if 'Djinn Hunt' in self.options.goal.value:
             counts['djinn'] = self.options.djinn_hunt_count.value
-        if 'Summon Hunt' in self.goal_conditions:
+        if 'Summon Hunt' in self.options.goal.value:
             counts['summons'] = self.options.summon_hunt_count.value
         goal_dict['flags'] = flags
         goal_dict['counts'] = counts
@@ -278,7 +367,7 @@ class GSTLAWorld(World):
         spheres = multiworld.get_spheres()
         max_spheres: defaultdict[int, int] = defaultdict(lambda: -1)
         for i, sphere in enumerate(spheres):
-            for loc in sphere:
+            for loc in sorted(sphere):  # make sure to always sort spheres, otherwise output is nondeterministic
                 item = loc.item
                 if not isinstance(item, GSTLAItem):
                     continue
