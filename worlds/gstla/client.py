@@ -471,20 +471,15 @@ class GSTLAClient(BizHawkClient):
         item = ctx.items_received[index_to_give]
 
         logger.debug('Writing Item %d to Slot', item.item)
-        await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(item.item)])
+        if item.item in self.game_data.djinn:
+            djinn = self.game_data.djinn[item.item]
+            await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(djinn.rando_flag)])
+        else:
+            await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(item.item)])
 
     def _should_give_to_player(self, ctx: BizHawkClientContext, item: NetworkItem) -> bool:
         logger.debug('item: %s flags: %s location: %s coop: %s', item.item, item.flags, item.location, self.coop)
         if item.item in self.game_data.event_locations:
-            return False
-        if item.item in self.game_data.djinn:
-            # Since currently we cannot deliver djinns, we'll have to make this exception here.
-            # Otherwise, !getitem or /send might try to send a djinn.
-            # This is just a bandaid until we can deliver them.
-            #
-            # We could also remove djinns from the item pool entirely, maybe.
-            # I only noticed this when trying a "!getitem Lash", which tried to map to "Flash"
-            logger.warning('Cannot give %s: djinn cannot be sent as items', self.game_data.djinn[item.item].name)
             return False
         if ctx.slot != item.player:
             return True
