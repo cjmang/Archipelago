@@ -204,10 +204,9 @@ def create_items(world: 'GSTLAWorld', player: int):  # noqa: PLR0912, PLR0915
         world.random.shuffle(sorted_djinn_locs)
 
     for item in sorted_djinns:
-        ap_item = create_item_direct(item, player, True)
+        ap_item = create_item_direct(item, player)
         location = sorted_djinn_locs.pop(0)
         ap_loc = world.get_location(location.name)
-        ap_loc.address = None
         ap_loc.place_locked_item(ap_item)
 
     # char shuffle

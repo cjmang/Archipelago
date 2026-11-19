@@ -56,6 +56,20 @@ class Djinn(BaseItem):
         return djinn_to_flag_index(self.element, self.index)
 
     @property
+    def rando_flag(self) -> int:
+        """
+        Since our normal ap_id is just the address of the djinn in the normal ROM, it's too big to directly
+        put into the "incoming item" address of the rando. We also need format that makes it easy to decode in asm.
+        So we'll just do it the same way as we do for the mimics (0xA00).
+        I just picked 0xB00 here because it seemed empty.
+
+        To decode:
+        (number >> 5) & 0b11  # (or 0x3) for the element
+        number & 0b11111  # (or 0x1F) for the index
+        """
+        return 0xB00 | (self.element << 5) | self.index
+
+    @property
     def shuffled(self) -> bool:
         # Custom handling for now. Gotta randomize djinns with each other,
         # not the other stuff in the pool. See `create_items()`

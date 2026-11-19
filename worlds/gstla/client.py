@@ -24,6 +24,7 @@ from worlds.gstla.memory import (
 from .deathlink import PARTY_STATE_READS, DeathDeliverer, PartyState
 from .game_data.loader import load_game_data
 from .gstla_types import ItemType, LocationType
+from .location_rules import DJINNS_BY_PARTY_SIZE
 from .locations import get_remote_blacklist
 from .names import LocationName
 
@@ -311,7 +312,7 @@ class GSTLAClient(BizHawkClient):
         }
         self.checked_djinn: set[int] = set()
         self.possessed_djinn: set[int] = set()
-        self.djinn_last_count: int = 0
+        self.sent_possessed_djinn: set[int] = set()
         self.summons: set[int] = set()
         self.summon_item_index: int = 0
         for event in self.game_data.event_by_name.values():
@@ -327,6 +328,11 @@ class GSTLAClient(BizHawkClient):
         self.was_in_game: bool = False
         self.coop: int = 0
         self.remote_blacklist: set[int] = get_remote_blacklist()
+        self.party_djinn_location_ids: frozenset[int] = frozenset(
+            self.game_data.location_by_name[location_name].id
+            for location_names in DJINNS_BY_PARTY_SIZE.values()
+            for location_name in location_names
+        )
         self.goals = GoalManager()
         self.last_map: int = 0
         self.last_entrance: int = 0
@@ -422,25 +428,34 @@ class GSTLAClient(BizHawkClient):
                 self.summons.add(itemdata.id)
         self.summon_item_index = end
 
-    def _check_djinn_flags(self, flags: FlagArray) -> None:
-        for owned_djinn_flag, location_flag in self.djinn_ram_to_rom.items():
-            if flags.is_set(owned_djinn_flag):
-                self.checked_djinn.add(location_flag)
-                self.possessed_djinn.add(owned_djinn_flag)
-
-    def _scan_flags(self, flags: FlagArray) -> tuple[set[int], set[int]]:
+    def _scan_flags(self, flags: FlagArray) -> None:
         location_ids: set[int] = set()
         for flag, locations in self.flag_map.items():
             if flags.is_set(flag):
                 location_ids |= locations
+        self.temp_locs = location_ids
+
         event_ids: set[int] = set()
         for flag, events in self.event_flag_map.items():
             if flags.is_set(flag):
                 event_ids |= events
+        self.temp_events = event_ids
+
+        checked_djinn: set[int] = set()
+        possessed_djinn: set[int] = set()
+        djinn_locs: set[int] = set()
+        for owned_djinn_flag, location_flag in self.djinn_ram_to_rom.items():
+            if flags.is_set(owned_djinn_flag):
+                checked_djinn.add(location_flag)
+                possessed_djinn.add(owned_djinn_flag)
+                djinn_locs.add(self.djinn_flag_to_loc_id[location_flag])
+        self.checked_djinn = checked_djinn
+        self.possessed_djinn = possessed_djinn
+        self.temp_locs |= djinn_locs
+
         for flag in self.goal_map:
             if flags.is_set(flag):
                 self.goal_map[flag] = True
-        return location_ids, event_ids
 
     async def _receive_items(self, ctx: BizHawkClientContext, game_state: GameState) -> None:
         if game_state.pending_item_id != 0:
@@ -471,23 +486,30 @@ class GSTLAClient(BizHawkClient):
         item = ctx.items_received[index_to_give]
 
         logger.debug('Writing Item %d to Slot', item.item)
-        await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(item.item)])
+        if item.item in self.game_data.djinn:
+            djinn = self.game_data.djinn[item.item]
+            await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(djinn.rando_flag)])
+        else:
+            await write(ctx.bizhawk_ctx, [AP_ITEM_SLOT.to_write(item.item)])
 
     def _should_give_to_player(self, ctx: BizHawkClientContext, item: NetworkItem) -> bool:
         logger.debug('item: %s flags: %s location: %s coop: %s', item.item, item.flags, item.location, self.coop)
         if item.item in self.game_data.event_locations:
             return False
-        if item.item in self.game_data.djinn:
-            # Since currently we cannot deliver djinns, we'll have to make this exception here.
-            # Otherwise, !getitem or /send might try to send a djinn.
-            # This is just a bandaid until we can deliver them.
-            #
-            # We could also remove djinns from the item pool entirely, maybe.
-            # I only noticed this when trying a "!getitem Lash", which tried to map to "Flash"
-            logger.warning('Cannot give %s: djinn cannot be sent as items', self.game_data.djinn[item.item].name)
-            return False
         if ctx.slot != item.player:
             return True
+        if item.item in self.game_data.djinn:
+            # As of right now, the djinns brought be the characters would be duplicated if we already have them.
+            # To replicate:
+            # start new seed, recruit garet, get his two djinns, restart the game, we obtain those two djinns,
+            # and after we recruit garet, he brings his two djinns regardless. Now we have two Waft and Petra.
+            # This has to preferably be fixed inside the rando itself already.
+            if item.location in self.party_djinn_location_ids:
+                return False
+
+            # Found djinns should be delivered regardless of remote/coop on/off.
+            # Otherwise the Poptracker would show djinns already collected when they're not.
+            return self.game_data.djinn[item.item].flag_index not in self.possessed_djinn
         if item.location < 0:
             # -1 can be the "!getitem" and "/send" command
             # -2 is the starting inventory, also allowed by "ctx.slot != item.player"
@@ -604,8 +626,7 @@ class GSTLAClient(BizHawkClient):
         # )
 
         await self._load_djinn(ctx)
-        self.temp_locs, self.temp_events = self._scan_flags(game_state.flags)
-        self._check_djinn_flags(game_state.flags)
+        self._scan_flags(game_state.flags)
 
         await self._receive_items(ctx, game_state)
 
@@ -618,7 +639,7 @@ class GSTLAClient(BizHawkClient):
             await ctx.send_msgs([{'cmd': 'LocationChecks', 'locations': list(self.temp_locs)}])
             self.local_locations = self.temp_locs
 
-        if self.possessed_djinn and self.djinn_last_count != len(self.possessed_djinn):
+        if self.possessed_djinn - self.sent_possessed_djinn:
             logger.debug(f'Possesed djinn: {self.possessed_djinn}')
             await ctx.send_msgs(
                 [
@@ -637,7 +658,7 @@ class GSTLAClient(BizHawkClient):
                     }
                 ]
             )
-            self.djinn_last_count = len(self.possessed_djinn)
+            self.sent_possessed_djinn |= self.possessed_djinn
 
         if self.temp_events and self.temp_events != self.local_events:
             await ctx.send_msgs(
